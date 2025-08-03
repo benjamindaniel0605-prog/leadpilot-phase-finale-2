@@ -46,8 +46,8 @@ export default function Landing() {
     },
     {
       icon: Target,
-      title: "Module Closing",
-      description: "Outils avancés de closing avec IA pour transformer vos prospects en clients.",
+      title: "Service Closing",
+      description: "Closeurs professionnels pour conclure vos ventes par téléphone avec commission sur résultats.",
       color: "bg-orange-100 text-orange-600",
       comingSoon: true
     }

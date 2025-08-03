@@ -1,37 +1,37 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Target, Clock, CheckCircle, TrendingUp, Users, Award } from "lucide-react";
+import { Target, Clock, CheckCircle, Phone, Users, Award, Calendar, TrendingUp } from "lucide-react";
 
 export default function ClosingSection() {
   const upcomingFeatures = [
     {
+      icon: Calendar,
+      title: "Prise de RDV Closing",
+      description: "Permettez à vos leads qualifiés de booker un RDV téléphonique directement avec un closeur professionnel.",
+      eta: "Q2 2025"
+    },
+    {
+      icon: Phone,
+      title: "Closeurs Professionnels",
+      description: "Équipe de closeurs expérimentés pour conclure vos ventes par téléphone avec commission sur résultats.",
+      eta: "Q2 2025"
+    },
+    {
       icon: Target,
       title: "Suivi des Opportunités",
-      description: "Gérez vos prospects chauds et suivez leur progression dans le tunnel de vente.",
-      eta: "Q2 2025"
-    },
-    {
-      icon: CheckCircle,
-      title: "Checklist de Closing",
-      description: "Listes de vérification personnalisées pour optimiser vos techniques de closing.",
-      eta: "Q2 2025"
-    },
-    {
-      icon: TrendingUp,
-      title: "Scripts de Closing IA",
-      description: "Scripts personnalisés générés par IA selon le profil et les objections du prospect.",
+      description: "Gérez vos prospects chauds et suivez leur progression vers la conclusion de vente.",
       eta: "Q3 2025"
     },
     {
       icon: Users,
-      title: "Gestion des Objections",
-      description: "Base de données d'objections avec réponses suggérées et taux de réussite.",
+      title: "Gestion des Commissions",
+      description: "Système automatisé de calcul et versement des commissions aux closeurs selon les ventes réalisées.",
       eta: "Q3 2025"
     },
     {
       icon: Award,
-      title: "Analytics de Closing",
-      description: "Analyse détaillée de vos performances de closing et recommandations d'amélioration.",
+      title: "Analytics de Performance",
+      description: "Statistiques détaillées sur les taux de conversion et performances des closeurs.",
       eta: "Q4 2025"
     }
   ];
@@ -45,10 +45,10 @@ export default function ClosingSection() {
           </div>
         </div>
         <h1 className="text-3xl font-bold text-foreground mb-4">
-          Module Closing
+          Service Closing
         </h1>
         <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Transformez vos prospects en clients avec des outils de closing avancés et des techniques d'IA.
+          Transformez vos prospects qualifiés en clients grâce à nos closeurs professionnels. Ils concluent vos ventes par téléphone avec commission sur résultats.
         </p>
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 inline-block">
           <div className="flex items-center text-primary">
@@ -84,29 +84,82 @@ export default function ClosingSection() {
         ))}
       </div>
 
-      <Card className="mt-8">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-semibold text-card-foreground mb-4">
-            Soyez les premiers informés
-          </h3>
-          <p className="text-muted-foreground mb-6">
-            Inscrivez-vous pour être notifié dès que le module Closing sera disponible et bénéficier d'un accès anticipé.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <input 
-              type="email" 
-              placeholder="Votre email"
-              className="form-input flex-1"
-            />
-            <Button>
-              Me notifier
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground mt-4">
-            Nous respectons votre vie privée. Pas de spam, juste les updates importantes.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="grid md:grid-cols-2 gap-8 mt-8">
+        <Card>
+          <CardContent className="p-8">
+            <h3 className="text-2xl font-semibold text-card-foreground mb-4">
+              Comment ça fonctionne
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="bg-primary/10 rounded-full p-2">
+                  <span className="text-primary font-semibold text-sm">1</span>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-card-foreground">Sélectionnez vos leads qualifiés</h4>
+                  <p className="text-muted-foreground text-sm">Choisissez les prospects les plus prometteurs de votre pipeline</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-primary/10 rounded-full p-2">
+                  <span className="text-primary font-semibold text-sm">2</span>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-card-foreground">Bookez un RDV closing</h4>
+                  <p className="text-muted-foreground text-sm">Le lead reçoit un lien pour prendre RDV avec un closeur</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-primary/10 rounded-full p-2">
+                  <span className="text-primary font-semibold text-sm">3</span>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-card-foreground">Closing professionnel</h4>
+                  <p className="text-muted-foreground text-sm">Notre closeur appelle et conclut la vente</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-primary/10 rounded-full p-2">
+                  <span className="text-primary font-semibold text-sm">4</span>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-card-foreground">Commission partagée</h4>
+                  <p className="text-muted-foreground text-sm">Le closeur touche sa commission, vous gardez le reste</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-8">
+            <h3 className="text-2xl font-semibold text-card-foreground mb-4">
+              Intéressé par le service ?
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Rejoignez la liste d'attente pour être notifié dès le lancement du service de closing.
+            </p>
+            <div className="space-y-4">
+              <input 
+                type="email" 
+                placeholder="Votre email"
+                className="form-input w-full"
+              />
+              <Button className="w-full">
+                Rejoindre la liste d'attente
+              </Button>
+            </div>
+            <div className="mt-6 p-4 bg-primary/5 rounded-lg">
+              <h4 className="font-semibold text-card-foreground mb-2">Avantages exclusifs :</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Accès prioritaire au service</li>
+                <li>• Tarifs préférentiels early bird</li>
+                <li>• Formation gratuite aux techniques de closing</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

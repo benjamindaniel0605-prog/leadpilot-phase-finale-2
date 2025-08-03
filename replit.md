@@ -2,11 +2,12 @@
 
 ## Overview
 
-LeadPilot is a comprehensive B2B SaaS platform that enables businesses to automate their lead generation and email outreach processes. The application integrates AI-powered lead scoring, automated email campaigns using 30 pre-built French templates, multi-step sequences, and comprehensive analytics tracking. Built as a full-stack TypeScript application, it features a modern React frontend with Tailwind CSS and a Node.js Express backend connected to a PostgreSQL database.
+LeadPilot is a comprehensive B2B SaaS platform that enables businesses to automate their lead generation and email outreach processes. The application integrates AI-powered lead scoring, automated email campaigns using 30 pre-built French templates, multi-step sequences, comprehensive analytics tracking, and a planned professional closing service where human closers handle phone sales with commission-based compensation. Built as a full-stack TypeScript application, it features a modern React frontend with Tailwind CSS and a Node.js Express backend connected to a PostgreSQL database.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Closing service preference: Human closers (not AI) for phone sales with commission structure.
 
 ## System Architecture
 
