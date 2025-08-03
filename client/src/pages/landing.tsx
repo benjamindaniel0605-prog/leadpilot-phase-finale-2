@@ -11,7 +11,7 @@ export default function Landing() {
     {
       icon: Users,
       title: "Génération de Leads",
-      description: "Trouvez automatiquement des prospects qualifiés via l'API Apollo avec filtrage IA.",
+      description: "Trouvez automatiquement des prospects qualifiés avec filtrage IA avancé.",
       color: "bg-blue-100 text-blue-600"
     },
     {
@@ -22,7 +22,7 @@ export default function Landing() {
     },
     {
       icon: Brain,
-      title: "IA GPT-4o",
+      title: "Intelligence Artificielle",
       description: "Scoring automatique des leads et génération de variations d'emails personnalisées.",
       color: "bg-amber-100 text-amber-600"
     },

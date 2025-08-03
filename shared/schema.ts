@@ -64,7 +64,7 @@ export const leads = pgTable("leads", {
   position: varchar("position"),
   aiScore: integer("ai_score"),
   status: varchar("status").notNull().default("new"),
-  source: varchar("source").default("apollo"),
+  source: varchar("source").default("external"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

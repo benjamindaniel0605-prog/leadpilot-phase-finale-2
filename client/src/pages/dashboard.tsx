@@ -131,7 +131,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="h-full bg-slate-50 flex">
+    <div className="h-full bg-background flex">
       <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="flex-1 overflow-auto">
         <Header activeSection={activeSection} />

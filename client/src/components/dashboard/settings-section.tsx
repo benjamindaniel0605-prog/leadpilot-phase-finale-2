@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SettingsSection() {
   const [profileForm, setProfileForm] = useState({
@@ -113,14 +114,14 @@ export default function SettingsSection() {
 
   const integrations = [
     {
-      name: "Apollo API",
+      name: "API de Leads",
       description: "Génération automatique de leads",
       icon: Rocket,
       status: "not_configured",
       color: "bg-purple-100 text-purple-600"
     },
     {
-      name: "OpenAI GPT-4o",
+      name: "Intelligence Artificielle",
       description: "Scoring et variations IA",
       icon: Brain,
       status: "not_configured",

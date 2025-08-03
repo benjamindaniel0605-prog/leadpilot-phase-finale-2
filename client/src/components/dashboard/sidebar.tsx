@@ -43,11 +43,11 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   const leadsUsage = (user?.leadsUsed || 0) / currentLimits.leads * 100;
 
   return (
-    <aside className="w-64 bg-white shadow-lg border-r border-gray-200">
+    <aside className="w-64 bg-card shadow-lg border-r border-border">
       <div className="p-6">
         <div className="flex items-center mb-8">
           <Rocket className="h-8 w-8 text-primary mr-3" />
-          <span className="text-xl font-bold text-gray-900">LeadPilot</span>
+          <span className="text-xl font-bold text-foreground">LeadPilot</span>
         </div>
         
         <nav className="space-y-2">
@@ -58,7 +58,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
               className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
                 activeSection === item.id
                   ? "text-primary bg-primary/10"
-                  : "text-gray-700 hover:bg-gray-50"
+                  : "text-muted-foreground hover:bg-muted"
               }`}
             >
               <item.icon className="h-5 w-5 mr-3" />
@@ -68,7 +68,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         </nav>
       </div>
       
-      <div className="border-t border-gray-200 p-6">
+      <div className="border-t border-border p-6">
         <div className="bg-primary/5 p-4 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-primary capitalize">
