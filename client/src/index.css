@@ -9,21 +9,21 @@
 }
 
 :root {
-  --background: hsl(220, 27%, 18%);
+  --background: hsl(220, 30%, 8%);
   --foreground: hsl(0, 0%, 95%);
-  --muted: hsl(220, 27%, 25%);
+  --muted: hsl(220, 27%, 15%);
   --muted-foreground: hsl(215, 16%, 65%);
-  --popover: hsl(220, 27%, 20%);
+  --popover: hsl(220, 27%, 12%);
   --popover-foreground: hsl(0, 0%, 95%);
-  --card: hsl(220, 27%, 20%);
+  --card: hsl(220, 27%, 12%);
   --card-foreground: hsl(0, 0%, 95%);
-  --border: hsl(220, 27%, 30%);
-  --input: hsl(220, 27%, 25%);
+  --border: hsl(220, 27%, 20%);
+  --input: hsl(220, 27%, 15%);
   --primary: hsl(207, 90%, 54%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(220, 27%, 25%);
+  --secondary: hsl(220, 27%, 15%);
   --secondary-foreground: hsl(0, 0%, 90%);
-  --accent: hsl(220, 27%, 25%);
+  --accent: hsl(220, 27%, 15%);
   --accent-foreground: hsl(0, 0%, 90%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);

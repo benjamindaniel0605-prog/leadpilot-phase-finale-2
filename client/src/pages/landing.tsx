@@ -103,20 +103,20 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="relative bg-white shadow-sm">
+      <header className="relative bg-card shadow-sm border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between items-center">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
                 <Rocket className="h-8 w-8 text-primary mr-3" />
-                <span className="text-xl font-bold text-gray-900">LeadPilot</span>
+                <span className="text-xl font-bold text-foreground">LeadPilot</span>
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Fonctionnalités</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Tarifs</a>
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Fonctionnalités</a>
+              <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Tarifs</a>
               <Button variant="ghost" onClick={handleLogin}>Connexion</Button>
               <Button onClick={handleLogin}>Essai Gratuit</Button>
             </div>
@@ -132,15 +132,15 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/5 to-white py-20">
+      <section className="relative bg-gradient-to-br from-primary/5 to-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+              <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
                 Génération de leads B2B{" "}
                 <span className="text-primary">automatisée</span> avec IA
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
                 Trouvez, qualifiez et convertissez vos prospects automatiquement. 
                 30 templates d'emails, séquences multi-étapes et IA pour maximiser vos conversions.
               </p>
@@ -152,7 +152,7 @@ export default function Landing() {
                   Voir la Démo
                 </Button>
               </div>
-              <div className="mt-8 flex items-center space-x-6 text-sm text-gray-600">
+              <div className="mt-8 flex items-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-emerald-500 mr-2" />
                   Essai gratuit 14 jours
@@ -180,13 +180,13 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-20 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Tout ce dont vous avez besoin pour générer des leads
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Une plateforme complète qui automatise votre prospection de A à Z
             </p>
           </div>
@@ -197,8 +197,8 @@ export default function Landing() {
                   <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center mb-4`}>
                     <feature.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-3">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -207,13 +207,13 @@ export default function Landing() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-slate-50">
+      <section id="pricing" className="py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Choisissez votre plan
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-muted-foreground">
               Commencez gratuitement, évoluez selon vos besoins
             </p>
           </div>
@@ -229,9 +229,9 @@ export default function Landing() {
                 )}
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                    <div className="text-4xl font-bold text-gray-900 mb-2">{plan.price}</div>
-                    <p className="text-gray-600">{plan.description}</p>
+                    <h3 className="text-2xl font-bold text-card-foreground mb-2">{plan.name}</h3>
+                    <div className="text-4xl font-bold text-card-foreground mb-2">{plan.price}</div>
+                    <p className="text-muted-foreground">{plan.description}</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, featureIndex) => (
@@ -239,17 +239,17 @@ export default function Landing() {
                         {typeof feature === 'string' ? (
                           <>
                             <CheckCircle className="h-4 w-4 text-emerald-500 mr-3 flex-shrink-0" />
-                            <span className="text-gray-700">{feature}</span>
+                            <span className="text-card-foreground">{feature}</span>
                           </>
                         ) : feature.disabled ? (
                           <>
-                            <Lock className="h-4 w-4 text-gray-400 mr-3 flex-shrink-0" />
-                            <span className="text-gray-400">{feature.text}</span>
+                            <Lock className="h-4 w-4 text-muted-foreground mr-3 flex-shrink-0" />
+                            <span className="text-muted-foreground">{feature.text}</span>
                           </>
                         ) : (
                           <>
                             <CheckCircle className="h-4 w-4 text-emerald-500 mr-3 flex-shrink-0" />
-                            <span className="text-gray-700">{feature.text}</span>
+                            <span className="text-card-foreground">{feature.text}</span>
                           </>
                         )}
                       </li>
@@ -267,7 +267,7 @@ export default function Landing() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               💡 Facturation annuelle = 2 mois offerts (payer 10 mois au lieu de 12)
             </p>
           </div>
