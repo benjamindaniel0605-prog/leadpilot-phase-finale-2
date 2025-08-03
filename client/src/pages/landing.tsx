@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Rocket, Users, Mail, Brain, TrendingUp, Calendar, Lock } from "lucide-react";
+import { CheckCircle, Rocket, Users, Mail, Brain, TrendingUp, Calendar, Lock, Target, Clock } from "lucide-react";
 
 export default function Landing() {
   const handleLogin = () => {
@@ -43,6 +43,13 @@ export default function Landing() {
       title: "Calendrier Intégré",
       description: "Permettez à vos prospects de réserver des RDV directement via vos emails.",
       color: "bg-indigo-100 text-indigo-600"
+    },
+    {
+      icon: Target,
+      title: "Module Closing",
+      description: "Outils avancés de closing avec IA pour transformer vos prospects en clients.",
+      color: "bg-orange-100 text-orange-600",
+      comingSoon: true
     }
   ];
 
@@ -192,12 +199,20 @@ export default function Landing() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className={`hover:shadow-lg transition-shadow ${feature.comingSoon ? 'relative overflow-hidden' : ''}`}>
                 <CardContent className="p-6">
                   <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center mb-4`}>
                     <feature.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-semibold text-card-foreground mb-3">{feature.title}</h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xl font-semibold text-card-foreground">{feature.title}</h3>
+                    {feature.comingSoon && (
+                      <div className="flex items-center text-amber-600 bg-amber-100 px-2 py-1 rounded-full text-xs font-semibold">
+                        <Clock className="h-3 w-3 mr-1" />
+                        Bientôt
+                      </div>
+                    )}
+                  </div>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </CardContent>
               </Card>

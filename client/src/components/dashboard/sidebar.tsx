@@ -10,7 +10,8 @@ import {
   Calendar, 
   Settings, 
   Rocket,
-  Crown
+  Crown,
+  Target
 } from "lucide-react";
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: "templates", label: "Templates", icon: Mail },
     { id: "campaigns", label: "Campagnes", icon: Send },
     { id: "sequences", label: "Séquences", icon: GitBranch },
+    { id: "closing", label: "Closing", icon: Target, comingSoon: true },
     { id: "calendar", label: "Calendrier", icon: Calendar },
     { id: "analytics", label: "Statistiques", icon: BarChart3 },
     { id: "settings", label: "Paramètres", icon: Settings },
@@ -54,15 +56,24 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
           {navigationItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => onSectionChange(item.id)}
-              className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+              onClick={() => !item.comingSoon && onSectionChange(item.id)}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                 activeSection === item.id
                   ? "text-primary bg-primary/10"
+                  : item.comingSoon
+                  ? "text-muted-foreground/50 cursor-not-allowed"
                   : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.label}
+              <div className="flex items-center">
+                <item.icon className="h-5 w-5 mr-3" />
+                {item.label}
+              </div>
+              {item.comingSoon && (
+                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                  Bientôt
+                </span>
+              )}
             </button>
           ))}
         </nav>

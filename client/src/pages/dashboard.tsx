@@ -12,6 +12,7 @@ import SequencesSection from "@/components/dashboard/sequences-section";
 import CalendarSection from "@/components/dashboard/calendar-section";
 import AnalyticsSection from "@/components/dashboard/analytics-section";
 import SettingsSection from "@/components/dashboard/settings-section";
+import ClosingSection from "@/components/dashboard/closing-section";
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -119,6 +120,8 @@ export default function Dashboard() {
         return <CampaignsSection />;
       case "sequences":
         return <SequencesSection />;
+      case "closing":
+        return <ClosingSection />;
       case "calendar":
         return <CalendarSection />;
       case "analytics":
