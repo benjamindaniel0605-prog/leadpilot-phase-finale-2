@@ -51,16 +51,16 @@ export default function Dashboard() {
           <div className="p-6">
             <StatsCards />
             <div className="grid lg:grid-cols-2 gap-6 mt-8">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Activité Récente</h3>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">Activité Récente</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                       <span className="text-emerald-600 text-sm">+</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-900">Nouveau lead ajouté</p>
-                      <p className="text-xs text-gray-500">Il y a 2 heures</p>
+                      <p className="text-sm text-card-foreground">Nouveau lead ajouté</p>
+                      <p className="text-xs text-muted-foreground">Il y a 2 heures</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -68,43 +68,43 @@ export default function Dashboard() {
                       <span className="text-blue-600 text-sm">📧</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-900">Email envoyé</p>
-                      <p className="text-xs text-gray-500">Il y a 4 heures</p>
+                      <p className="text-sm text-card-foreground">Email envoyé</p>
+                      <p className="text-xs text-muted-foreground">Il y a 4 heures</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions Rapides</h3>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">Actions Rapides</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setActiveSection("leads")}
-                    className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="p-4 border border-border rounded-lg hover:bg-muted transition-colors text-center"
                   >
                     <div className="text-primary text-xl mb-2">👥</div>
-                    <p className="text-sm font-medium text-gray-900">Nouveau Lead</p>
+                    <p className="text-sm font-medium text-card-foreground">Nouveau Lead</p>
                   </button>
                   <button 
                     onClick={() => setActiveSection("campaigns")}
-                    className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="p-4 border border-border rounded-lg hover:bg-muted transition-colors text-center"
                   >
                     <div className="text-emerald-600 text-xl mb-2">📧</div>
-                    <p className="text-sm font-medium text-gray-900">Nouvelle Campagne</p>
+                    <p className="text-sm font-medium text-card-foreground">Nouvelle Campagne</p>
                   </button>
                   <button 
                     onClick={() => setActiveSection("templates")}
-                    className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="p-4 border border-border rounded-lg hover:bg-muted transition-colors text-center"
                   >
                     <div className="text-amber-600 text-xl mb-2">📝</div>
-                    <p className="text-sm font-medium text-gray-900">Templates</p>
+                    <p className="text-sm font-medium text-card-foreground">Templates</p>
                   </button>
                   <button 
                     onClick={() => setActiveSection("analytics")}
-                    className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="p-4 border border-border rounded-lg hover:bg-muted transition-colors text-center"
                   >
                     <div className="text-purple-600 text-xl mb-2">📊</div>
-                    <p className="text-sm font-medium text-gray-900">Analytics</p>
+                    <p className="text-sm font-medium text-card-foreground">Analytics</p>
                   </button>
                 </div>
               </div>
