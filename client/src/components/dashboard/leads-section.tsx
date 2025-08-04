@@ -25,10 +25,10 @@ export default function LeadsSection() {
   const [showGenerationForm, setShowGenerationForm] = useState(true); // Show form by default for better UX
   const [generationCriteria, setGenerationCriteria] = useState({
     sector: "",
-    location: "France",
+    location: "France", 
     companySize: "all",
     jobTitles: "",
-    count: 10
+    count: 1
   });
 
   const queryClient = useQueryClient();
@@ -361,36 +361,43 @@ export default function LeadsSection() {
                         className="h-10 text-center"
                         value={generationCriteria.count.toString()}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          if (value === '') {
-                            setGenerationCriteria(prev => ({ ...prev, count: 1 }));
-                          } else {
-                            const numValue = parseInt(value);
-                            if (!isNaN(numValue)) {
-                              const clampedValue = Math.max(1, Math.min(numValue, maxLeads));
-                              setGenerationCriteria(prev => ({ ...prev, count: clampedValue }));
+                          const rawValue = e.target.value;
+                          console.log("Input onChange:", rawValue);
+                          
+                          // Allow empty string for clearing
+                          if (rawValue === '') {
+                            setGenerationCriteria(prev => ({ ...prev, count: '' as any }));
+                            return;
+                          }
+                          
+                          // Filter out non-numeric characters
+                          const numericValue = rawValue.replace(/[^0-9]/g, '');
+                          
+                          if (numericValue !== '') {
+                            const numValue = parseInt(numericValue);
+                            if (!isNaN(numValue) && numValue > 0) {
+                              // Don't clamp during typing, only validate range
+                              if (numValue <= maxLeads) {
+                                setGenerationCriteria(prev => ({ ...prev, count: numValue }));
+                              } else {
+                                // If exceeds max, set to max
+                                setGenerationCriteria(prev => ({ ...prev, count: maxLeads }));
+                              }
                             }
                           }
                         }}
                         onBlur={() => {
-                          if (generationCriteria.count < 1 || isNaN(generationCriteria.count)) {
+                          // On blur, ensure we have a valid number
+                          const currentValue = generationCriteria.count;
+                          if (currentValue === '' || typeof currentValue === 'string' || currentValue < 1 || isNaN(currentValue)) {
                             setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                          } else if (currentValue > maxLeads) {
+                            setGenerationCriteria(prev => ({ ...prev, count: maxLeads }));
                           }
                         }}
-                        onKeyDown={(e) => {
-                          // Allow backspace, delete, tab, escape, enter
-                          if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
-                              // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-                              (e.keyCode === 65 && e.ctrlKey === true) ||
-                              (e.keyCode === 67 && e.ctrlKey === true) ||
-                              (e.keyCode === 86 && e.ctrlKey === true) ||
-                              (e.keyCode === 88 && e.ctrlKey === true)) {
-                            return;
-                          }
-                          // Ensure that it is a number and stop the keypress
-                          if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                            e.preventDefault();
-                          }
+                        onFocus={(e) => {
+                          // Select all text when focusing for easy replacement
+                          e.target.select();
                         }}
                       />
                       <button 
