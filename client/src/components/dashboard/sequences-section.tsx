@@ -67,13 +67,13 @@ export default function SequencesSection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   Débloque les Séquences Multi-étapes
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Automatisez vos follow-ups avec jusqu'à 3 étapes (Pro) ou 5 étapes (Growth)
                 </p>
-                <ul className="space-y-1 text-sm text-gray-600">
+                <ul className="space-y-1 text-sm text-muted-foreground">
                   <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mr-2" />
                     Relances automatiques personnalisées
@@ -93,7 +93,7 @@ export default function SequencesSection() {
                   <Crown className="h-4 w-4 mr-2" />
                   Upgrader vers Pro
                 </Button>
-                <p className="text-sm text-gray-600">À partir de 99€/mois</p>
+                <p className="text-sm text-muted-foreground">À partir de 99€/mois</p>
               </div>
             </div>
           </CardContent>
