@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit3, Trash2, Eye, Copy, Wand2, RotateCcw } from "lucide-react";
+import { Plus, Edit3, Trash2, Eye, Copy, Wand2, RotateCcw, Calendar } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,11 @@ import type { CustomEmail } from "@shared/schema";
 export default function CustomEmailsSection() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Vérification du plan pour le booking
+  const userPlan = (user as any)?.plan || "free";
+  const canUseBooking = ['starter', 'pro', 'growth'].includes(userPlan);
   const [viewingEmail, setViewingEmail] = useState<CustomEmail | null>(null);
   const [editingEmail, setEditingEmail] = useState<CustomEmail | null>(null);
   const [editedName, setEditedName] = useState("");
@@ -34,6 +40,29 @@ export default function CustomEmailsSection() {
   const [originalContent, setOriginalContent] = useState("");
   const [generatingVariation, setGeneratingVariation] = useState(false);
   const [lastGeneratedContent, setLastGeneratedContent] = useState("");
+
+  // Fonction pour ajouter le lien de booking
+  const handleAddBookingLink = () => {
+    if (!canUseBooking) {
+      toast({
+        title: "Fonctionnalité réservée",
+        description: "Les liens de RDV sont disponibles à partir du plan Starter.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const userId = (user as any)?.id;
+    const bookingText = `\n\nPour programmer un RDV, cliquez ici :\nhttps://leadpilot.com/book/${userId}\n\nOu répondez à cet email pour convenir d'un autre créneau.`;
+    
+    // Ajouter le texte à la fin du contenu existant
+    setEditedContent(prevContent => prevContent + bookingText);
+    
+    toast({
+      title: "Lien de RDV ajouté !",
+      description: "Le texte de proposition de rendez-vous a été inséré à la fin de votre email.",
+    });
+  };
 
   const { data: customEmails = [], isLoading } = useQuery<CustomEmail[]>({
     queryKey: ["/api/custom-emails"],
@@ -186,8 +215,8 @@ export default function CustomEmailsSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mes Emails Personnalisés</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-white">Mes Emails Personnalisés</h2>
+          <p className="text-gray-300">
             Gérez vos emails créés à partir des templates de base
           </p>
         </div>
@@ -410,6 +439,17 @@ export default function CustomEmailsSection() {
                     Variation
                   </>
                 )}
+              </Button>
+
+              <Button 
+                variant="outline"
+                onClick={handleAddBookingLink}
+                disabled={!canUseBooking}
+                title={!canUseBooking ? "Disponible à partir du plan Starter" : "Ajouter un lien de prise de RDV"}
+                className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Proposer RDV
               </Button>
               
               <Button 
