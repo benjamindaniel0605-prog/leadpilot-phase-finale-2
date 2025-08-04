@@ -29,9 +29,9 @@ export default function CustomEmailsSection() {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Vérification du plan pour le booking (temporairement désactivée pour test)
+  // Vérification du plan pour le booking
   const userPlan = (user as any)?.plan || "free";
-  const canUseBooking = true; // Temporairement activé pour tous les plans
+  const canUseBooking = ['starter', 'pro', 'growth'].includes(userPlan);
   const [viewingEmail, setViewingEmail] = useState<CustomEmail | null>(null);
   const [editingEmail, setEditingEmail] = useState<CustomEmail | null>(null);
   const [editedName, setEditedName] = useState("");
