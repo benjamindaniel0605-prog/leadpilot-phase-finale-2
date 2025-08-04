@@ -150,7 +150,7 @@ export default function TemplatesSection() {
                               <p className="mt-2 text-amber-600">Contenu verrouillé</p>
                             </div>
                           ) : (
-                            template.content
+                            <span>{template.content}</span>
                           )}
                         </div>
                       </div>
