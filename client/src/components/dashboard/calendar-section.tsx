@@ -29,7 +29,9 @@ export default function CalendarSection() {
     tuesday: { enabled: true, startTime: "09:00", endTime: "17:00" },
     wednesday: { enabled: true, startTime: "09:00", endTime: "17:00" },
     thursday: { enabled: true, startTime: "09:00", endTime: "17:00" },
-    friday: { enabled: true, startTime: "09:00", endTime: "17:00" }
+    friday: { enabled: true, startTime: "09:00", endTime: "17:00" },
+    saturday: { enabled: false, startTime: "10:00", endTime: "16:00" },
+    sunday: { enabled: false, startTime: "10:00", endTime: "16:00" }
   });
 
   const getStatusBadge = (status: string) => {
@@ -238,7 +240,9 @@ export default function CalendarSection() {
                       { key: 'tuesday', label: 'Mar' },
                       { key: 'wednesday', label: 'Mer' },
                       { key: 'thursday', label: 'Jeu' },
-                      { key: 'friday', label: 'Ven' }
+                      { key: 'friday', label: 'Ven' },
+                      { key: 'saturday', label: 'Sam' },
+                      { key: 'sunday', label: 'Dim' }
                     ].map(day => (
                       <div key={day.key} className="bg-gray-800 border border-gray-600 rounded p-3">
                         <label className="flex items-center space-x-3 mb-2">
@@ -320,7 +324,9 @@ export default function CalendarSection() {
                       tuesday: 'Mardi', 
                       wednesday: 'Mercredi',
                       thursday: 'Jeudi',
-                      friday: 'Vendredi'
+                      friday: 'Vendredi',
+                      saturday: 'Samedi',
+                      sunday: 'Dimanche'
                     };
                     return (
                       <div key={key} className={`text-sm p-1 rounded ${slot.enabled ? 'text-emerald-600' : 'text-muted-foreground'}`}>
