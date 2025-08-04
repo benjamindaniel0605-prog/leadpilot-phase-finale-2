@@ -59,7 +59,12 @@ export default function TemplatesSection() {
   // Mutation pour utiliser un template
   const useTemplateMutation = useMutation({
     mutationFn: async (templateId: string) => {
-      await apiRequest(`/api/templates/${templateId}/use`, "POST");
+      const response = await fetch(`/api/templates/${templateId}/use`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
     },
     onSuccess: () => {
       toast({
@@ -80,8 +85,12 @@ export default function TemplatesSection() {
   // Mutation pour générer une variation
   const generateVariationMutation = useMutation({
     mutationFn: async (templateId: string) => {
-      const response = await apiRequest(`/api/templates/${templateId}/variation`, "POST");
-      return response;
+      const response = await fetch(`/api/templates/${templateId}/variation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
     },
     onSuccess: (variation, templateId) => {
       toast({
@@ -104,7 +113,13 @@ export default function TemplatesSection() {
   // Mutation pour éditer un template
   const editTemplateMutation = useMutation({
     mutationFn: async ({ id, subject, content }: { id: string; subject: string; content: string }) => {
-      await apiRequest(`/api/templates/${id}`, "PATCH", { subject, content });
+      const response = await fetch(`/api/templates/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, content }),
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
     },
     onSuccess: () => {
       toast({
