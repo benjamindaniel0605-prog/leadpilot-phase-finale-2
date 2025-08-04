@@ -114,9 +114,9 @@ export default function SettingsSection() {
 
   const planLimits = {
     free: { leads: 5, templates: 1, variations: 5 },
-    starter: { leads: 100, templates: 5, variations: 100 },
-    pro: { leads: 400, templates: 15, variations: 300 },
-    growth: { leads: 1500, templates: 30, variations: 1000 }
+    starter: { leads: 100, templates: 5, variations: 15 },
+    pro: { leads: 500, templates: 15, variations: 50 },
+    growth: { leads: 1500, templates: 30, variations: 150 }
   };
 
   const userPlan = user?.plan || "free";
@@ -124,7 +124,7 @@ export default function SettingsSection() {
   
   // Use real analytics data instead of user properties
   const leadsUsed = (analytics as any)?.leadsGenerated || 0;
-  const variationsUsed = (analytics as any)?.aiVariationsUsed || 0;
+  const variationsUsed = (user as any)?.aiVariationsUsed || 0; // Use user data for variations
   const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
   const variationsUsage = (variationsUsed / currentLimits.variations) * 100;
 
@@ -262,12 +262,16 @@ export default function SettingsSection() {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-gray-500" />
                     ) : (
                       <Eye className="h-4 w-4 text-gray-500" />
                     )}
+                    <span className="sr-only">
+                      {showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                    </span>
                   </Button>
                 </div>
               </div>
@@ -432,7 +436,7 @@ export default function SettingsSection() {
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Variations IA</span>
+                    <span className="text-gray-600">Variations utilisées</span>
                     <span className="font-medium">{variationsUsed}/{currentLimits.variations}</span>
                   </div>
                   <Progress value={variationsUsage} className="h-2" />

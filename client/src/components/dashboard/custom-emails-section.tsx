@@ -24,7 +24,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { CustomEmail } from "@shared/schema";
 
-export default function CustomEmailsSection() {
+interface CustomEmailsSectionProps {
+  onSectionChange?: (section: string) => void;
+}
+
+export default function CustomEmailsSection({ onSectionChange }: CustomEmailsSectionProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -241,7 +245,10 @@ export default function CustomEmailsSection() {
                   dans la section Templates.
                 </p>
               </div>
-              <Button className="mt-4">
+              <Button 
+                className="mt-4"
+                onClick={() => onSectionChange?.('templates')}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Aller aux Templates
               </Button>

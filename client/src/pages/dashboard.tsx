@@ -153,7 +153,7 @@ export default function Dashboard() {
       case "templates":
         return <TemplatesSection />;
       case "custom-emails":
-        return <CustomEmailsSection />;
+        return <CustomEmailsSection onSectionChange={setActiveSection} />;
       case "campaigns":
         return <CampaignsSection />;
       case "sequences":
