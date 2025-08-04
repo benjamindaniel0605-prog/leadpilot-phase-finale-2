@@ -17,35 +17,35 @@ export default function SequencesSection() {
       title: "Email Initial",
       template: "Découverte simple",
       timing: "Immédiatement",
-      color: "bg-primary"
+      color: "bg-emerald-500"
     },
     {
       step: 2,
       title: "Follow-up 1",
       template: "Petit rappel",
       timing: "3 jours après si pas de réponse",
-      color: maxSteps >= 2 ? "bg-primary" : "bg-gray-400"
+      color: maxSteps >= 2 ? "bg-blue-500" : "bg-gray-600"
     },
     {
       step: 3,
       title: "Follow-up Final",
       template: "Dernier message",
       timing: "7 jours après si pas de réponse",
-      color: maxSteps >= 3 ? "bg-primary" : "bg-gray-400"
+      color: maxSteps >= 3 ? "bg-purple-500" : "bg-gray-600"
     },
     {
       step: 4,
       title: "Social Proof",
       template: "Étude de cas",
       timing: "14 jours après si pas de réponse",
-      color: maxSteps >= 4 ? "bg-primary" : "bg-gray-400"
+      color: maxSteps >= 4 ? "bg-orange-500" : "bg-gray-600"
     },
     {
       step: 5,
       title: "Offre Spéciale",
       template: "Proposition commerciale",
       timing: "21 jours après si pas de réponse",
-      color: maxSteps >= 5 ? "bg-primary" : "bg-gray-400"
+      color: maxSteps >= 5 ? "bg-red-500" : "bg-gray-600"
     }
   ];
 
