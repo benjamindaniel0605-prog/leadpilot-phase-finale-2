@@ -343,18 +343,24 @@ export default function LeadsSection() {
                   <div className="relative">
                     <Input
                       type="number"
-                      min="1"
+                      min={1}
                       max={maxLeads}
+                      step={1}
                       className="h-10"
-                      value={generationCriteria.count}
+                      value={generationCriteria.count.toString()}
                       onChange={(e) => {
-                        const value = Math.min(parseInt(e.target.value) || 1, maxLeads);
+                        const value = Math.max(1, Math.min(parseInt(e.target.value) || 1, maxLeads));
                         setGenerationCriteria(prev => ({ ...prev, count: value }));
                       }}
-                      placeholder={`Max ${maxLeads} leads`}
+                      onBlur={(e) => {
+                        if (!e.target.value || parseInt(e.target.value) < 1) {
+                          setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                        }
+                      }}
+                      placeholder="Nombre de leads"
                     />
                     <div className="text-xs text-muted-foreground mt-1">
-                      Limite: {maxLeads} leads
+                      Limite: {maxLeads} leads disponibles
                     </div>
                   </div>
                 </div>
@@ -387,26 +393,54 @@ export default function LeadsSection() {
         </Card>
       </div>
 
-      {/* Filters and Search */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Leads Management Section */}
+      <div className="space-y-6">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div>
-            <h3 className="text-lg font-semibold">Tous les Leads ({leads.length})</h3>
+            <h3 className="text-xl font-semibold">Tous les Leads</h3>
+            <p className="text-sm text-muted-foreground">
+              {leads.length} leads au total • {filteredLeads.length} affichés
+            </p>
           </div>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-3">Secteur</label>
+        {/* Filters Card */}
+        <Card className="border-muted bg-muted/20">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center space-x-2">
+                <Search className="h-4 w-4" />
+                <span>Filtrer les leads</span>
+              </CardTitle>
+              <Button 
+                size="sm"
+                onClick={() => {
+                  setFilters({
+                    sector: "all",
+                    companySize: "all", 
+                    score: "all",
+                    status: "all"
+                  });
+                }}
+                variant="ghost"
+                className="text-xs"
+              >
+                Tout effacer
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Secteur d'activité
+                </label>
                 <Input
                   list="filterSectors"
-                  className="h-10"
+                  className="h-9 text-sm"
                   value={filters.sector === "all" ? "" : filters.sector}
                   onChange={(e) => setFilters({ ...filters, sector: e.target.value || "all" })}
-                  placeholder="Tous les secteurs"
+                  placeholder="Filtrer par secteur..."
                 />
                 <datalist id="filterSectors">
                   <option value="Tech/SaaS">Tech / SaaS</option>
@@ -421,14 +455,17 @@ export default function LeadsSection() {
                   <option value="Transport">Transport / Logistique</option>
                 </datalist>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-3">Taille d'entreprise</label>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Taille d'entreprise
+                </label>
                 <Input
                   list="filterCompanySizes"
-                  className="h-10"
+                  className="h-9 text-sm"
                   value={filters.companySize === "all" ? "" : filters.companySize}
                   onChange={(e) => setFilters({ ...filters, companySize: e.target.value || "all" })}
-                  placeholder="Toutes les tailles"
+                  placeholder="Filtrer par taille..."
                 />
                 <datalist id="filterCompanySizes">
                   <option value="startup">Startup (1-50)</option>
@@ -439,11 +476,14 @@ export default function LeadsSection() {
                   <option value="enterprise">Entreprise (1000+)</option>
                 </datalist>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-3">Score IA</label>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Score IA
+                </label>
                 <Select value={filters.score} onValueChange={(value) => setFilters({ ...filters, score: value })}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Tous les scores" />
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue placeholder="Tous scores" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les scores</SelectItem>
@@ -453,11 +493,14 @@ export default function LeadsSection() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-3">Statut</label>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Statut du lead
+                </label>
                 <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Tous les statuts" />
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue placeholder="Tous statuts" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les statuts</SelectItem>
@@ -466,24 +509,6 @@ export default function LeadsSection() {
                     <SelectItem value="qualified">Qualifié</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="flex items-end">
-                <Button 
-                  className="w-full h-10"
-                  onClick={() => {
-                    // Reset filters
-                    setFilters({
-                      sector: "all",
-                      companySize: "all", 
-                      score: "all",
-                      status: "all"
-                    });
-                  }}
-                  variant="outline"
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  Réinitialiser
-                </Button>
               </div>
             </div>
           </CardContent>
