@@ -33,6 +33,7 @@ export default function CustomEmailsSection() {
   const [editedContent, setEditedContent] = useState("");
   const [originalContent, setOriginalContent] = useState("");
   const [generatingVariation, setGeneratingVariation] = useState(false);
+  const [lastGeneratedContent, setLastGeneratedContent] = useState("");
 
   const { data: customEmails = [], isLoading } = useQuery<CustomEmail[]>({
     queryKey: ["/api/custom-emails"],
@@ -121,11 +122,12 @@ export default function CustomEmailsSection() {
       return response.json();
     },
     onSuccess: (data) => {
+      setLastGeneratedContent(editedContent); // Sauvegarder le contenu précédent
       setEditedContent(data.variation);
       setGeneratingVariation(false);
       toast({
         title: "Variation générée !",
-        description: "Une nouvelle version de votre email a été créée avec l'IA.",
+        description: "Une nouvelle version de votre email a été créée.",
       });
     },
     onError: () => {

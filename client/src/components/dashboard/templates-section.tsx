@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bot, Plus, Edit, Copy, Lock, RefreshCw, Wand2 } from "lucide-react";
+import { Bot, Plus, Edit, Copy, Lock, RefreshCw, Wand2, Trash2 } from "lucide-react";
 import type { Template } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +20,7 @@ export default function TemplatesSection() {
   const [editedSubject, setEditedSubject] = useState("");
   const [editedContent, setEditedContent] = useState("");
   const [showCustomEmailDialog, setShowCustomEmailDialog] = useState(false);
+  const [customName, setCustomName] = useState("");
   const [customSubject, setCustomSubject] = useState("");
   const [customContent, setCustomContent] = useState("");
   const [originalTemplates, setOriginalTemplates] = useState<{[key: string]: Template}>({});
@@ -153,9 +154,9 @@ export default function TemplatesSection() {
 
   // Mutation pour créer un email personnalisé
   const createCustomEmailMutation = useMutation({
-    mutationFn: async ({ subject, content }: { subject: string; content: string }) => {
+    mutationFn: async ({ name, subject, content }: { name: string; subject: string; content: string }) => {
       const response = await apiRequest("POST", "/api/custom-emails", {
-        name: "Email Personnalisé", 
+        name, 
         subject, 
         content
       });
@@ -167,6 +168,7 @@ export default function TemplatesSection() {
         description: "Votre email personnalisé a été ajouté dans 'Mes Emails'",
       });
       setShowCustomEmailDialog(false);
+      setCustomName("");
       setCustomSubject("");
       setCustomContent("");
       queryClient.invalidateQueries({ queryKey: ["/api/custom-emails"] });
@@ -228,6 +230,31 @@ export default function TemplatesSection() {
     setGeneratingVariation(templateId);
     generateVariationMutation.mutate(templateId);
   };
+
+  // Mutation pour supprimer un template
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      const response = await fetch(`/api/templates/${templateId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Template supprimé !",
+        description: "Le template a été supprimé avec succès.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le template.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const categories = [
     { id: "all", label: `Tous (${userLimit}/30)` },
@@ -360,15 +387,26 @@ export default function TemplatesSection() {
                           <span>Utilisé: {template.timesUsed} fois</span>
                           <span>Taux ouverture: {template.openRate || 0}%</span>
                         </div>
-                        <Button 
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedTemplateForEdit(template)}
-                          title="Créer un email personnalisé à partir de ce template"
-                        >
-                          <Wand2 className="h-4 w-4 mr-1" />
-                          Choisir Template
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button 
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedTemplateForEdit(template)}
+                            title="Créer un email personnalisé à partir de ce template"
+                          >
+                            <Wand2 className="h-4 w-4 mr-1" />
+                            Choisir Template
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteTemplateMutation.mutate(template.id)}
+                            title="Supprimer ce template"
+                            disabled={deleteTemplateMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -447,6 +485,15 @@ export default function TemplatesSection() {
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 pr-2">
             <div>
+              <Label htmlFor="customName">Nom de l'email</Label>
+              <Input
+                id="customName"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                placeholder="Ex: Email de présentation"
+              />
+            </div>
+            <div>
               <Label htmlFor="customSubject">Objet de l'email</Label>
               <Input
                 id="customSubject"
@@ -480,8 +527,8 @@ Cordialement,
               Annuler
             </Button>
             <Button 
-              onClick={() => createCustomEmailMutation.mutate({ subject: customSubject, content: customContent })}
-              disabled={createCustomEmailMutation.isPending || !customSubject.trim() || !customContent.trim()}
+              onClick={() => createCustomEmailMutation.mutate({ name: customName, subject: customSubject, content: customContent })}
+              disabled={createCustomEmailMutation.isPending || !customName.trim() || !customSubject.trim() || !customContent.trim()}
             >
               {createCustomEmailMutation.isPending ? "Création..." : "Créer l'Email"}
             </Button>

@@ -154,12 +154,16 @@ export class DatabaseStorage implements IStorage {
       .where(eq(templates.id, id));
   }
 
+  async deleteTemplate(id: string): Promise<void> {
+    await db.delete(templates).where(eq(templates.id, id));
+  }
+
   async generateAIVariation(template: Template): Promise<{ subject: string; content: string }> {
     try {
       // Fallback direct avec variations substantielles (OpenAI sera ajouté plus tard)
       return {
         subject: this.generateSubjectVariation(template.subject),
-        content: this.generateContentVariation(template.content)
+        content: await this.generateContentVariation(template.content)
       };
     } catch (error) {
       console.error("Error generating variation:", error);
@@ -195,77 +199,189 @@ export class DatabaseStorage implements IStorage {
       originalSubject + " - Proposition personnalisée"
     ];
     
-    return advancedVariations[Math.floor(Math.random() * advancedVariations.length)];
+    return variations[Math.floor(Math.random() * variations.length)];
   }
 
   async generateContentVariation(originalContent: string): Promise<string> {
-    const advancedVariations = [
-      // Variation 1: Style professionnel soutenu
-      originalContent
-        .replace(/Bonjour/gi, "Mesdames, Messieurs")
-        .replace(/j'espère que vous allez bien/gi, "j'espère que cette communication vous trouve en parfaite santé")
-        .replace(/je me permets de vous contacter/gi, "je me permets de solliciter votre attention")
+    // Générateur de variations plus complet qui transforme TOUT le contenu
+    const transformations = [
+      // Transformation 1: Style professionnel soutenu
+      (text: string) => text
+        .replace(/Bonjour[^,.]*/gi, "Mesdames, Messieurs")
+        .replace(/Salut[^,.]*/gi, "Mesdames, Messieurs") 
+        .replace(/j'espère que vous allez bien[^.]*/gi, "j'espère que cette communication vous trouve en parfaite santé")
+        .replace(/j'espère que tout[^.]*/gi, "j'espère que cette communication vous trouve en excellente forme")
+        .replace(/je me permets de[^.]*/gi, "je me permets de solliciter votre attention afin de")
+        .replace(/je prends[^.]*/gi, "j'ai l'honneur de prendre")
         .replace(/intéressé/gi, "vivement intéressé")
         .replace(/solution/gi, "méthodologie éprouvée")
+        .replace(/approche/gi, "démarche professionnelle")
         .replace(/entreprise/gi, "structure entrepreneuriale")
+        .replace(/société/gi, "organisation")
+        .replace(/boîte/gi, "entreprise")
         .replace(/développer/gi, "optimiser et développer")
+        .replace(/booster/gi, "développer stratégiquement")
         .replace(/croissance/gi, "développement stratégique")
-        .replace(/Cordialement/gi, "Je vous prie d'agréer mes salutations distinguées")
+        .replace(/growth/gi, "expansion")
+        .replace(/Cordialement[^.]*/gi, "Je vous prie d'agréer mes salutations distinguées")
+        .replace(/À très vite[^.]*/gi, "Dans l'attente de votre retour")
+        .replace(/À bientôt[^.]*/gi, "En espérant avoir le plaisir de vous lire")
         .replace(/j'aimerais/gi, "il me serait agréable de")
+        .replace(/ça me plairait/gi, "il me serait très agréable")
         .replace(/discuter/gi, "échanger de manière constructive")
+        .replace(/papoter/gi, "converser professionnellement")
         .replace(/proposer/gi, "avoir l'honneur de vous présenter")
-        .replace(/rencontrer/gi, "avoir le plaisir de vous rencontrer"),
-      
-      // Variation 2: Style décontracté et moderne
-      originalContent
-        .replace(/Bonjour/gi, "Salut")
-        .replace(/j'espère que vous allez bien/gi, "j'espère que tout roule")
-        .replace(/je me permets de vous contacter/gi, "je me lance et je t'écris")
-        .replace(/intéressé/gi, "super intéressé")
-        .replace(/solution/gi, "super approche")
-        .replace(/entreprise/gi, "boîte")
-        .replace(/développer/gi, "booster")
-        .replace(/croissance/gi, "growth")
-        .replace(/Cordialement/gi, "À très vite !")
-        .replace(/j'aimerais/gi, "ça me plairait de")
-        .replace(/discuter/gi, "papoter")
-        .replace(/proposer/gi, "te montrer")
-        .replace(/rencontrer/gi, "se voir"),
-      
-      // Variation 3: Style commercial dynamique
-      originalContent
-        .replace(/Bonjour/gi, "Excellente journée")
-        .replace(/j'espère que vous allez bien/gi, "j'espère que vos projets avancent à merveille")
-        .replace(/je me permets de vous contacter/gi, "je prends contact avec vous aujourd'hui")
-        .replace(/intéressé/gi, "particulièrement attentif à")
-        .replace(/solution/gi, "stratégie gagnante")
-        .replace(/entreprise/gi, "organisation performante")
-        .replace(/développer/gi, "propulser")
-        .replace(/croissance/gi, "performance commerciale")
-        .replace(/Cordialement/gi, "Excellente continuation")
-        .replace(/j'aimerais/gi, "je serais ravi de")
-        .replace(/discuter/gi, "explorer ensemble")
-        .replace(/proposer/gi, "vous dévoiler")
-        .replace(/rencontrer/gi, "échanger en direct"),
-      
-      // Variation 4: Style empathique et personnalisé
-      originalContent
-        .replace(/Bonjour/gi, "Très bonne journée à vous")
-        .replace(/j'espère que vous allez bien/gi, "j'espère sincèrement que tout va pour le mieux")
-        .replace(/je me permets de vous contacter/gi, "je prends quelques minutes pour vous écrire")
-        .replace(/intéressé/gi, "genuinement intéressé")
-        .replace(/solution/gi, "accompagnement sur mesure")
-        .replace(/entreprise/gi, "société que vous dirigez")
-        .replace(/développer/gi, "faire grandir")
-        .replace(/croissance/gi, "essor commercial")
-        .replace(/Cordialement/gi, "Avec toute ma considération")
-        .replace(/j'aimerais/gi, "cela me ferait réellement plaisir de")
-        .replace(/discuter/gi, "avoir une conversation")
-        .replace(/proposer/gi, "partager avec vous")
-        .replace(/rencontrer/gi, "faire votre connaissance")
+        .replace(/présenter/gi, "soumettre à votre approbation")
+        .replace(/te montrer/gi, "vous présenter")
+        .replace(/rencontrer/gi, "avoir le plaisir de vous rencontrer")
+        .replace(/se voir/gi, "nous rencontrer")
+        .replace(/échanger en direct/gi, "converser en personne"),
+
+      // Transformation 2: Style décontracté et moderne  
+      (text: string) => text
+        .replace(/Bonjour[^,.]*/gi, "Salut")
+        .replace(/Mesdames, Messieurs[^,.]*/gi, "Hello")
+        .replace(/j'espère que vous allez bien[^.]*/gi, "j'espère que tout roule de votre côté")
+        .replace(/j'espère que cette communication[^.]*/gi, "j'espère que ça va bien")
+        .replace(/je me permets de[^.]*/gi, "je me lance et")
+        .replace(/j'ai l'honneur de[^.]*/gi, "je")
+        .replace(/vivement intéressé/gi, "super intéressé")
+        .replace(/intéressé/gi, "curieux")
+        .replace(/méthodologie éprouvée/gi, "super approche")
+        .replace(/solution/gi, "truc génial")
+        .replace(/démarche professionnelle/gi, "façon de faire")
+        .replace(/approche/gi, "méthode")
+        .replace(/structure entrepreneuriale/gi, "boîte")
+        .replace(/organisation/gi, "entreprise")
+        .replace(/entreprise/gi, "société")
+        .replace(/optimiser et développer/gi, "booster")
+        .replace(/développer stratégiquement/gi, "faire grandir")
+        .replace(/développer/gi, "améliorer")
+        .replace(/développement stratégique/gi, "growth")
+        .replace(/expansion/gi, "développement")
+        .replace(/croissance/gi, "progression")
+        .replace(/Je vous prie d'agréer[^.]*/gi, "À très vite !")
+        .replace(/Cordialement[^.]*/gi, "À bientôt !")
+        .replace(/il me serait agréable de/gi, "ça me plairait de")
+        .replace(/il me serait très agréable/gi, "j'adorerais")
+        .replace(/j'aimerais/gi, "ça me dirait de")
+        .replace(/échanger de manière constructive/gi, "papoter")
+        .replace(/converser professionnellement/gi, "discuter")
+        .replace(/discuter/gi, "bavarder")
+        .replace(/avoir l'honneur de vous présenter/gi, "te montrer")
+        .replace(/soumettre à votre approbation/gi, "te proposer")
+        .replace(/proposer/gi, "montrer")
+        .replace(/vous présenter/gi, "te faire voir")
+        .replace(/avoir le plaisir de vous rencontrer/gi, "se voir")
+        .replace(/converser en personne/gi, "se rencontrer")
+        .replace(/rencontrer/gi, "voir"),
+
+      // Transformation 3: Style commercial dynamique
+      (text: string) => text
+        .replace(/Bonjour[^,.]*/gi, "Excellente journée")
+        .replace(/Salut[^,.]*/gi, "Super journée")
+        .replace(/Hello[^,.]*/gi, "Bonne journée")
+        .replace(/j'espère que vous allez bien[^.]*/gi, "j'espère que vos projets avancent à merveille")
+        .replace(/j'espère que tout roule[^.]*/gi, "j'espère que les affaires marchent bien")
+        .replace(/je me permets de[^.]*/gi, "je prends contact avec vous aujourd'hui pour")
+        .replace(/je me lance et/gi, "je vous contacte pour")
+        .replace(/super intéressé/gi, "particulièrement attentif à")
+        .replace(/curieux/gi, "attentif à")
+        .replace(/intéressé/gi, "focus sur")
+        .replace(/super approche/gi, "stratégie gagnante")
+        .replace(/truc génial/gi, "solution performante")
+        .replace(/méthodologie éprouvée/gi, "stratégie éprouvée")
+        .replace(/solution/gi, "approche")
+        .replace(/façon de faire/gi, "méthode de travail")
+        .replace(/méthode/gi, "stratégie")
+        .replace(/approche/gi, "tactique")
+        .replace(/boîte/gi, "organisation performante")
+        .replace(/entreprise/gi, "structure dynamique")
+        .replace(/société/gi, "entreprise")
+        .replace(/booster/gi, "propulser")
+        .replace(/faire grandir/gi, "développer rapidement")
+        .replace(/améliorer/gi, "optimiser")
+        .replace(/développer/gi, "accélérer")
+        .replace(/growth/gi, "performance commerciale")
+        .replace(/développement/gi, "croissance")
+        .replace(/progression/gi, "montée en puissance")
+        .replace(/croissance/gi, "expansion")
+        .replace(/À très vite[^.]*/gi, "Excellente continuation")
+        .replace(/À bientôt[^.]*/gi, "Bonne continuation")
+        .replace(/Cordialement[^.]*/gi, "Très bonne journée")
+        .replace(/ça me plairait de/gi, "je serais ravi de")
+        .replace(/j'adorerais/gi, "ce serait fantastique de")
+        .replace(/ça me dirait de/gi, "j'aimerais")
+        .replace(/j'aimerais/gi, "je souhaiterais")
+        .replace(/papoter/gi, "explorer ensemble")
+        .replace(/discuter/gi, "échanger")
+        .replace(/bavarder/gi, "converser")
+        .replace(/te montrer/gi, "vous dévoiler")
+        .replace(/te proposer/gi, "vous présenter")
+        .replace(/montrer/gi, "démontrer")
+        .replace(/te faire voir/gi, "vous faire découvrir")
+        .replace(/proposer/gi, "suggérer")
+        .replace(/se voir/gi, "échanger en direct")
+        .replace(/se rencontrer/gi, "nous voir")
+        .replace(/voir/gi, "rencontrer")
+        .replace(/rencontrer/gi, "nous retrouver"),
+
+      // Transformation 4: Style empathique et personnalisé
+      (text: string) => text
+        .replace(/Bonjour[^,.]*/gi, "Très bonne journée à vous")
+        .replace(/Excellente journée[^,.]*/gi, "Belle journée")
+        .replace(/Super journée[^,.]*/gi, "Agréable journée")
+        .replace(/j'espère que vous allez bien[^.]*/gi, "j'espère sincèrement que tout va pour le mieux")
+        .replace(/j'espère que vos projets[^.]*/gi, "j'espère que tout se déroule bien pour vous")
+        .replace(/je me permets de[^.]*/gi, "je prends quelques minutes pour vous écrire afin de")
+        .replace(/je prends contact avec vous[^.]*/gi, "je me tourne vers vous")
+        .replace(/particulièrement attentif à/gi, "genuinement intéressé par")
+        .replace(/attentif à/gi, "sensible à")
+        .replace(/focus sur/gi, "concentré sur")
+        .replace(/intéressé/gi, "touché par")
+        .replace(/stratégie gagnante/gi, "accompagnement sur mesure")
+        .replace(/solution performante/gi, "aide personnalisée")
+        .replace(/stratégie éprouvée/gi, "soutien adapté")
+        .replace(/tactique/gi, "approche bienveillante")
+        .replace(/stratégie/gi, "méthode personnalisée")
+        .replace(/approche/gi, "accompagnement")
+        .replace(/organisation performante/gi, "société que vous dirigez")
+        .replace(/structure dynamique/gi, "entreprise que vous animez")
+        .replace(/entreprise/gi, "organisation")
+        .replace(/propulser/gi, "faire grandir en douceur")
+        .replace(/développer rapidement/gi, "accompagner le développement")
+        .replace(/optimiser/gi, "améliorer")
+        .replace(/accélérer/gi, "soutenir")
+        .replace(/développer/gi, "cultiver")
+        .replace(/performance commerciale/gi, "essor commercial")
+        .replace(/croissance/gi, "épanouissement")
+        .replace(/montée en puissance/gi, "développement harmonieux")
+        .replace(/expansion/gi, "croissance")
+        .replace(/Excellente continuation[^.]*/gi, "Avec toute ma considération")
+        .replace(/Bonne continuation[^.]*/gi, "Bien cordialement")
+        .replace(/Très bonne journée[^.]*/gi, "Chaleureusement")
+        .replace(/je serais ravi de/gi, "cela me ferait réellement plaisir de")
+        .replace(/ce serait fantastique de/gi, "j'aurais beaucoup de joie à")
+        .replace(/j'aimerais/gi, "je serais honoré de")
+        .replace(/je souhaiterais/gi, "il me tiendrait à cœur de")
+        .replace(/explorer ensemble/gi, "avoir une conversation")
+        .replace(/échanger/gi, "partager")
+        .replace(/converser/gi, "dialoguer")
+        .replace(/vous dévoiler/gi, "partager avec vous")
+        .replace(/vous présenter/gi, "vous faire découvrir")
+        .replace(/démontrer/gi, "vous expliquer")
+        .replace(/vous faire découvrir/gi, "vous accompagner dans")
+        .replace(/suggérer/gi, "proposer respectueusement")
+        .replace(/échanger en direct/gi, "faire votre connaissance")
+        .replace(/nous voir/gi, "nous rencontrer")
+        .replace(/rencontrer/gi, "faire connaissance")
+        .replace(/nous retrouver/gi, "avoir un échange")
     ];
     
-    return advancedVariations[Math.floor(Math.random() * advancedVariations.length)];
+    // Choisir une transformation aléatoire et l'appliquer
+    const randomTransformation = transformations[Math.floor(Math.random() * transformations.length)];
+    const result = randomTransformation(originalContent);
+    return result;
   }
 
   async deleteCampaign(id: string): Promise<void> {

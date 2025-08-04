@@ -79,6 +79,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour supprimer un template
+  app.delete('/api/templates/:id', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteTemplate(req.params.id);
+      res.json({ message: "Template deleted successfully" });
+    } catch (error) {
+      console.error("Error updating template:", error);
+      res.status(500).json({ message: "Failed to update template" });
+    }
+  });
+
   // Route pour créer un template personnalisé
   app.post('/api/templates', isAuthenticated, async (req, res) => {
     try {
