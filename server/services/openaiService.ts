@@ -52,10 +52,11 @@ export class OpenAILeadScoringService {
     } catch (error) {
       console.error("Error calling OpenAI API:", error);
       // Fallback to basic scoring
+      const basicScore = this.calculateBasicScore(lead, enrichedData);
       return {
-        score: this.calculateBasicScore(lead, enrichedData),
-        reasoning: "Score basique calculé (IA indisponible)",
-        priorities: ["Vérifier le potentiel manuellement"]
+        score: basicScore,
+        reasoning: `Score basique calculé (IA indisponible) - Position: ${lead.position}, Entreprise: ${lead.company}`,
+        priorities: ["Vérifier le potentiel manuellement", "Analyser le secteur d'activité", "Contacter directement"]
       };
     }
   }

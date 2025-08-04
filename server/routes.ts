@@ -287,7 +287,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         let aiScore: number;
         let notes = "";
         
-        if (process.env.OPENAI_API_KEY) {
+        // Calculate AI score using OpenAI with rate limiting
+        if (process.env.OPENAI_API_KEY && generatedLeads.indexOf(leadData) < 3) {
+          // Only use OpenAI for first 3 leads to avoid rate limiting
           try {
             const openaiService = new OpenAILeadScoringService();
             const aiResult = await openaiService.calculateAdvancedLeadScore(leadData, enrichedData || undefined);
@@ -296,11 +298,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } catch (error) {
             console.warn("OpenAI scoring failed, using basic scoring:", error);
             aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
-            notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null;
+            notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : "Score basique calculé";
           }
         } else {
           aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
-          notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null;
+          notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : "Score basique calculé";
         }
         
         // Save to database

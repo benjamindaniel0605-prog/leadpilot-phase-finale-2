@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Upload, Plus, Search, Mail, Edit, Trash2, Download } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Upload, Plus, Search, Mail, Edit, Trash2, Download, Settings2, Target } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Lead } from "@shared/schema";
@@ -19,11 +21,24 @@ export default function LeadsSection() {
     status: "all"
   });
 
+  const [showGenerationForm, setShowGenerationForm] = useState(false);
+  const [generationCriteria, setGenerationCriteria] = useState({
+    sector: "",
+    location: "France",
+    companySize: "",
+    jobTitles: "",
+    count: 10
+  });
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { data: leads = [], isLoading } = useQuery<Lead[]>({
     queryKey: ["/api/leads"],
+  });
+
+  const { data: analytics } = useQuery({
+    queryKey: ["/api/analytics/stats"],
   });
 
   const deleteMutation = useMutation({
@@ -92,12 +107,25 @@ export default function LeadsSection() {
 
   // Handlers
   const handleGenerateLeads = () => {
+    if (!generationCriteria.sector) {
+      toast({
+        title: "Secteur requis",
+        description: "Veuillez sélectionner un secteur d'activité.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const params = {
-      sector: "Tech/SaaS",
-      location: "France", 
-      limit: 10
+      sector: generationCriteria.sector,
+      location: generationCriteria.location,
+      companySize: generationCriteria.companySize || undefined,
+      jobTitles: generationCriteria.jobTitles ? generationCriteria.jobTitles.split(',').map(t => t.trim()) : undefined,
+      limit: generationCriteria.count
     };
+    
     generateLeadsMutation.mutate(params);
+    setShowGenerationForm(false);
   };
 
   const handleImportCSV = () => {
@@ -199,33 +227,166 @@ export default function LeadsSection() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-card-foreground">Gestion des Leads</h2>
-          <p className="text-muted-foreground">Gérez vos prospects et leur scoring IA</p>
+    <div className="space-y-6">
+      {/* Header with Lead Generation Form */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-2xl font-bold tracking-tight">Leads</h3>
+            <p className="text-muted-foreground">
+              Gérez vos prospects et leur scoring IA • {remainingLeads} leads restants
+            </p>
+          </div>
+          <div className="flex space-x-2">
+            <AdminSeedButton />
+            <Button variant="outline" onClick={handleImportCSV} disabled={importCSVMutation.isPending}>
+              <Upload className="h-4 w-4 mr-2" />
+              {importCSVMutation.isPending ? "Import..." : "Importer"}
+            </Button>
+            <Button variant="outline" onClick={handleExportCSV}>
+              <Download className="h-4 w-4 mr-2" />
+              Exporter
+            </Button>
+          </div>
         </div>
-        <div className="flex space-x-3">
-          <AdminSeedButton />
-          <Button variant="outline" onClick={handleImportCSV} disabled={importCSVMutation.isPending}>
-            <Upload className="h-4 w-4 mr-2" />
-            {importCSVMutation.isPending ? "Import..." : "Importer CSV"}
-          </Button>
-          <Button variant="outline" onClick={handleExportCSV}>
-            <Download className="h-4 w-4 mr-2" />
-            Exporter CSV
-          </Button>
-          <Button onClick={handleGenerateLeads} disabled={generateLeadsMutation.isPending}>
-            <Plus className="h-4 w-4 mr-2" />
-            {generateLeadsMutation.isPending ? "Génération..." : "Générer Leads"}
-          </Button>
-        </div>
+
+        {/* Lead Generation Section */}
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Target className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg">Génération de Leads</CardTitle>
+              </div>
+              {!showGenerationForm && (
+                <Button 
+                  onClick={() => setShowGenerationForm(true)}
+                  disabled={remainingLeads === 0}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Générer des Leads
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          
+          {showGenerationForm && (
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sector">Secteur d'activité *</Label>
+                  <Select value={generationCriteria.sector} onValueChange={(value) => 
+                    setGenerationCriteria(prev => ({ ...prev, sector: value }))
+                  }>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un secteur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Tech/SaaS">Tech / SaaS</SelectItem>
+                      <SelectItem value="E-commerce">E-commerce</SelectItem>
+                      <SelectItem value="Finance">Finance / Fintech</SelectItem>
+                      <SelectItem value="Marketing">Marketing / Publicité</SelectItem>
+                      <SelectItem value="Conseil">Conseil / Services</SelectItem>
+                      <SelectItem value="Santé">Santé / Médical</SelectItem>
+                      <SelectItem value="Education">Éducation / Formation</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">Localisation</Label>
+                  <Input
+                    value={generationCriteria.location}
+                    onChange={(e) => setGenerationCriteria(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="France, Paris, Lyon..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="companySize">Taille d'entreprise</Label>
+                  <Select value={generationCriteria.companySize} onValueChange={(value) => 
+                    setGenerationCriteria(prev => ({ ...prev, companySize: value }))
+                  }>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Toutes tailles" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Toutes tailles</SelectItem>
+                      <SelectItem value="startup">Startup (1-50)</SelectItem>
+                      <SelectItem value="small">PME (51-200)</SelectItem>
+                      <SelectItem value="medium">Moyenne (201-500)</SelectItem>
+                      <SelectItem value="large">Grande (500+)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="count">Nombre de leads</Label>
+                  <Select value={generationCriteria.count.toString()} onValueChange={(value) => 
+                    setGenerationCriteria(prev => ({ ...prev, count: parseInt(value) }))
+                  }>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: Math.min(maxLeads, 10) }, (_, i) => (
+                        <SelectItem key={i + 1} value={(i + 1).toString()}>
+                          {i + 1} lead{i > 0 ? 's' : ''}
+                        </SelectItem>
+                      ))}
+                      {maxLeads > 10 && (
+                        <>
+                          <SelectItem value="15">15 leads</SelectItem>
+                          <SelectItem value="20">20 leads</SelectItem>
+                          {maxLeads >= 25 && <SelectItem value="25">25 leads</SelectItem>}
+                          {maxLeads >= 50 && <SelectItem value="50">50 leads</SelectItem>}
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="jobTitles">Postes ciblés (optionnel)</Label>
+                  <Input
+                    value={generationCriteria.jobTitles}
+                    onChange={(e) => setGenerationCriteria(prev => ({ ...prev, jobTitles: e.target.value }))}
+                    placeholder="CEO, Directeur Marketing, CTO... (séparés par des virgules)"
+                  />
+                </div>
+
+                <div className="col-span-2 flex justify-end space-x-2 pt-2">
+                  <Button variant="outline" onClick={() => setShowGenerationForm(false)}>
+                    Annuler
+                  </Button>
+                  <Button 
+                    onClick={handleGenerateLeads} 
+                    disabled={generateLeadsMutation.isPending || remainingLeads === 0}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    {generateLeadsMutation.isPending ? "Génération..." : `Générer ${generationCriteria.count} leads`}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
       </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Filters and Search */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Tous les Leads ({leads.length})</h3>
+          </div>
+          <div className="flex space-x-2">{/* Filter components will be here */}</div>
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-2">Secteur</label>
               <Select value={filters.sector} onValueChange={(value) => setFilters({ ...filters, sector: value })}>
@@ -277,6 +438,7 @@ export default function LeadsSection() {
           </div>
         </CardContent>
       </Card>
+      </div>
 
       {/* Leads Table */}
       <Card>
