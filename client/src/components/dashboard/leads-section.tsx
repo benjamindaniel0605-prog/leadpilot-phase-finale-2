@@ -37,7 +37,12 @@ export default function LeadsSection() {
     queryKey: ["/api/leads"],
   });
 
-  const { data: analytics } = useQuery({
+  const { data: analytics } = useQuery<{
+    leadsGenerated: number;
+    emailsSent: string;
+    campaignsActive: number;
+    remainingLeads: number;
+  }>({
     queryKey: ["/api/analytics/stats"],
   });
 
@@ -225,6 +230,9 @@ export default function LeadsSection() {
       </div>
     );
   }
+
+  const remainingLeads = analytics?.remainingLeads || 0;
+  const maxLeads = Math.min(remainingLeads, 50); // Limite max par génération
 
   return (
     <div className="space-y-6">
@@ -449,7 +457,7 @@ export default function LeadsSection() {
           {filteredLeads.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-muted-foreground">Aucun lead trouvé.</p>
-              <Button className="mt-4">
+              <Button className="mt-4" onClick={() => setShowGenerationForm(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer votre premier lead
               </Button>
