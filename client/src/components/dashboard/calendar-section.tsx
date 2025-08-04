@@ -3,10 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Settings, Calendar, Clock, Video, Phone, ChevronLeft, ChevronRight, Copy } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Settings, Calendar, Clock, Video, Phone, ChevronLeft, ChevronRight, Copy, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Booking } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 
 export default function CalendarSection() {
   const { data: bookings = [], isLoading } = useQuery<Booking[]>({
@@ -14,6 +19,17 @@ export default function CalendarSection() {
   });
 
   const { user } = useAuth();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showConfigDialog, setShowConfigDialog] = useState(false);
+  const [showNewBookingDialog, setShowNewBookingDialog] = useState(false);
+  const [duration, setDuration] = useState("30");
+  const [availableSlots, setAvailableSlots] = useState({
+    monday: true,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true
+  });
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -47,6 +63,25 @@ export default function CalendarSection() {
     });
   };
 
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const getCurrentMonthName = () => {
+    return currentMonth.toLocaleDateString('fr-FR', {
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -68,10 +103,116 @@ export default function CalendarSection() {
           <h2 className="text-2xl font-bold text-foreground">Calendrier de Booking</h2>
           <p className="text-muted-foreground">Gérez vos créneaux et RDV prospects</p>
         </div>
-        <Button>
-          <Settings className="h-4 w-4 mr-2" />
-          Configurer
-        </Button>
+        <div className="flex gap-2">
+          <Dialog open={showNewBookingDialog} onOpenChange={setShowNewBookingDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau RDV
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Créer un nouveau RDV</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Titre du RDV</Label>
+                  <Input id="title" placeholder="Ex: Entretien commercial avec prospect" />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" placeholder="Détails du rendez-vous..." />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="date">Date</Label>
+                    <Input id="date" type="date" />
+                  </div>
+                  <div>
+                    <Label htmlFor="time">Heure</Label>
+                    <Input id="time" type="time" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="meetingType">Type de meeting</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir le type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="video">Visioconférence</SelectItem>
+                      <SelectItem value="phone">Téléphone</SelectItem>
+                      <SelectItem value="in-person">En personne</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button className="w-full">Créer le RDV</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
+            <DialogTrigger asChild>
+              <Button>
+                <Settings className="h-4 w-4 mr-2" />
+                Configurer
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Configuration du calendrier</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="duration">Durée par défaut des RDV</Label>
+                  <Select value={duration} onValueChange={setDuration}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30">30 minutes</SelectItem>
+                      <SelectItem value="45">45 minutes</SelectItem>
+                      <SelectItem value="60">60 minutes</SelectItem>
+                      <SelectItem value="90">90 minutes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Jours disponibles</Label>
+                  <div className="space-y-2 mt-2">
+                    {[
+                      { key: 'monday', label: 'Lundi' },
+                      { key: 'tuesday', label: 'Mardi' },
+                      { key: 'wednesday', label: 'Mercredi' },
+                      { key: 'thursday', label: 'Jeudi' },
+                      { key: 'friday', label: 'Vendredi' }
+                    ].map(day => (
+                      <label key={day.key} className="flex items-center space-x-2">
+                        <input 
+                          type="checkbox" 
+                          checked={availableSlots[day.key as keyof typeof availableSlots]}
+                          onChange={(e) => setAvailableSlots(prev => ({
+                            ...prev,
+                            [day.key]: e.target.checked
+                          }))}
+                          className="rounded"
+                        />
+                        <span className="text-sm text-foreground">{day.label} 9h-17h</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={() => setShowConfigDialog(false)}
+                >
+                  Sauvegarder
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -84,39 +225,54 @@ export default function CalendarSection() {
             <CardContent className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Durée des RDV
+                  Durée des RDV configurée
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2">
-                  <option>30 minutes</option>
-                  <option>45 minutes</option>
-                  <option>60 minutes</option>
-                </select>
+                <div className="text-sm text-muted-foreground bg-muted p-2 rounded">
+                  {duration} minutes par défaut
+                </div>
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Créneaux disponibles
                 </label>
-                <div className="space-y-2">
-                  {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map((day) => (
-                    <label key={day} className="flex items-center">
-                      <input type="checkbox" defaultChecked className="mr-2" />
-                      <span className="text-sm text-foreground">{day} 9h-17h</span>
-                    </label>
-                  ))}
+                <div className="space-y-1">
+                  {Object.entries(availableSlots).map(([key, enabled]) => {
+                    const dayNames = {
+                      monday: 'Lundi',
+                      tuesday: 'Mardi', 
+                      wednesday: 'Mercredi',
+                      thursday: 'Jeudi',
+                      friday: 'Vendredi'
+                    };
+                    return (
+                      <div key={key} className={`text-sm p-1 rounded ${enabled ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                        {enabled ? '✓' : '✗'} {dayNames[key as keyof typeof dayNames]} 9h-17h
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Calendar Link */}
               <div className="p-4 bg-primary/5 rounded-lg">
                 <h4 className="font-medium text-primary mb-2">Lien de booking</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Partagez ce lien pour que vos prospects puissent réserver un créneau
+                </p>
                 <div className="flex items-center space-x-2">
                   <Input 
-                    value={`leadpilot.com/book/${user?.id || 'user123'}`}
+                    value={`https://leadpilot.com/book/${user?.id || 'user123'}`}
                     readOnly
                     className="text-sm text-primary bg-white border-primary/20"
                   />
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://leadpilot.com/book/${user?.id || 'user123'}`);
+                    }}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -132,11 +288,21 @@ export default function CalendarSection() {
               <div className="flex items-center justify-between">
                 <CardTitle>RDV à venir</CardTitle>
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigateMonth('prev')}
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm font-medium text-foreground">Janvier 2024</span>
-                  <Button variant="ghost" size="sm">
+                  <span className="text-sm font-medium text-foreground capitalize">
+                    {getCurrentMonthName()}
+                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigateMonth('next')}
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -183,11 +349,11 @@ export default function CalendarSection() {
                       <div className="flex items-center text-sm text-muted-foreground space-x-4">
                         <span className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
-                          {formatDate(booking.startTime)}
+                          {formatDate(booking.startTime.toString())}
                         </span>
                         <span className="flex items-center">
                           <Clock className="h-4 w-4 mr-1" />
-                          {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
+                          {formatTime(booking.startTime.toString())} - {formatTime(booking.endTime.toString())}
                         </span>
                         <span className="flex items-center">
                           {booking.meetingType === 'video' ? (
