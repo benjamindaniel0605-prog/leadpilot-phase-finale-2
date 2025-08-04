@@ -1,14 +1,27 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Plus, Edit, Copy, Lock } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Bot, Plus, Edit, Copy, Lock, RefreshCw, Wand2 } from "lucide-react";
 import type { Template } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function TemplatesSection() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
+  const [editedSubject, setEditedSubject] = useState("");
+  const [editedContent, setEditedContent] = useState("");
+  const [generatingVariation, setGeneratingVariation] = useState<string | null>(null);
+  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: templates = [], isLoading } = useQuery<Template[]>({
     queryKey: ["/api/templates"],
@@ -26,11 +39,123 @@ export default function TemplatesSection() {
   const userPlan = (user as any)?.plan || "free";
   const userLimit = planHierarchy[userPlan as keyof typeof planHierarchy];
 
+  // Mutation pour copier dans le presse-papiers
+  const copyToClipboard = async (text: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copié !",
+        description: `${type} copié dans le presse-papiers`,
+      });
+    } catch (err) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de copier le texte",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Mutation pour utiliser un template
+  const useTemplateMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      await apiRequest(`/api/templates/${templateId}/use`, {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Template utilisé !",
+        description: "Le template a été ajouté à vos campagnes",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'utiliser ce template",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation pour générer une variation
+  const generateVariationMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      const response = await apiRequest(`/api/templates/${templateId}/variation`, {
+        method: "POST",
+      });
+      return response;
+    },
+    onSuccess: (variation, templateId) => {
+      toast({
+        title: "Variation générée !",
+        description: "Nouvelle variation créée avec succès",
+      });
+      setGeneratingVariation(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+    onError: () => {
+      setGeneratingVariation(null);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer la variation",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation pour éditer un template
+  const editTemplateMutation = useMutation({
+    mutationFn: async ({ id, subject, content }: { id: string; subject: string; content: string }) => {
+      await apiRequest(`/api/templates/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ subject, content }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Template modifié !",
+        description: "Vos modifications ont été enregistrées",
+      });
+      setEditingTemplate(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le template",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEditTemplate = (template: Template) => {
+    setEditingTemplate(template);
+    setEditedSubject(template.subject);
+    setEditedContent(template.content);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingTemplate) {
+      editTemplateMutation.mutate({
+        id: editingTemplate.id,
+        subject: editedSubject,
+        content: editedContent,
+      });
+    }
+  };
+
+  const handleGenerateVariation = (templateId: string) => {
+    setGeneratingVariation(templateId);
+    generateVariationMutation.mutate(templateId);
+  };
+
   const categories = [
-    { id: "all", label: `Tous (${templates.length}/${userLimit})` },
-    { id: "free", label: "Free (1/1)" },
-    { id: "starter", label: "Starter (5/5)", disabled: userPlan === "free" },
-    { id: "pro", label: "Pro (15/15)", disabled: !["pro", "growth"].includes(userPlan) },
+    { id: "all", label: `Tous (${userLimit}/30)` },
+    { id: "free", label: "Free (1/30)" },
+    { id: "starter", label: "Starter (5/30)", disabled: userPlan === "free" },
+    { id: "pro", label: "Pro (15/30)", disabled: !["pro", "growth"].includes(userPlan) },
     { id: "growth", label: "Growth (30/30)", disabled: userPlan !== "growth" }
   ];
 
@@ -62,9 +187,9 @@ export default function TemplatesSection() {
           <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline">
-            <Bot className="h-4 w-4 mr-2" />
-            Générer Variation IA
+          <Button variant="outline" disabled={templates.length === 0}>
+            <Wand2 className="h-4 w-4 mr-2" />
+            Générer Variations
           </Button>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -125,10 +250,30 @@ export default function TemplatesSection() {
                     </div>
                     {!isLocked && (
                       <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleGenerateVariation(template.id)}
+                          disabled={generatingVariation === template.id}
+                        >
+                          {generatingVariation === template.id ? (
+                            <RefreshCw className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Wand2 className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleEditTemplate(template)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => copyToClipboard(template.content, "Template")}
+                        >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
@@ -157,10 +302,10 @@ export default function TemplatesSection() {
                     </div>
                   </div>
 
-                  {/* Template Variables */}
+                  {/* Template Variations */}
                   {!isLocked && template.variables && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium text-card-foreground mb-2">Variables disponibles:</h4>
+                      <h4 className="text-sm font-medium text-card-foreground mb-2">Variables personnalisables:</h4>
                       <div className="flex flex-wrap gap-2">
                         {(template.variables as string[]).map((variable, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
@@ -179,8 +324,12 @@ export default function TemplatesSection() {
                           <span>Utilisé: {template.timesUsed} fois</span>
                           <span>Taux ouverture: {template.openRate || 0}%</span>
                         </div>
-                        <Button size="sm">
-                          Utiliser
+                        <Button 
+                          size="sm"
+                          onClick={() => useTemplateMutation.mutate(template.id)}
+                          disabled={useTemplateMutation.isPending}
+                        >
+                          {useTemplateMutation.isPending ? "..." : "Utiliser"}
                         </Button>
                       </>
                     ) : (
@@ -200,6 +349,48 @@ export default function TemplatesSection() {
           })
         )}
       </div>
+
+      {/* Dialog d'édition */}
+      <Dialog open={!!editingTemplate} onOpenChange={() => setEditingTemplate(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Modifier le Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="subject">Objet de l'email</Label>
+              <Input
+                id="subject"
+                value={editedSubject}
+                onChange={(e) => setEditedSubject(e.target.value)}
+                placeholder="Objet de votre email..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="content">Contenu de l'email</Label>
+              <Textarea
+                id="content"
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                placeholder="Contenu de votre email..."
+                rows={12}
+                className="resize-none"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setEditingTemplate(null)}>
+                Annuler
+              </Button>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={editTemplateMutation.isPending}
+              >
+                {editTemplateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

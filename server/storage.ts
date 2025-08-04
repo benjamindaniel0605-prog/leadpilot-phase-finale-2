@@ -34,6 +34,8 @@ export interface IStorage {
   getTemplate(id: string): Promise<Template | undefined>;
   createTemplate(templateData: any): Promise<Template>;
   updateTemplateUsage(id: string): Promise<void>;
+  updateTemplate(id: string, data: { subject?: string; content?: string }): Promise<void>;
+  createTemplateVariation(baseTemplate: Template, userId: string): Promise<Template>;
   
   // Lead operations
   getLeads(userId: string): Promise<Lead[]>;
@@ -132,6 +134,47 @@ export class DatabaseStorage implements IStorage {
       .update(templates)
       .set({ timesUsed: sql`${templates.timesUsed} + 1` })
       .where(eq(templates.id, id));
+  }
+
+  async updateTemplate(id: string, data: { subject?: string; content?: string }): Promise<void> {
+    await db
+      .update(templates)
+      .set(data)
+      .where(eq(templates.id, id));
+  }
+
+  async createTemplateVariation(baseTemplate: Template, userId: string): Promise<Template> {
+    // Générer une variation en modifiant légèrement le contenu
+    const variations = {
+      subject: [
+        baseTemplate.subject,
+        baseTemplate.subject.replace("votre", "notre"),
+        baseTemplate.subject.replace("Découvrez", "Explorez"),
+        baseTemplate.subject + " - Offre spéciale"
+      ],
+      content: [
+        baseTemplate.content,
+        baseTemplate.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous"),
+        baseTemplate.content.replace("vous", "tu").replace("votre", "ta"),
+        baseTemplate.content.replace("intéressé", "curieux").replace("solution", "approche")
+      ]
+    };
+
+    const randomSubject = variations.subject[Math.floor(Math.random() * variations.subject.length)];
+    const randomContent = variations.content[Math.floor(Math.random() * variations.content.length)];
+
+    const variationData = {
+      name: `${baseTemplate.name} - Variation`,
+      subject: randomSubject,
+      content: randomContent,
+      plan: baseTemplate.plan,
+      category: baseTemplate.category,
+      variables: baseTemplate.variables,
+      timesUsed: 0,
+      openRate: null
+    };
+
+    return await this.createTemplate(variationData);
   }
 
   // Lead operations

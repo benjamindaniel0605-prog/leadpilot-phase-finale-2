@@ -56,6 +56,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour utiliser un template
+  app.post('/api/templates/:id/use', isAuthenticated, async (req, res) => {
+    try {
+      await storage.updateTemplateUsage(req.params.id);
+      res.json({ message: "Template usage updated" });
+    } catch (error) {
+      console.error("Error updating template usage:", error);
+      res.status(500).json({ message: "Failed to update template usage" });
+    }
+  });
+
+  // Route pour modifier un template
+  app.patch('/api/templates/:id', isAuthenticated, async (req, res) => {
+    try {
+      const { subject, content } = req.body;
+      await storage.updateTemplate(req.params.id, { subject, content });
+      res.json({ message: "Template updated successfully" });
+    } catch (error) {
+      console.error("Error updating template:", error);
+      res.status(500).json({ message: "Failed to update template" });
+    }
+  });
+
+  // Route pour générer une variation
+  app.post('/api/templates/:id/variation', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const template = await storage.getTemplate(req.params.id);
+      
+      if (!template) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+
+      // Créer une variation du template avec des modifications légères
+      const variation = await storage.createTemplateVariation(template, userId);
+      res.json(variation);
+    } catch (error) {
+      console.error("Error creating template variation:", error);
+      res.status(500).json({ message: "Failed to create template variation" });
+    }
+  });
+
   // Leads routes
   app.get('/api/leads', isAuthenticated, async (req: any, res) => {
     try {
