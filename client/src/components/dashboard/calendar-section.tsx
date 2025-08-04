@@ -83,7 +83,7 @@ export default function CalendarSection() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Durée des RDV
                 </label>
                 <select className="w-full border border-gray-300 rounded-lg px-3 py-2">
@@ -94,14 +94,14 @@ export default function CalendarSection() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Créneaux disponibles
                 </label>
                 <div className="space-y-2">
                   {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map((day) => (
                     <label key={day} className="flex items-center">
                       <input type="checkbox" defaultChecked className="mr-2" />
-                      <span className="text-sm">{day} 9h-17h</span>
+                      <span className="text-sm text-foreground">{day} 9h-17h</span>
                     </label>
                   ))}
                 </div>
@@ -135,7 +135,7 @@ export default function CalendarSection() {
                   <Button variant="ghost" size="sm">
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm font-medium text-gray-900">Janvier 2024</span>
+                  <span className="text-sm font-medium text-foreground">Janvier 2024</span>
                   <Button variant="ghost" size="sm">
                     <ChevronRight className="h-4 w-4" />
                   </Button>
@@ -174,13 +174,13 @@ export default function CalendarSection() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <h4 className="font-medium text-gray-900">{booking.title}</h4>
-                            <p className="text-sm text-gray-600">{booking.description}</p>
+                            <h4 className="font-medium text-foreground">{booking.title}</h4>
+                            <p className="text-sm text-muted-foreground">{booking.description}</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status)}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600 space-x-4">
+                      <div className="flex items-center text-sm text-muted-foreground space-x-4">
                         <span className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
                           {formatDate(booking.startTime)}
@@ -206,20 +206,20 @@ export default function CalendarSection() {
               {/* Calendar Stats */}
               <div className="mt-6 grid grid-cols-3 gap-4 pt-6 border-t">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{bookings.length}</div>
-                  <div className="text-sm text-gray-600">RDV ce mois</div>
+                  <div className="text-2xl font-bold text-foreground">{bookings.length}</div>
+                  <div className="text-sm text-muted-foreground">RDV ce mois</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-emerald-600">
                     {bookings.filter(b => b.status === 'confirmed').length}
                   </div>
-                  <div className="text-sm text-gray-600">Confirmés</div>
+                  <div className="text-sm text-muted-foreground">Confirmés</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
                     {bookings.length > 0 ? Math.round((bookings.filter(b => b.status === 'completed').length / bookings.length) * 100) : 0}%
                   </div>
-                  <div className="text-sm text-gray-600">Taux show-up</div>
+                  <div className="text-sm text-muted-foreground">Taux show-up</div>
                 </div>
               </div>
             </CardContent>
