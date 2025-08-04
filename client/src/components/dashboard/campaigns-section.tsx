@@ -183,40 +183,42 @@ export default function CampaignsSection() {
           <CardTitle>Créer une Campagne</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom de la campagne
-              </label>
-              <Input
-                type="text"
-                value={campaignForm.name}
-                onChange={(e) => setCampaignForm({ ...campaignForm, name: e.target.value })}
-                placeholder="Ex: Prospection Q1 2024"
-              />
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Nom de la campagne
+                </label>
+                <Input
+                  type="text"
+                  value={campaignForm.name}
+                  onChange={(e) => setCampaignForm({ ...campaignForm, name: e.target.value })}
+                  placeholder="Ex: Prospection Q1 2024"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Email
+                </label>
+                <Select 
+                  value={campaignForm.emailId} 
+                  onValueChange={(value) => setCampaignForm({ ...campaignForm, emailId: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un email" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customEmails.map((email: CustomEmail) => (
+                      <SelectItem key={email.id} value={email.id}>
+                        {email.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <Select 
-                value={campaignForm.emailId} 
-                onValueChange={(value) => setCampaignForm({ ...campaignForm, emailId: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un email" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customEmails.map((email: CustomEmail) => (
-                    <SelectItem key={email.id} value={email.id}>
-                      {email.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-foreground mb-3">
                 Sélection des leads cibles
               </label>
               
@@ -227,7 +229,7 @@ export default function CampaignsSection() {
                   variant="outline" 
                   size="sm"
                   onClick={handleSelectAllLeads}
-                  className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                  className="bg-card hover:bg-muted dark:bg-card dark:hover:bg-muted"
                 >
                   ✓ Tous les leads ({leads.length})
                 </Button>
@@ -236,7 +238,7 @@ export default function CampaignsSection() {
                   variant="outline" 
                   size="sm"
                   onClick={handleSelectHighScoreLeads}
-                  className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                  className="bg-card hover:bg-muted dark:bg-card dark:hover:bg-muted"
                 >
                   ⭐ Score {'>'} 80% ({leads.filter(lead => (lead.aiScore || 0) > 80).length})
                 </Button>
@@ -245,30 +247,30 @@ export default function CampaignsSection() {
                   variant="outline" 
                   size="sm"
                   onClick={handleDeselectAll}
-                  className="bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                  className="bg-card hover:bg-muted dark:bg-card dark:hover:bg-muted"
                 >
                   ✗ Désélectionner tout
                 </Button>
-                <div className="ml-auto bg-blue-100 px-3 py-1 rounded-full text-sm font-medium text-blue-800">
+                <div className="ml-auto bg-primary/10 px-3 py-1 rounded-full text-sm font-medium text-primary">
                   {campaignForm.selectedLeads.length} sélectionnés
                 </div>
               </div>
 
               {/* Liste des leads avec cases à cocher */}
-              <div className="border rounded-lg bg-white">
-                <div className="p-3 bg-gray-50 border-b font-medium text-sm text-gray-700">
+              <div className="border rounded-lg bg-card dark:bg-card">
+                <div className="p-3 bg-muted dark:bg-muted border-b font-medium text-sm text-foreground">
                   Vos leads disponibles
                 </div>
                 <div className="max-h-64 overflow-y-auto">
                   {leads.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">
+                    <div className="p-4 text-center text-muted-foreground">
                       <p>Aucun lead disponible</p>
                       <p className="text-xs mt-1">Ajoutez des leads dans l'onglet "Leads" pour créer une campagne</p>
                     </div>
                   ) : (
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-border dark:divide-border">
                       {leads.map((lead: Lead) => (
-                        <div key={lead.id} className="p-3 hover:bg-gray-50 transition-colors">
+                        <div key={lead.id} className="p-3 hover:bg-muted dark:hover:bg-muted transition-colors">
                           <div className="flex items-center space-x-3">
                             <Checkbox
                               id={`lead-${lead.id}`}
@@ -279,10 +281,10 @@ export default function CampaignsSection() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <h4 className="font-medium text-gray-900 text-sm">
+                                  <h4 className="font-medium text-foreground text-sm">
                                     {lead.firstName} {lead.lastName}
                                   </h4>
-                                  <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
+                                  <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
                                     <span className="font-medium">{lead.company}</span>
                                     {lead.position && (
                                       <>
@@ -291,7 +293,7 @@ export default function CampaignsSection() {
                                       </>
                                     )}
                                   </div>
-                                  <div className="text-xs text-gray-500 mt-1">
+                                  <div className="text-xs text-muted-foreground mt-1">
                                     {lead.email}
                                   </div>
                                 </div>
@@ -318,20 +320,7 @@ export default function CampaignsSection() {
                 </div>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Programmation
-              </label>
-              <Select defaultValue="now">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="now">Envoyer maintenant</SelectItem>
-                  <SelectItem value="later">Programmer plus tard</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
           </div>
           <div className="flex justify-end mt-6">
             <Button 
