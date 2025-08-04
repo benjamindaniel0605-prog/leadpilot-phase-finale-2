@@ -210,7 +210,7 @@ export default function LeadsSection() {
 
   const filteredLeads = leads.filter((lead: Lead) => {
     if (filters.sector !== "all" && lead.sector !== filters.sector) return false;
-    if (filters.companySize !== "all" && lead.companySize !== filters.companySize) return false;
+    // Note: companySize filtering removed temporarily as field doesn't exist in schema yet
     if (filters.status !== "all" && lead.status !== filters.status) return false;
     if (filters.score !== "all") {
       const score = lead.aiScore || 0;
@@ -341,23 +341,32 @@ export default function LeadsSection() {
                 <div className="space-y-3">
                   <Label htmlFor="count" className="text-sm font-medium">Nombre de leads</Label>
                   <div className="relative">
-                    <Input
+                    <input
+                      id="count"
                       type="number"
-                      min={1}
-                      max={maxLeads}
-                      step={1}
-                      className="h-10"
-                      value={generationCriteria.count.toString()}
+                      min="1"
+                      max={maxLeads.toString()}
+                      step="1"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={generationCriteria.count}
                       onChange={(e) => {
-                        const value = Math.max(1, Math.min(parseInt(e.target.value) || 1, maxLeads));
-                        setGenerationCriteria(prev => ({ ...prev, count: value }));
+                        const inputValue = e.target.value;
+                        if (inputValue === "") {
+                          setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                          return;
+                        }
+                        const numValue = parseInt(inputValue);
+                        if (!isNaN(numValue)) {
+                          const clampedValue = Math.max(1, Math.min(numValue, maxLeads));
+                          setGenerationCriteria(prev => ({ ...prev, count: clampedValue }));
+                        }
                       }}
                       onBlur={(e) => {
                         if (!e.target.value || parseInt(e.target.value) < 1) {
                           setGenerationCriteria(prev => ({ ...prev, count: 1 }));
                         }
                       }}
-                      placeholder="Nombre de leads"
+                      placeholder="Ex: 10"
                     />
                     <div className="text-xs text-muted-foreground mt-1">
                       Limite: {maxLeads} leads disponibles
