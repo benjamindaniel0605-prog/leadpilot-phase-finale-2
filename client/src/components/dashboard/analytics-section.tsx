@@ -1,19 +1,33 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { Download, TrendingUp, Mail, Eye, MousePointer, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { Download, TrendingUp, Mail, Eye, MousePointer, Calendar, CalendarDays } from "lucide-react";
+import { format, startOfMonth, endOfMonth, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
+import { fr } from "date-fns/locale";
 import type { Template } from "@shared/schema";
 
 export default function AnalyticsSection() {
+  const [selectedRange, setSelectedRange] = useState<{
+    from: Date | null;
+    to: Date | null;
+  }>({
+    from: subDays(new Date(), 7),
+    to: new Date()
+  });
+  const [isSelectingRange, setIsSelectingRange] = useState(false);
+  const [tempDate, setTempDate] = useState<Date | null>(null);
+
   const { data: stats, isLoading: statsLoading } = useQuery<{
     leadsGenerated: number;
     emailsSent: number;
     openRate: number;
     meetingsBooked: number;
   }>({
-    queryKey: ["/api/analytics/stats"],
+    queryKey: ["/api/analytics/stats", selectedRange],
   });
 
   const { data: templates = [] } = useQuery<Template[]>({
@@ -58,16 +72,143 @@ export default function AnalyticsSection() {
           <p className="text-muted-foreground">Analysez vos performances de prospection</p>
         </div>
         <div className="flex space-x-3">
-          <Select defaultValue="7days">
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7days">7 derniers jours</SelectItem>
-              <SelectItem value="30days">30 derniers jours</SelectItem>
-              <SelectItem value="thismonth">Ce mois</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* Sélecteur de période avec calendrier */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-60 justify-start text-left font-normal">
+                <CalendarDays className="h-4 w-4 mr-2" />
+                {selectedRange.from && selectedRange.to ? (
+                  `${format(selectedRange.from, "dd MMM", { locale: fr })} - ${format(selectedRange.to, "dd MMM yyyy", { locale: fr })}`
+                ) : (
+                  "Sélectionner une période"
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <div className="p-4">
+                {/* Raccourcis de période */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const today = new Date();
+                      setSelectedRange({
+                        from: subDays(today, 7),
+                        to: today
+                      });
+                    }}
+                  >
+                    7 derniers jours
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const today = new Date();
+                      setSelectedRange({
+                        from: subDays(today, 30),
+                        to: today
+                      });
+                    }}
+                  >
+                    30 derniers jours
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const today = new Date();
+                      setSelectedRange({
+                        from: startOfMonth(today),
+                        to: endOfMonth(today)
+                      });
+                    }}
+                  >
+                    Ce mois
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const today = new Date();
+                      const lastMonth = subMonths(today, 1);
+                      setSelectedRange({
+                        from: startOfMonth(lastMonth),
+                        to: endOfMonth(lastMonth)
+                      });
+                    }}
+                  >
+                    Mois dernier
+                  </Button>
+                </div>
+
+                {/* Instructions de sélection manuelle */}
+                <div className="text-sm text-muted-foreground mb-3 p-2 bg-blue-50 rounded">
+                  📅 <strong>Sélection personnalisée :</strong><br />
+                  1. Cliquez sur la date de début<br />
+                  2. Cliquez sur la date de fin
+                </div>
+
+                {/* Grille de calendrier simple */}
+                <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                  {/* En-têtes des jours */}
+                  {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
+                    <div key={day} className="p-2 font-medium text-muted-foreground">
+                      {day}
+                    </div>
+                  ))}
+                  
+                  {/* Dates du mois actuel - version simple */}
+                  {Array.from({ length: 31 }, (_, i) => {
+                    const date = new Date(2025, 7, i + 1); // Août 2025
+                    const isSelected = selectedRange.from && selectedRange.to && 
+                      date >= selectedRange.from && date <= selectedRange.to;
+                    const isStart = selectedRange.from && 
+                      date.toDateString() === selectedRange.from.toDateString();
+                    const isEnd = selectedRange.to && 
+                      date.toDateString() === selectedRange.to.toDateString();
+                    
+                    return (
+                      <Button
+                        key={i}
+                        variant={isSelected ? "default" : "ghost"}
+                        size="sm"
+                        className={`h-8 w-8 p-0 text-xs ${
+                          isStart || isEnd ? "bg-primary text-primary-foreground" : 
+                          isSelected ? "bg-primary/20" : ""
+                        }`}
+                        onClick={() => {
+                          if (!tempDate) {
+                            // Premier clic - définir le début
+                            setTempDate(date);
+                            setSelectedRange({ from: date, to: null });
+                          } else {
+                            // Deuxième clic - définir la fin
+                            const from = tempDate < date ? tempDate : date;
+                            const to = tempDate < date ? date : tempDate;
+                            setSelectedRange({ from, to });
+                            setTempDate(null);
+                          }
+                        }}
+                      >
+                        {i + 1}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                {/* Affichage de la sélection actuelle */}
+                {selectedRange.from && selectedRange.to && (
+                  <div className="mt-4 p-2 bg-green-50 rounded text-sm">
+                    <strong>Période sélectionnée :</strong><br />
+                    Du {format(selectedRange.from, "dd MMMM yyyy", { locale: fr })} au {format(selectedRange.to, "dd MMMM yyyy", { locale: fr })}
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
             Exporter
