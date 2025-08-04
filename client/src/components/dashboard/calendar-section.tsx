@@ -112,59 +112,77 @@ export default function CalendarSection() {
                 Nouveau RDV
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Créer un nouveau RDV</DialogTitle>
+                <DialogTitle className="text-white">Nouveau rendez-vous</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Titre du RDV</Label>
-                  <Input id="title" placeholder="Ex: Entretien commercial avec prospect" />
+                  <Label htmlFor="title" className="text-white">Titre</Label>
+                  <Input 
+                    id="title" 
+                    placeholder="Ex: Entretien commercial" 
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" placeholder="Détails du rendez-vous..." />
+                  <Label htmlFor="description" className="text-white">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    placeholder="Détails du rendez-vous..." 
+                    className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="date">Date</Label>
-                    <Input id="date" type="date" />
+                    <Label htmlFor="date" className="text-white">Date</Label>
+                    <Input 
+                      id="date" 
+                      type="date" 
+                      className="bg-gray-800 border-gray-600 text-white"
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="time">Heure de début</Label>
-                    <Input id="time" type="time" />
+                    <Label htmlFor="time" className="text-white">Heure</Label>
+                    <Input 
+                      id="time" 
+                      type="time" 
+                      className="bg-gray-800 border-gray-600 text-white"
+                    />
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="rdvDuration">Durée du RDV</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir la durée" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="45">45 minutes</SelectItem>
-                      <SelectItem value="60">1 heure</SelectItem>
-                      <SelectItem value="90">1h30</SelectItem>
-                      <SelectItem value="120">2 heures</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="rdvDuration" className="text-white">Durée</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Durée" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        <SelectItem value="15" className="text-white hover:bg-gray-700">15 min</SelectItem>
+                        <SelectItem value="30" className="text-white hover:bg-gray-700">30 min</SelectItem>
+                        <SelectItem value="45" className="text-white hover:bg-gray-700">45 min</SelectItem>
+                        <SelectItem value="60" className="text-white hover:bg-gray-700">1h</SelectItem>
+                        <SelectItem value="90" className="text-white hover:bg-gray-700">1h30</SelectItem>
+                        <SelectItem value="120" className="text-white hover:bg-gray-700">2h</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="meetingType" className="text-white">Type</Label>
+                    <Select>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        <SelectItem value="video" className="text-white hover:bg-gray-700">Visio</SelectItem>
+                        <SelectItem value="phone" className="text-white hover:bg-gray-700">Téléphone</SelectItem>
+                        <SelectItem value="in-person" className="text-white hover:bg-gray-700">Présentiel</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="meetingType">Type de meeting</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir le type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="video">Visioconférence</SelectItem>
-                      <SelectItem value="phone">Téléphone</SelectItem>
-                      <SelectItem value="in-person">En personne</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button className="w-full">Créer le RDV</Button>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Créer le RDV</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -176,54 +194,54 @@ export default function CalendarSection() {
                 Configurer
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Configuration du calendrier</DialogTitle>
+                <DialogTitle className="text-white">Configuration du calendrier</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <Label htmlFor="duration">Durée par défaut des RDV</Label>
+                  <Label htmlFor="duration" className="text-white text-sm font-medium">Durée par défaut</Label>
                   <Select value={duration} onValueChange={setDuration}>
-                    <SelectTrigger>
-                      <SelectValue />
+                    <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                      <SelectValue className="text-white" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="45">45 minutes</SelectItem>
-                      <SelectItem value="60">60 minutes</SelectItem>
-                      <SelectItem value="90">90 minutes</SelectItem>
-                      <SelectItem value="120">2 heures</SelectItem>
-                      <SelectItem value="custom">Durée personnalisée</SelectItem>
+                    <SelectContent className="bg-gray-800 border-gray-600">
+                      <SelectItem value="15" className="text-white hover:bg-gray-700">15 min</SelectItem>
+                      <SelectItem value="30" className="text-white hover:bg-gray-700">30 min</SelectItem>
+                      <SelectItem value="45" className="text-white hover:bg-gray-700">45 min</SelectItem>
+                      <SelectItem value="60" className="text-white hover:bg-gray-700">1h</SelectItem>
+                      <SelectItem value="90" className="text-white hover:bg-gray-700">1h30</SelectItem>
+                      <SelectItem value="120" className="text-white hover:bg-gray-700">2h</SelectItem>
+                      <SelectItem value="custom" className="text-white hover:bg-gray-700">Personnalisé</SelectItem>
                     </SelectContent>
                   </Select>
                   {duration === "custom" && (
-                    <div className="mt-2">
-                      <Label htmlFor="customDuration">Durée en minutes</Label>
+                    <div className="mt-3">
                       <Input
                         id="customDuration"
                         type="number"
-                        placeholder="Ex: 75"
+                        placeholder="Durée en minutes"
                         value={customDuration}
                         onChange={(e) => setCustomDuration(e.target.value)}
                         min="5"
                         max="480"
+                        className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                       />
                     </div>
                   )}
                 </div>
                 <div>
-                  <Label>Jours et horaires disponibles</Label>
-                  <div className="space-y-3 mt-2">
+                  <Label className="text-white text-sm font-medium">Horaires de disponibilité</Label>
+                  <div className="space-y-2 mt-3">
                     {[
-                      { key: 'monday', label: 'Lundi' },
-                      { key: 'tuesday', label: 'Mardi' },
-                      { key: 'wednesday', label: 'Mercredi' },
-                      { key: 'thursday', label: 'Jeudi' },
-                      { key: 'friday', label: 'Vendredi' }
+                      { key: 'monday', label: 'Lun' },
+                      { key: 'tuesday', label: 'Mar' },
+                      { key: 'wednesday', label: 'Mer' },
+                      { key: 'thursday', label: 'Jeu' },
+                      { key: 'friday', label: 'Ven' }
                     ].map(day => (
-                      <div key={day.key} className="border rounded-lg p-3 space-y-2">
-                        <label className="flex items-center space-x-2">
+                      <div key={day.key} className="bg-gray-800 border border-gray-600 rounded p-3">
+                        <label className="flex items-center space-x-3 mb-2">
                           <input 
                             type="checkbox" 
                             checked={availableSlots[day.key as keyof typeof availableSlots].enabled}
@@ -231,47 +249,39 @@ export default function CalendarSection() {
                               ...prev,
                               [day.key]: { ...prev[day.key as keyof typeof prev], enabled: e.target.checked }
                             }))}
-                            className="rounded"
+                            className="w-4 h-4"
                           />
-                          <span className="text-sm font-medium text-foreground">{day.label}</span>
+                          <span className="text-white font-medium">{day.label}</span>
                         </label>
                         {availableSlots[day.key as keyof typeof availableSlots].enabled && (
-                          <div className="grid grid-cols-2 gap-2 ml-6">
-                            <div>
-                              <Label className="text-xs">De</Label>
-                              <Input
-                                type="time"
-                                value={availableSlots[day.key as keyof typeof availableSlots].startTime}
-                                onChange={(e) => setAvailableSlots(prev => ({
-                                  ...prev,
-                                  [day.key]: { ...prev[day.key as keyof typeof prev], startTime: e.target.value }
-                                }))}
-                                className="text-xs"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs">À</Label>
-                              <Input
-                                type="time"
-                                value={availableSlots[day.key as keyof typeof availableSlots].endTime}
-                                onChange={(e) => setAvailableSlots(prev => ({
-                                  ...prev,
-                                  [day.key]: { ...prev[day.key as keyof typeof prev], endTime: e.target.value }
-                                }))}
-                                className="text-xs"
-                              />
-                            </div>
+                          <div className="flex items-center space-x-2 ml-7">
+                            <Input
+                              type="time"
+                              value={availableSlots[day.key as keyof typeof availableSlots].startTime}
+                              onChange={(e) => setAvailableSlots(prev => ({
+                                ...prev,
+                                [day.key]: { ...prev[day.key as keyof typeof prev], startTime: e.target.value }
+                              }))}
+                              className="bg-gray-700 border-gray-500 text-white text-sm"
+                            />
+                            <span className="text-gray-400">à</span>
+                            <Input
+                              type="time"
+                              value={availableSlots[day.key as keyof typeof availableSlots].endTime}
+                              onChange={(e) => setAvailableSlots(prev => ({
+                                ...prev,
+                                [day.key]: { ...prev[day.key as keyof typeof prev], endTime: e.target.value }
+                              }))}
+                              className="bg-gray-700 border-gray-500 text-white text-sm"
+                            />
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
-                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                    💡 Vous pouvez définir des horaires personnalisés pour chaque jour (ex: 7h-19h)
-                  </div>
                 </div>
                 <Button 
-                  className="w-full" 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
                   onClick={() => setShowConfigDialog(false)}
                 >
                   Sauvegarder
