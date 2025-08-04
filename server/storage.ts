@@ -32,6 +32,7 @@ export interface IStorage {
   getTemplates(): Promise<Template[]>;
   getTemplatesByPlan(plan: string): Promise<Template[]>;
   getTemplate(id: string): Promise<Template | undefined>;
+  createTemplate(templateData: any): Promise<Template>;
   updateTemplateUsage(id: string): Promise<void>;
   
   // Lead operations
@@ -90,6 +91,14 @@ export class DatabaseStorage implements IStorage {
   // Template operations
   async getTemplates(): Promise<Template[]> {
     return await db.select().from(templates).orderBy(templates.createdAt);
+  }
+
+  async createTemplate(templateData: any): Promise<Template> {
+    const [template] = await db
+      .insert(templates)
+      .values(templateData)
+      .returning();
+    return template;
   }
 
   async getTemplatesByPlan(plan: string): Promise<Template[]> {

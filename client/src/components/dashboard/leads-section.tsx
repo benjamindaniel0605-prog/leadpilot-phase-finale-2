@@ -10,6 +10,7 @@ import { Upload, Plus, Search, Mail, Edit, Trash2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Lead } from "@shared/schema";
+import { AdminSeedButton } from "@/components/admin-seed-button";
 
 export default function LeadsSection() {
   const [filters, setFilters] = useState({
@@ -99,6 +100,7 @@ export default function LeadsSection() {
           <p className="text-muted-foreground">Gérez vos prospects et leur scoring IA</p>
         </div>
         <div className="flex space-x-3">
+          <AdminSeedButton />
           <Button variant="outline">
             <Upload className="h-4 w-4 mr-2" />
             Importer
