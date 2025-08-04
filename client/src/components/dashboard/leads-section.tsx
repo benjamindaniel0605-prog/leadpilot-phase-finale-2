@@ -21,7 +21,7 @@ export default function LeadsSection() {
     status: "all"
   });
 
-  const [showGenerationForm, setShowGenerationForm] = useState(false);
+  const [showGenerationForm, setShowGenerationForm] = useState(true); // Show form by default for better UX
   const [generationCriteria, setGenerationCriteria] = useState({
     sector: "",
     location: "France",
@@ -235,7 +235,7 @@ export default function LeadsSection() {
   const maxLeads = Math.min(remainingLeads, 50); // Limite max par génération
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header with Lead Generation Form */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -266,28 +266,26 @@ export default function LeadsSection() {
                 <Target className="h-5 w-5 text-primary" />
                 <CardTitle className="text-lg">Génération de Leads</CardTitle>
               </div>
-              {!showGenerationForm && (
-                <Button 
-                  onClick={() => setShowGenerationForm(true)}
-                  disabled={remainingLeads === 0}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Générer des Leads
-                </Button>
-              )}
+              <Button 
+                onClick={() => setShowGenerationForm(!showGenerationForm)}
+                disabled={remainingLeads === 0}
+                className="bg-primary hover:bg-primary/90"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {showGenerationForm ? "Masquer" : "Générer des Leads"}
+              </Button>
             </div>
           </CardHeader>
           
           {showGenerationForm && (
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="sector">Secteur d'activité *</Label>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="sector" className="text-sm font-medium">Secteur d'activité *</Label>
                   <Select value={generationCriteria.sector} onValueChange={(value) => 
                     setGenerationCriteria(prev => ({ ...prev, sector: value }))
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Sélectionner un secteur" />
                     </SelectTrigger>
                     <SelectContent>
@@ -302,21 +300,22 @@ export default function LeadsSection() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="location">Localisation</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="location" className="text-sm font-medium">Localisation</Label>
                   <Input
+                    className="h-10"
                     value={generationCriteria.location}
                     onChange={(e) => setGenerationCriteria(prev => ({ ...prev, location: e.target.value }))}
                     placeholder="France, Paris, Lyon..."
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="companySize">Taille d'entreprise</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="companySize" className="text-sm font-medium">Taille d'entreprise</Label>
                   <Select value={generationCriteria.companySize} onValueChange={(value) => 
                     setGenerationCriteria(prev => ({ ...prev, companySize: value }))
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Toutes tailles" />
                     </SelectTrigger>
                     <SelectContent>
@@ -329,12 +328,12 @@ export default function LeadsSection() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="count">Nombre de leads</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="count" className="text-sm font-medium">Nombre de leads</Label>
                   <Select value={generationCriteria.count.toString()} onValueChange={(value) => 
                     setGenerationCriteria(prev => ({ ...prev, count: parseInt(value) }))
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -355,16 +354,17 @@ export default function LeadsSection() {
                   </Select>
                 </div>
 
-                <div className="col-span-2 space-y-2">
-                  <Label htmlFor="jobTitles">Postes ciblés (optionnel)</Label>
+                <div className="col-span-1 md:col-span-2 space-y-3">
+                  <Label htmlFor="jobTitles" className="text-sm font-medium">Postes ciblés (optionnel)</Label>
                   <Input
+                    className="h-10"
                     value={generationCriteria.jobTitles}
                     onChange={(e) => setGenerationCriteria(prev => ({ ...prev, jobTitles: e.target.value }))}
                     placeholder="CEO, Directeur Marketing, CTO... (séparés par des virgules)"
                   />
                 </div>
 
-                <div className="col-span-2 flex justify-end space-x-2 pt-2">
+                <div className="col-span-1 md:col-span-2 flex justify-end space-x-3 pt-4 border-t">
                   <Button variant="outline" onClick={() => setShowGenerationForm(false)}>
                     Annuler
                   </Button>
@@ -393,10 +393,10 @@ export default function LeadsSection() {
 
         {/* Filters */}
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Secteur</label>
+              <label className="block text-sm font-medium text-card-foreground mb-3">Secteur</label>
               <Select value={filters.sector} onValueChange={(value) => setFilters({ ...filters, sector: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tous les secteurs" />
@@ -410,7 +410,7 @@ export default function LeadsSection() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Score IA</label>
+              <label className="block text-sm font-medium text-card-foreground mb-3">Score IA</label>
               <Select value={filters.score} onValueChange={(value) => setFilters({ ...filters, score: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tous les scores" />
@@ -424,7 +424,7 @@ export default function LeadsSection() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Statut</label>
+              <label className="block text-sm font-medium text-card-foreground mb-3">Statut</label>
               <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tous les statuts" />
@@ -450,13 +450,13 @@ export default function LeadsSection() {
 
       {/* Leads Table */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-4">
           <CardTitle>Liste des Leads ({filteredLeads.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {filteredLeads.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-muted-foreground">Aucun lead trouvé.</p>
+            <div className="p-12 text-center">
+              <p className="text-muted-foreground mb-4">Aucun lead trouvé.</p>
               <Button className="mt-4" onClick={() => setShowGenerationForm(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer votre premier lead
