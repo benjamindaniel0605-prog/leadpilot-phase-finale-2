@@ -6,6 +6,7 @@ import {
   campaignEmails,
   sequences,
   bookings,
+  customEmails,
   type User,
   type UpsertUser,
   type Template,
@@ -19,6 +20,8 @@ import {
   type InsertSequence,
   type Booking,
   type InsertBooking,
+  type CustomEmail,
+  type InsertCustomEmail,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, count, sql, inArray } from "drizzle-orm";
@@ -37,6 +40,12 @@ export interface IStorage {
   updateTemplate(id: string, data: { subject?: string; content?: string }): Promise<void>;
   generateAIVariation(template: Template): Promise<{ subject: string; content: string }>;
   deleteCampaign(id: string): Promise<void>;
+  
+  // Custom email operations
+  getCustomEmails(userId: string): Promise<CustomEmail[]>;
+  createCustomEmail(userId: string, emailData: { name: string; subject: string; content: string; baseTemplateId?: string }): Promise<CustomEmail>;
+  updateCustomEmail(id: string, data: { name?: string; subject?: string; content?: string }): Promise<void>;
+  deleteCustomEmail(id: string): Promise<void>;
   
   // Lead operations
   getLeads(userId: string): Promise<Lead[]>;
@@ -146,55 +155,17 @@ export class DatabaseStorage implements IStorage {
 
   async generateAIVariation(template: Template): Promise<{ subject: string; content: string }> {
     try {
-      // Utiliser le service OpenAI pour générer une variation complète
-      const openaiService = await import('./services/openaiService');
-      
-      const prompt = `Tu es un expert en rédaction d'emails commerciaux en français. Je vais te donner un template d'email et tu dois créer une version complètement différente mais qui respecte exactement la même structure et le même objectif commercial.
-
-CONSIGNES STRICTES :
-- Change TOUS les mots et phrases possibles
-- Garde exactement la même structure (paragraphes, salutations, etc.)
-- Garde le même objectif commercial et le même ton professionnel
-- Utilise un vocabulaire français varié et naturel
-- Évite les répétitions du template original
-- Garde les variables [PRENOM], [ENTREPRISE], etc. telles quelles
-
-EMAIL ORIGINAL :
-Objet: ${template.subject}
-Contenu: ${template.content}
-
-Réponds UNIQUEMENT avec un JSON valide au format :
-{"subject": "nouveau sujet complètement différent", "content": "nouveau contenu complètement réécrit"}`;
-
-      const response = await openaiService.generateText(prompt);
-      
-      try {
-        // Nettoyer la réponse si elle contient du markdown
-        const cleanResponse = response.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
-        const parsed = JSON.parse(cleanResponse);
-        
-        if (parsed.subject && parsed.content) {
-          return {
-            subject: parsed.subject,
-            content: parsed.content
-          };
-        } else {
-          throw new Error("Invalid response format");
-        }
-      } catch (parseError) {
-        console.error("Failed to parse OpenAI response:", parseError, "Response:", response);
-        // Fallback avec variations substantielles
-        return {
-          subject: this.generateSubjectVariation(template.subject),
-          content: this.generateContentVariation(template.content)
-        };
-      }
-    } catch (error) {
-      console.error("Error generating AI variation:", error);
-      // Fallback avec variations substantielles
+      // Fallback direct avec variations substantielles (OpenAI sera ajouté plus tard)
       return {
         subject: this.generateSubjectVariation(template.subject),
         content: this.generateContentVariation(template.content)
+      };
+    } catch (error) {
+      console.error("Error generating variation:", error);
+      // Fallback simple
+      return {
+        subject: template.subject + " - Version alternative",
+        content: template.content.replace("Bonjour", "Salut").replace("vous", "tu")
       };
     }
   }
@@ -267,6 +238,36 @@ Réponds UNIQUEMENT avec un JSON valide au format :
 
   async deleteCampaign(id: string): Promise<void> {
     await db.delete(campaigns).where(eq(campaigns.id, id));
+  }
+
+  // Custom email operations
+  async getCustomEmails(userId: string): Promise<CustomEmail[]> {
+    return await db.select().from(customEmails).where(eq(customEmails.userId, userId));
+  }
+
+  async createCustomEmail(userId: string, emailData: { name: string; subject: string; content: string; baseTemplateId?: string }): Promise<CustomEmail> {
+    const [customEmail] = await db
+      .insert(customEmails)
+      .values({
+        userId,
+        name: emailData.name,
+        subject: emailData.subject,
+        content: emailData.content,
+        baseTemplateId: emailData.baseTemplateId,
+      })
+      .returning();
+    return customEmail;
+  }
+
+  async updateCustomEmail(id: string, data: { name?: string; subject?: string; content?: string }): Promise<void> {
+    await db
+      .update(customEmails)
+      .set(data)
+      .where(eq(customEmails.id, id));
+  }
+
+  async deleteCustomEmail(id: string): Promise<void> {
+    await db.delete(customEmails).where(eq(customEmails.id, id));
   }
 
   // Lead operations

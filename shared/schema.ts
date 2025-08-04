@@ -126,6 +126,21 @@ export const bookings = pgTable("bookings", {
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+
+// Custom emails created by users from base templates
+export const customEmails = pgTable("custom_emails", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  name: varchar("name").notNull(),
+  subject: text("subject").notNull(),
+  content: text("content").notNull(),
+  baseTemplateId: varchar("base_template_id"), // référence au template original
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type CustomEmail = typeof customEmails.$inferSelect;
+export type InsertCustomEmail = typeof customEmails.$inferInsert;
 export type InsertTemplate = typeof templates.$inferInsert;
 export type Template = typeof templates.$inferSelect;
 export type InsertLead = typeof leads.$inferInsert;

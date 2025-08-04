@@ -34,6 +34,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: "dashboard", label: "Dashboard", icon: BarChart3 },
     { id: "leads", label: "Leads", icon: Users },
     { id: "templates", label: "Templates", icon: Mail },
+    { id: "custom-emails", label: "Mes Emails", icon: Mail },
     { id: "campaigns", label: "Campagnes", icon: Send },
     { id: "sequences", label: "Séquences", icon: GitBranch },
     { id: "closing", label: "Closing", icon: Target, comingSoon: true },

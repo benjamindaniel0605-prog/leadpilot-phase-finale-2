@@ -125,6 +125,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Routes pour les emails personnalisés
+  app.get('/api/custom-emails', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const customEmails = await storage.getCustomEmails(userId);
+      res.json(customEmails);
+    } catch (error) {
+      console.error("Error fetching custom emails:", error);
+      res.status(500).json({ message: "Failed to fetch custom emails" });
+    }
+  });
+
+  app.post('/api/custom-emails', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const customEmail = await storage.createCustomEmail(userId, req.body);
+      res.json(customEmail);
+    } catch (error) {
+      console.error("Error creating custom email:", error);
+      res.status(500).json({ message: "Failed to create custom email" });
+    }
+  });
+
+  app.patch('/api/custom-emails/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      await storage.updateCustomEmail(req.params.id, req.body);
+      res.json({ message: "Custom email updated successfully" });
+    } catch (error) {
+      console.error("Error updating custom email:", error);
+      res.status(500).json({ message: "Failed to update custom email" });
+    }
+  });
+
+  app.delete('/api/custom-emails/:id', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteCustomEmail(req.params.id);
+      res.json({ message: "Custom email deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting custom email:", error);
+      res.status(500).json({ message: "Failed to delete custom email" });
+    }
+  });
+
   // Leads routes
   app.get('/api/leads', isAuthenticated, async (req: any, res) => {
     try {

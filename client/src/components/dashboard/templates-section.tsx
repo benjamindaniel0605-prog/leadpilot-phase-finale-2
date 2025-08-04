@@ -23,6 +23,7 @@ export default function TemplatesSection() {
   const [customContent, setCustomContent] = useState("");
   const [originalTemplates, setOriginalTemplates] = useState<{[key: string]: Template}>({});
   const [generatingVariation, setGeneratingVariation] = useState<string | null>(null);
+  const [selectedTemplateForEdit, setSelectedTemplateForEdit] = useState<Template | null>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -409,11 +410,12 @@ export default function TemplatesSection() {
                         </div>
                         <Button 
                           size="sm"
-                          onClick={() => useTemplateMutation.mutate(template.id)}
-                          disabled={useTemplateMutation.isPending}
-                          title="Ajouter ce template à vos campagnes d'email"
+                          variant="outline"
+                          onClick={() => setSelectedTemplateForEdit(template)}
+                          title="Créer un email personnalisé à partir de ce template"
                         >
-                          {useTemplateMutation.isPending ? "..." : "Utiliser"}
+                          <Wand2 className="h-4 w-4 mr-1" />
+                          Choisir Template
                         </Button>
                       </>
                     ) : (
@@ -534,6 +536,15 @@ Cordialement,
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Custom Email Editor */}
+      {selectedTemplateForEdit && (
+        <CustomEmailEditor
+          template={selectedTemplateForEdit}
+          isOpen={!!selectedTemplateForEdit}
+          onClose={() => setSelectedTemplateForEdit(null)}
+        />
+      )}
     </div>
   );
 }

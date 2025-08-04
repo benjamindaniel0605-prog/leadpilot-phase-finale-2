@@ -7,6 +7,7 @@ import Header from "@/components/dashboard/header";
 import StatsCards from "@/components/dashboard/stats-cards";
 import LeadsSection from "@/components/dashboard/leads-section";
 import TemplatesSection from "@/components/dashboard/templates-section";
+import CustomEmailsSection from "@/components/dashboard/custom-emails-section";
 import CampaignsSection from "@/components/dashboard/campaigns-section";
 import SequencesSection from "@/components/dashboard/sequences-section";
 import CalendarSection from "@/components/dashboard/calendar-section";
@@ -116,6 +117,8 @@ export default function Dashboard() {
         return <LeadsSection />;
       case "templates":
         return <TemplatesSection />;
+      case "custom-emails":
+        return <CustomEmailsSection />;
       case "campaigns":
         return <CampaignsSection />;
       case "sequences":
