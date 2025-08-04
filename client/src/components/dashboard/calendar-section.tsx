@@ -337,29 +337,47 @@ export default function CalendarSection() {
                 </div>
               </div>
 
-              {/* Calendar Link */}
-              <div className="p-4 bg-primary/5 rounded-lg">
-                <h4 className="font-medium text-primary mb-2">Lien de booking</h4>
-                <p className="text-xs text-muted-foreground mb-2">
-                  Partagez ce lien pour que vos prospects puissent réserver un créneau
-                </p>
-                <div className="flex items-center space-x-2">
-                  <Input 
-                    value={`https://leadpilot.com/book/${user?.id || 'user123'}`}
-                    readOnly
-                    className="text-sm text-primary bg-white border-primary/20"
-                  />
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(`https://leadpilot.com/book/${user?.id || 'user123'}`);
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
+              {/* Calendar Link avec restriction de plan */}
+              {['starter', 'pro', 'growth'].includes((user as any)?.plan || 'free') ? (
+                <div className="p-4 bg-primary/5 rounded-lg">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h4 className="font-medium text-primary">Lien de booking</h4>
+                    <Badge variant="outline" className="text-xs">Starter+</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Partagez ce lien pour que vos prospects puissent réserver un créneau
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Input 
+                      value={`https://leadpilot.com/book/${user?.id || 'user123'}`}
+                      readOnly
+                      className="text-sm text-primary bg-white border-primary/20"
+                    />
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://leadpilot.com/book/${user?.id || 'user123'}`);
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 bg-gray-100 rounded-lg border border-gray-300">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h4 className="font-medium text-gray-700">Lien de booking</h4>
+                    <Badge variant="secondary" className="text-xs">Starter+</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Les liens de prise de rendez-vous sont disponibles à partir du plan Starter.
+                  </p>
+                  <Button size="sm" variant="outline" className="w-full">
+                    Upgrader vers Starter
                   </Button>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>

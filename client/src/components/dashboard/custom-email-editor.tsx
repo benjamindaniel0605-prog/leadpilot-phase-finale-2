@@ -7,9 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, RefreshCw, Save, X, RotateCcw } from "lucide-react";
+import { Sparkles, RefreshCw, Save, X, RotateCcw, Calendar } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import type { Template } from "@shared/schema";
 
 interface CustomEmailEditorProps {
@@ -28,6 +29,34 @@ export default function CustomEmailEditor({ template, isOpen, onClose }: CustomE
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Vérification du plan pour le booking
+  const userPlan = (user as any)?.plan || "free";
+  const canUseBooking = ['starter', 'pro', 'growth'].includes(userPlan);
+
+  // Fonction pour ajouter le lien de booking
+  const handleAddBookingLink = () => {
+    if (!canUseBooking) {
+      toast({
+        title: "Fonctionnalité réservée",
+        description: "Les liens de RDV sont disponibles à partir du plan Starter.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const userId = (user as any)?.id;
+    const bookingText = `\n\nPour programmer un RDV, cliquez ici :\nhttps://leadpilot.com/book/${userId}\n\nOu répondez à cet email pour convenir d'un autre créneau.`;
+    
+    // Ajouter le texte à la fin du contenu existant
+    setContent(prevContent => prevContent + bookingText);
+    
+    toast({
+      title: "Lien de RDV ajouté !",
+      description: "Le texte de proposition de rendez-vous a été inséré à la fin de votre email.",
+    });
+  };
 
   // Mutation pour générer une variation IA
   const generateVariationMutation = useMutation({
@@ -184,6 +213,16 @@ export default function CustomEmailEditor({ template, isOpen, onClose }: CustomE
                       <Sparkles className="h-4 w-4 mr-1" />
                     )}
                     {isGeneratingVariation ? "Génération..." : "Variation IA"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddBookingLink}
+                    disabled={!canUseBooking}
+                    title={!canUseBooking ? "Disponible à partir du plan Starter" : "Ajouter un lien de prise de RDV"}
+                  >
+                    <Calendar className="h-4 w-4 mr-1" />
+                    Proposer RDV
                   </Button>
                   <Button
                     variant="ghost"

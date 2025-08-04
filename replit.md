@@ -106,3 +106,12 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **Real-time Selection Feedback**: Interface shows count of selected leads with visual badges for lead scores
 - **Database Schema Update**: Modified campaigns table to use emailId (referencing custom emails) and leadTargets (comma-separated lead IDs) instead of templateId
 - **Flexible Campaign Creation**: Users can now select any combination of leads, use quick filters, or manually choose specific prospects for targeted campaigns
+
+### RDV Booking System Enhancement (August 4, 2025)
+- **Plan-Based Access Control**: Booking link functionality restricted to Starter+ plans only (Free plan users see upgrade prompt)
+- **"Proposer RDV" Button**: Added booking proposal button in email editor interface alongside variation buttons
+- **Automatic Text Insertion**: Button inserts standardized French booking text with user's personal booking link at email end
+- **Professional Booking Template**: Automated insertion of "Pour programmer un RDV, cliquez ici : [lien] / Ou répondez à cet email pour convenir d'un autre créneau"
+- **Complete Weekend Support**: Added Saturday and Sunday configuration with default 10h-16h hours (disabled by default)
+- **Enhanced UI Design**: Simplified interface with white text on dark theme, scrollable modals, and improved visibility
+- **Flexible Time Configuration**: Complete customization of hours per day with simplified layout and better user experience
