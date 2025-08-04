@@ -333,48 +333,7 @@ export default function TemplatesSection() {
                         {isLocked && <Lock className="h-4 w-4 text-amber-600" />}
                       </div>
                     </div>
-                    {!isLocked && (
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleGenerateVariation(template.id)}
-                          disabled={generatingVariation === template.id}
-                          title="Générer une variation"
-                        >
-                          {generatingVariation === template.id ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Wand2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                        {originalTemplates[template.id] && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => restoreOriginalMutation.mutate(template.id)}
-                            title="Revenir à l'original"
-                            className="text-amber-600 hover:text-amber-700"
-                          >
-                            <RefreshCw className="h-4 w-4" />
-                          </Button>
-                        )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleEditTemplate(template)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => copyToClipboard(template.content, "Template")}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
+
                   </div>
                 </CardHeader>
                 <CardContent>

@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Edit3, Trash2, Eye, Copy } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +26,11 @@ import type { CustomEmail } from "@shared/schema";
 export default function CustomEmailsSection() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [viewingEmail, setViewingEmail] = useState<CustomEmail | null>(null);
+  const [editingEmail, setEditingEmail] = useState<CustomEmail | null>(null);
+  const [editedName, setEditedName] = useState("");
+  const [editedSubject, setEditedSubject] = useState("");
+  const [editedContent, setEditedContent] = useState("");
 
   const { data: customEmails = [], isLoading } = useQuery<CustomEmail[]>({
     queryKey: ["/api/custom-emails"],
@@ -48,12 +57,56 @@ export default function CustomEmailsSection() {
     },
   });
 
+  const updateEmailMutation = useMutation({
+    mutationFn: async (data: { id: string; name: string; subject: string; content: string }) => {
+      const response = await apiRequest("PATCH", `/api/custom-emails/${data.id}`, {
+        name: data.name,
+        subject: data.subject,
+        content: data.content,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/custom-emails"] });
+      setEditingEmail(null);
+      toast({
+        title: "Email mis à jour",
+        description: "L'email personnalisé a été modifié avec succès.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier l'email.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCopyEmail = (customEmail: CustomEmail) => {
     const emailText = `Objet: ${customEmail.subject}\n\nContenu:\n${customEmail.content}`;
     navigator.clipboard.writeText(emailText);
     toast({
       title: "Email copié !",
       description: "Le contenu a été copié dans le presse-papier",
+    });
+  };
+
+  const handleEditEmail = (customEmail: CustomEmail) => {
+    setEditingEmail(customEmail);
+    setEditedName(customEmail.name);
+    setEditedSubject(customEmail.subject);
+    setEditedContent(customEmail.content);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingEmail) return;
+    
+    updateEmailMutation.mutate({
+      id: editingEmail.id,
+      name: editedName,
+      subject: editedSubject,
+      content: editedContent,
     });
   };
 
@@ -157,6 +210,7 @@ export default function CustomEmailsSection() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => setViewingEmail(customEmail)}
                       title="Aperçu complet"
                     >
                       <Eye className="h-4 w-4" />
@@ -164,6 +218,7 @@ export default function CustomEmailsSection() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => handleEditEmail(customEmail)}
                       title="Éditer"
                     >
                       <Edit3 className="h-4 w-4" />
@@ -201,6 +256,97 @@ export default function CustomEmailsSection() {
           ))}
         </div>
       )}
+
+      {/* Dialog de visualisation */}
+      <Dialog open={!!viewingEmail} onOpenChange={() => setViewingEmail(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{viewingEmail?.name}</DialogTitle>
+            <DialogDescription>
+              Aperçu complet de votre email personnalisé
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            <div>
+              <Label>Objet de l'email</Label>
+              <div className="mt-1 p-3 bg-muted rounded-md">
+                {viewingEmail?.subject}
+              </div>
+            </div>
+            <div>
+              <Label>Contenu de l'email</Label>
+              <div className="mt-1 p-4 bg-muted rounded-md whitespace-pre-line font-mono text-sm min-h-[300px]">
+                {viewingEmail?.content}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setViewingEmail(null)}>
+              Fermer
+            </Button>
+            <Button onClick={() => handleCopyEmail(viewingEmail!)}>
+              Copier
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog d'édition */}
+      <Dialog open={!!editingEmail} onOpenChange={() => setEditingEmail(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Modifier l'Email</DialogTitle>
+            <DialogDescription>
+              Modifiez le nom, l'objet et le contenu de votre email personnalisé
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            <div>
+              <Label htmlFor="edit-name">Nom de l'email</Label>
+              <Input
+                id="edit-name"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                placeholder="Nom de votre email..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-subject">Objet de l'email</Label>
+              <Input
+                id="edit-subject"
+                value={editedSubject}
+                onChange={(e) => setEditedSubject(e.target.value)}
+                placeholder="Objet de votre email..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-content">Contenu de l'email</Label>
+              <Textarea
+                id="edit-content"
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                placeholder="Contenu de votre email..."
+                rows={20}
+                className="resize-none font-mono text-sm min-h-[400px]"
+              />
+              <div className="text-xs text-muted-foreground mt-2">
+                💡 <strong>Variables disponibles :</strong> [PRENOM], [ENTREPRISE], [POSTE], [SECTEUR], [EXPEDITEUR]
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setEditingEmail(null)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleSaveEdit}
+              disabled={updateEmailMutation.isPending || !editedName.trim() || !editedSubject.trim() || !editedContent.trim()}
+            >
+              {updateEmailMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
