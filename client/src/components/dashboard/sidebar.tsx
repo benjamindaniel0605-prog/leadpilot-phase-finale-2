@@ -44,7 +44,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   ];
 
   const planLimits = {
-    free: { leads: 5, templates: 1, variations: 3 },
+    free: { leads: 5, templates: 1, variations: 5 },
     starter: { leads: 100, templates: 5, variations: 15 },
     pro: { leads: 500, templates: 15, variations: 50 },
     growth: { leads: 1500, templates: 30, variations: 150 }

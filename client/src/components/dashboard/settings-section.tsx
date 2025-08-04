@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,9 @@ import {
   Trash2,
   Crown,
   CheckCircle,
-  XCircle
+  XCircle,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +32,7 @@ export default function SettingsSection() {
     firstName: "",
     lastName: "",
     email: "",
+    password: "",
     company: ""
   });
 
@@ -41,10 +44,18 @@ export default function SettingsSection() {
     password: ""
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { user, isLoading } = useAuth();
+
+  // Get real-time analytics data for quotas
+  const { data: analytics } = useQuery({
+    queryKey: ['/api/analytics/stats'],
+    enabled: !!user,
+  });
   
   // Update form when user data is available
   useEffect(() => {
@@ -53,6 +64,7 @@ export default function SettingsSection() {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
+        password: "••••••••", // Placeholder for security
         company: ""
       });
     }
@@ -109,8 +121,12 @@ export default function SettingsSection() {
 
   const userPlan = user?.plan || "free";
   const currentLimits = planLimits[userPlan as keyof typeof planLimits];
-  const leadsUsage = (user?.leadsUsed || 0) / currentLimits.leads * 100;
-  const variationsUsage = (user?.aiVariationsUsed || 0) / currentLimits.variations * 100;
+  
+  // Use real analytics data instead of user properties
+  const leadsUsed = (analytics as any)?.leadsGenerated || 0;
+  const variationsUsed = (analytics as any)?.aiVariationsUsed || 0;
+  const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
+  const variationsUsage = (variationsUsed / currentLimits.variations) * 100;
 
   const integrations = [
     {
@@ -186,7 +202,7 @@ export default function SettingsSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Paramètres</h2>
+          <h2 className="text-2xl font-bold text-white">Paramètres</h2>
           <p className="text-gray-600">Configurez votre compte et intégrations</p>
         </div>
       </div>
@@ -232,6 +248,30 @@ export default function SettingsSection() {
                 />
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={profileForm.password}
+                    onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Entreprise</label>
                 <Input
                   type="text"
@@ -257,6 +297,10 @@ export default function SettingsSection() {
                 <Mail className="h-5 w-5 mr-2" />
                 Configuration Email
               </CardTitle>
+              <p className="text-sm text-gray-600">
+                Configurez votre serveur SMTP pour l'envoi d'emails automatisés. 
+                Ces paramètres sont nécessaires pour envoyer vos campagnes email.
+              </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -329,6 +373,10 @@ export default function SettingsSection() {
                 <SettingsIcon className="h-5 w-5 mr-2" />
                 Intégrations API
               </CardTitle>
+              <p className="text-sm text-gray-600">
+                Connectez des services externes pour enrichir vos leads et améliorer 
+                la génération automatique avec l'intelligence artificielle.
+              </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -362,7 +410,7 @@ export default function SettingsSection() {
             </CardHeader>
             <CardContent>
               <div className="text-center mb-4">
-                <div className="text-3xl font-bold text-gray-900 capitalize mb-2">{userPlan}</div>
+                <div className="text-3xl font-bold text-white capitalize mb-2">{userPlan}</div>
                 <div className="text-gray-600 mb-4">
                   {userPlan === "free" ? "Plan gratuit" : `Plan ${userPlan}`}
                 </div>
@@ -371,20 +419,21 @@ export default function SettingsSection() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Leads utilisés</span>
-                    <span className="font-medium">{user?.leadsUsed || 0}/{currentLimits.leads}</span>
+                    <span className="font-medium">{leadsUsed}/{currentLimits.leads}</span>
                   </div>
                   <Progress value={leadsUsage} className="h-2" />
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Templates accessibles</span>
-                    <span className="font-medium">1/{currentLimits.templates}</span>
+                    <span className="font-medium">1/30</span>
                   </div>
+                  <Progress value={(1/30) * 100} className="h-2" />
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Variations IA</span>
-                    <span className="font-medium">{user?.aiVariationsUsed || 0}/{currentLimits.variations}</span>
+                    <span className="font-medium">{variationsUsed}/{currentLimits.variations}</span>
                   </div>
                   <Progress value={variationsUsage} className="h-2" />
                 </div>
@@ -432,7 +481,7 @@ export default function SettingsSection() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium text-white">
                     {user?.firstName && user?.lastName 
                       ? `${user.firstName} ${user.lastName}`
                       : user?.email || "Utilisateur"
