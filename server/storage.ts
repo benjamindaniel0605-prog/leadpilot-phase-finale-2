@@ -46,6 +46,7 @@ export interface IStorage {
   createCustomEmail(userId: string, emailData: { name: string; subject: string; content: string; baseTemplateId?: string }): Promise<CustomEmail>;
   updateCustomEmail(id: string, data: { name?: string; subject?: string; content?: string }): Promise<void>;
   deleteCustomEmail(id: string): Promise<void>;
+  generateContentVariation(content: string): Promise<string>;
   
   // Lead operations
   getLeads(userId: string): Promise<Lead[]>;
@@ -197,7 +198,7 @@ export class DatabaseStorage implements IStorage {
     return variations[Math.floor(Math.random() * variations.length)];
   }
 
-  private generateContentVariation(originalContent: string): string {
+  async generateContentVariation(originalContent: string): Promise<string> {
     const variations = [
       originalContent
         .replace(/Bonjour/gi, "Salutations")

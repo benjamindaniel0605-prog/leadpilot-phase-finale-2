@@ -366,6 +366,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register additional routes
   registerEmailVariationRoutes(app);
 
+  // Custom email variation endpoint
+  app.post('/api/custom-emails/generate-variation', isAuthenticated, async (req: any, res) => {
+    try {
+      const { content } = req.body;
+      
+      if (!content || typeof content !== 'string') {
+        return res.status(400).json({ message: "Content is required" });
+      }
+
+      // Utiliser le service de génération de variations existant
+      const variation = await storage.generateContentVariation(content);
+      
+      res.json({ variation });
+    } catch (error) {
+      console.error("Error generating custom email variation:", error);
+      res.status(500).json({ message: "Failed to generate variation" });
+    }
+  });
+
   // Lead generation endpoint
   app.post('/api/leads/generate', isAuthenticated, async (req: any, res) => {
     try {

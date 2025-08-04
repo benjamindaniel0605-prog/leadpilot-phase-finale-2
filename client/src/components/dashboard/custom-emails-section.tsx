@@ -113,9 +113,8 @@ export default function CustomEmailsSection() {
 
   const generateVariationMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/templates/generate-variation", {
-        content: content,
-        type: "custom_email"
+      const response = await apiRequest("POST", "/api/custom-emails/generate-variation", {
+        content: content
       });
       return response.json();
     },
@@ -382,7 +381,7 @@ export default function CustomEmailsSection() {
               ) : (
                 <>
                   <Wand2 className="h-4 w-4 mr-2" />
-                  Variation IA
+                  Variation
                 </>
               )}
             </Button>
