@@ -119,7 +119,7 @@ export default function SequencesSection() {
                     {step.step}
                   </div>
                   <div className="flex-1">
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-card border border-border p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-foreground">{step.title}</h4>
                         {step.step > maxSteps && canUseSequences && (
