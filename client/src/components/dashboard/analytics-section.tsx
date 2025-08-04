@@ -62,6 +62,13 @@ export default function AnalyticsSection() {
   const meetingsBooked = stats?.meetingsBooked || 0;
   const meetingConversionRate = stats?.meetingConversionRate || 0;
 
+  // Debug pour vérifier les données
+  console.log('Analytics Debug:', {
+    leadsGenerated,
+    emailsSent,
+    stats
+  });
+
   // Entonnoir de conversion basé sur les vraies données
   const conversionData = [
     { 
@@ -302,9 +309,12 @@ export default function AnalyticsSection() {
                 <div key={index}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">{item.label}</span>
-                    <span className="font-semibold">{item.value}</span>
+                    <span className="font-semibold text-foreground">{item.value}</span>
                   </div>
                   <Progress value={item.percentage} className="h-2" />
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {item.percentage}% • Debug: {JSON.stringify(item)}
+                  </div>
                 </div>
               ))}
             </div>
