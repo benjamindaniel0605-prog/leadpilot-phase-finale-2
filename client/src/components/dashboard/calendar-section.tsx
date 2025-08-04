@@ -337,8 +337,8 @@ export default function CalendarSection() {
                 </div>
               </div>
 
-              {/* Calendar Link avec restriction de plan */}
-              {['starter', 'pro', 'growth'].includes((user as any)?.plan || 'free') ? (
+              {/* Calendar Link avec restriction de plan (temporairement désactivée pour test) */}
+              {true ? (
                 <div className="p-4 bg-primary/5 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
                     <h4 className="font-medium text-primary">Lien de booking</h4>

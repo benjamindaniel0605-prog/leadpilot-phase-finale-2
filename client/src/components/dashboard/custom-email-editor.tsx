@@ -31,9 +31,9 @@ export default function CustomEmailEditor({ template, isOpen, onClose }: CustomE
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Vérification du plan pour le booking
+  // Vérification du plan pour le booking (temporairement désactivée pour test)
   const userPlan = (user as any)?.plan || "free";
-  const canUseBooking = ['starter', 'pro', 'growth'].includes(userPlan);
+  const canUseBooking = true; // Temporairement activé pour tous les plans
 
   // Fonction pour ajouter le lien de booking
   const handleAddBookingLink = () => {
