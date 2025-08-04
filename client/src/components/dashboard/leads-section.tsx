@@ -341,33 +341,47 @@ export default function LeadsSection() {
                 <div className="space-y-3">
                   <Label htmlFor="count" className="text-sm font-medium">Nombre de leads</Label>
                   <div className="relative">
-                    <input
-                      id="count"
-                      type="number"
-                      min="1"
-                      max={maxLeads.toString()}
-                      step="1"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      value={generationCriteria.count}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        if (inputValue === "") {
-                          setGenerationCriteria(prev => ({ ...prev, count: 1 }));
-                          return;
-                        }
-                        const numValue = parseInt(inputValue);
-                        if (!isNaN(numValue)) {
-                          const clampedValue = Math.max(1, Math.min(numValue, maxLeads));
-                          setGenerationCriteria(prev => ({ ...prev, count: clampedValue }));
-                        }
-                      }}
-                      onBlur={(e) => {
-                        if (!e.target.value || parseInt(e.target.value) < 1) {
-                          setGenerationCriteria(prev => ({ ...prev, count: 1 }));
-                        }
-                      }}
-                      placeholder="Ex: 10"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const newValue = Math.max(1, generationCriteria.count - 1);
+                          setGenerationCriteria(prev => ({ ...prev, count: newValue }));
+                        }}
+                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                      >
+                        -
+                      </button>
+                      <Input
+                        type="text"
+                        className="h-10 text-center"
+                        value={generationCriteria.count.toString()}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          if (value === '') {
+                            setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                          } else {
+                            const numValue = Math.max(1, Math.min(parseInt(value), maxLeads));
+                            setGenerationCriteria(prev => ({ ...prev, count: numValue }));
+                          }
+                        }}
+                        onBlur={() => {
+                          if (generationCriteria.count < 1) {
+                            setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                          }
+                        }}
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const newValue = Math.min(maxLeads, generationCriteria.count + 1);
+                          setGenerationCriteria(prev => ({ ...prev, count: newValue }));
+                        }}
+                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                      >
+                        +
+                      </button>
+                    </div>
                     <div className="text-xs text-muted-foreground mt-1">
                       Limite: {maxLeads} leads disponibles
                     </div>
