@@ -25,7 +25,11 @@ export default function AnalyticsSection() {
     leadsGenerated: number;
     emailsSent: number;
     openRate: number;
+    clickRate: number;
+    responseRate: number;
     meetingsBooked: number;
+    meetingConversionRate: number;
+    avgScore: number;
   }>({
     queryKey: ["/api/analytics/stats", selectedRange],
   });
@@ -49,19 +53,54 @@ export default function AnalyticsSection() {
     );
   }
 
+  // Calculs des métriques réalistes basées sur les vraies données
+  const leadsGenerated = stats?.leadsGenerated || 0;
+  const emailsSent = stats?.emailsSent || 0;
+  const openRate = stats?.openRate || 0;
+  const clickRate = stats?.clickRate || 0;
+  const responseRate = stats?.responseRate || 0;
+  const meetingsBooked = stats?.meetingsBooked || 0;
+  const meetingConversionRate = stats?.meetingConversionRate || 0;
+
+  // Entonnoir de conversion basé sur les vraies données
   const conversionData = [
-    { label: "Leads générés", value: stats?.leadsGenerated || 0, percentage: 100, color: "bg-blue-600" },
-    { label: "Emails envoyés", value: stats?.emailsSent || 0, percentage: 80, color: "bg-emerald-600" },
-    { label: "Emails ouverts", value: Math.round((stats?.emailsSent || 0) * (stats?.openRate || 0) / 100), percentage: stats?.openRate || 0, color: "bg-amber-600" },
-    { label: "Clics", value: Math.round((stats?.emailsSent || 0) * 0.13), percentage: 13, color: "bg-purple-600" },
-    { label: "RDV bookés", value: stats?.meetingsBooked || 0, percentage: 13, color: "bg-rose-600" }
+    { 
+      label: "Leads générés", 
+      value: leadsGenerated, 
+      percentage: leadsGenerated > 0 ? 100 : 0, 
+      color: "bg-blue-600" 
+    },
+    { 
+      label: "Emails envoyés", 
+      value: emailsSent, 
+      percentage: leadsGenerated > 0 ? Math.round((emailsSent / leadsGenerated) * 100) : 0, 
+      color: "bg-emerald-600" 
+    },
+    { 
+      label: "Emails ouverts", 
+      value: Math.round((emailsSent * openRate) / 100), 
+      percentage: openRate, 
+      color: "bg-amber-600" 
+    },
+    { 
+      label: "Clics", 
+      value: Math.round((emailsSent * clickRate) / 100), 
+      percentage: clickRate, 
+      color: "bg-purple-600" 
+    },
+    { 
+      label: "RDV bookés", 
+      value: meetingsBooked, 
+      percentage: meetingConversionRate, 
+      color: "bg-rose-600" 
+    }
   ];
 
   const keyMetrics = [
-    { label: "Taux d'ouverture", value: `${stats?.openRate || 0}%`, color: "bg-blue-50 text-blue-600" },
-    { label: "Taux de clic", value: "13%", color: "bg-emerald-50 text-emerald-600" },
-    { label: "Taux de réponse", value: "7%", color: "bg-purple-50 text-purple-600" },
-    { label: "Conversion RDV", value: "13%", color: "bg-rose-50 text-rose-600" }
+    { label: "Taux d'ouverture", value: `${openRate}%`, color: "bg-blue-50 text-blue-600" },
+    { label: "Taux de clic", value: `${clickRate}%`, color: "bg-emerald-50 text-emerald-600" },
+    { label: "Taux de réponse", value: `${responseRate}%`, color: "bg-purple-50 text-purple-600" },
+    { label: "Conversion RDV", value: `${meetingConversionRate}%`, color: "bg-rose-50 text-rose-600" }
   ];
 
   return (
@@ -326,38 +365,51 @@ export default function AnalyticsSection() {
                   </tr>
                 </thead>
                 <tbody className="bg-card divide-y divide-border">
-                  {templates.slice(0, 5).map((template: any) => (
-                    <tr key={template.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-foreground">{template.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                        {template.timesUsed || 0}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="text-sm font-medium text-foreground mr-2">
-                            {template.openRate || 0}%
-                          </div>
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
-                            <div 
-                              className="bg-emerald-500 h-2 rounded-full" 
-                              style={{ width: `${Math.min(template.openRate || 0, 100)}%` }}
-                            ></div>
-                          </div>
+                  {emailsSent === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center">
+                        <div className="text-muted-foreground">
+                          <Mail className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">Aucune campagne envoyée pour l'instant</p>
+                          <p className="text-xs mt-1">Les statistiques apparaîtront après vos premiers envois</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="text-sm font-medium text-foreground mr-2">13%</div>
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
-                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: "13%" }}></div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">1</td>
                     </tr>
-                  ))}
+                  ) : (
+                    templates.slice(0, 5).map((template: any) => (
+                      <tr key={template.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-foreground">{template.name}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                          0
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="text-sm font-medium text-foreground mr-2">
+                              0%
+                            </div>
+                            <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
+                              <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '0%' }}></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="text-sm font-medium text-foreground mr-2">
+                              0%
+                            </div>
+                            <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
+                              <div className="bg-blue-500 h-2 rounded-full" style={{ width: '0%' }}></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                          0
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

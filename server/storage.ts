@@ -677,6 +677,39 @@ export class DatabaseStorage implements IStorage {
       const leadsThisMonth = leadsResult?.count || 0;
       console.log(`Leads this month for user ${userId}: ${leadsThisMonth}`);
 
+      // Count emails sent (campaigns)
+      const [campaignsResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(campaigns)
+        .where(and(
+          eq(campaigns.userId, userId),
+          sql`${campaigns.createdAt} >= ${currentMonthStart}`
+        ));
+
+      const campaignsThisMonth = campaignsResult?.count || 0;
+
+      // Count bookings this month
+      const [bookingsResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(bookings)
+        .where(and(
+          eq(bookings.userId, userId),
+          sql`${bookings.createdAt} >= ${currentMonthStart}`
+        ));
+
+      const bookingsThisMonth = bookingsResult?.count || 0;
+
+      // Calculate average lead score
+      const [avgScoreResult] = await db
+        .select({ avgScore: sql<number>`coalesce(avg(${leads.aiScore}), 0)::int` })
+        .from(leads)
+        .where(and(
+          eq(leads.userId, userId),
+          sql`${leads.createdAt} >= ${currentMonthStart}`
+        ));
+
+      const avgScore = avgScoreResult?.avgScore || 0;
+
       // Get user plan and calculate remaining leads
       const user = await this.getUser(userId);
       const planLimits = {
@@ -692,14 +725,26 @@ export class DatabaseStorage implements IStorage {
 
       console.log(`User plan: ${userPlan}, monthly limit: ${monthlyLimit}, remaining: ${remainingLeads}`);
 
+      // Calculate realistic metrics based on actual activity
+      // Note: Conversion rates are 0% if no emails were sent
+      const emailsSent = campaignsThisMonth; // Each campaign = emails sent
+      const openRate = emailsSent > 0 ? 0 : 0; // No tracking system implemented yet
+      const clickRate = emailsSent > 0 ? 0 : 0; // No tracking system implemented yet
+      const responseRate = emailsSent > 0 ? 0 : 0; // No tracking system implemented yet
+      const meetingConversionRate = emailsSent > 0 ? Math.round((bookingsThisMonth / emailsSent) * 100) : 0;
+
       return {
         leadsGenerated: leadsThisMonth,
         remainingLeads: remainingLeads,
         userPlan: userPlan,
         monthlyLimit: monthlyLimit,
-        emailsSent: "0", // À implémenter
-        conversionRate: "0%", // À implémenter  
-        avgScore: "0%" // À implémenter
+        emailsSent: emailsSent,
+        openRate: openRate,
+        clickRate: clickRate,
+        responseRate: responseRate,
+        meetingsBooked: bookingsThisMonth,
+        meetingConversionRate: meetingConversionRate,
+        avgScore: avgScore
       };
     } catch (error) {
       console.error('Error getting analytics:', error);
@@ -708,9 +753,13 @@ export class DatabaseStorage implements IStorage {
         remainingLeads: 5,
         userPlan: 'free',
         monthlyLimit: 5,
-        emailsSent: "0",
-        conversionRate: "0%",
-        avgScore: "0%"
+        emailsSent: 0,
+        openRate: 0,
+        clickRate: 0,
+        responseRate: 0,
+        meetingsBooked: 0,
+        meetingConversionRate: 0,
+        avgScore: 0
       };
     }
   }
