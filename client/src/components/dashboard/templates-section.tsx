@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,9 +59,7 @@ export default function TemplatesSection() {
   // Mutation pour utiliser un template
   const useTemplateMutation = useMutation({
     mutationFn: async (templateId: string) => {
-      await apiRequest(`/api/templates/${templateId}/use`, {
-        method: "POST",
-      });
+      await apiRequest(`/api/templates/${templateId}/use`, "POST");
     },
     onSuccess: () => {
       toast({
@@ -82,9 +80,7 @@ export default function TemplatesSection() {
   // Mutation pour générer une variation
   const generateVariationMutation = useMutation({
     mutationFn: async (templateId: string) => {
-      const response = await apiRequest(`/api/templates/${templateId}/variation`, {
-        method: "POST",
-      });
+      const response = await apiRequest(`/api/templates/${templateId}/variation`, "POST");
       return response;
     },
     onSuccess: (variation, templateId) => {
@@ -108,10 +104,7 @@ export default function TemplatesSection() {
   // Mutation pour éditer un template
   const editTemplateMutation = useMutation({
     mutationFn: async ({ id, subject, content }: { id: string; subject: string; content: string }) => {
-      await apiRequest(`/api/templates/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ subject, content }),
-      });
+      await apiRequest(`/api/templates/${id}`, "PATCH", { subject, content });
     },
     onSuccess: () => {
       toast({
@@ -303,7 +296,7 @@ export default function TemplatesSection() {
                   </div>
 
                   {/* Template Variations */}
-                  {!isLocked && template.variables && (
+                  {!isLocked && template.variables && Array.isArray(template.variables) && (
                     <div className="mb-4">
                       <h4 className="text-sm font-medium text-card-foreground mb-2">Variables personnalisables:</h4>
                       <div className="flex flex-wrap gap-2">
@@ -355,6 +348,9 @@ export default function TemplatesSection() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Modifier le Template</DialogTitle>
+            <DialogDescription>
+              Personnalisez l'objet et le contenu de votre template d'email.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
