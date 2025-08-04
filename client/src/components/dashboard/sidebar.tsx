@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useQuery } from "@tanstack/react-query";
 import { 
   BarChart3, 
   Users, 
@@ -22,6 +23,13 @@ interface SidebarProps {
 export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   const { user } = useAuth();
 
+  // Get real-time analytics data
+  const { data: analytics } = useQuery({
+    queryKey: ['/api/analytics/stats'],
+    enabled: !!user,
+    refetchInterval: 10000, // Refresh every 10 seconds
+  });
+
   const navigationItems = [
     { id: "dashboard", label: "Dashboard", icon: BarChart3 },
     { id: "leads", label: "Leads", icon: Users },
@@ -37,12 +45,13 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   const planLimits = {
     free: { leads: 5, templates: 1, variations: 5 },
     starter: { leads: 100, templates: 5, variations: 100 },
-    pro: { leads: 400, templates: 15, variations: 300 },
-    growth: { leads: 1500, templates: 30, variations: 1000 }
+    pro: { leads: 500, templates: 15, variations: 300 },
+    growth: { leads: 2000, templates: 30, variations: 1000 }
   };
 
   const currentLimits = planLimits[user?.plan as keyof typeof planLimits] || planLimits.free;
-  const leadsUsage = (user?.leadsUsed || 0) / currentLimits.leads * 100;
+  const leadsUsed = analytics?.leadsGenerated || 0;
+  const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
 
   return (
     <aside className="w-64 bg-card shadow-lg border-r border-border">
@@ -86,12 +95,12 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
               Plan {user?.plan || 'Free'}
             </span>
             <span className="text-xs bg-primary text-white px-2 py-1 rounded">
-              {user?.leadsUsed || 0}/{currentLimits.leads}
+              {leadsUsed}/{currentLimits.leads}
             </span>
           </div>
           <Progress value={leadsUsage} className="mb-2" />
           <p className="text-xs text-primary/70 mb-3">
-            {user?.leadsUsed || 0} leads utilisés ce mois
+            {leadsUsed} leads utilisés ce mois
           </p>
           <Button 
             size="sm" 
