@@ -37,6 +37,20 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Test external service connections
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    const { testSupabaseConnection } = await import('./supabaseClient');
+    await testSupabaseConnection();
+  }
+  
+  if (process.env.APOLLO_API_KEY) {
+    console.log('🔗 Apollo API key detected - real lead generation enabled');
+  }
+  
+  if (process.env.OPENAI_API_KEY) {
+    console.log('🧠 OpenAI API key detected - advanced AI scoring enabled');
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

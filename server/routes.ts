@@ -7,6 +7,8 @@ import { z } from "zod";
 import { seedDatabase, exampleLeads } from "./seed-data";
 import { getLeadService, AILeadScoringService, type LeadSearchParams } from "./services/leadService";
 import { CSVService } from "./services/csvService";
+import { OpenAILeadScoringService } from "./services/openaiService";
+import { registerEmailVariationRoutes } from "./routes/emailVariations";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -249,6 +251,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Seed templates on startup
   await seedDatabase();
 
+  // Register additional routes
+  registerEmailVariationRoutes(app);
+
   // Lead generation endpoint
   app.post('/api/leads/generate', isAuthenticated, async (req: any, res) => {
     try {
@@ -267,8 +272,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedParams = schema.parse(searchParams);
       
       // Generate leads using external service
+      console.log(`🔍 Generating leads with Apollo API for sector: ${validatedParams.sector}, limit: ${validatedParams.limit}`);
       const leadService = getLeadService();
       const generatedLeads = await leadService.generateLeads(validatedParams);
+      console.log(`📊 Generated ${generatedLeads.length} leads from Apollo API`);
       
       // Calculate AI scores and save to database
       const savedLeads = [];
@@ -276,8 +283,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Enrich lead data
         const enrichedData = await leadService.enrichLead(leadData.email);
         
-        // Calculate AI score
-        const aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
+        // Calculate AI score using OpenAI if available
+        let aiScore: number;
+        let notes = "";
+        
+        if (process.env.OPENAI_API_KEY) {
+          try {
+            const openaiService = new OpenAILeadScoringService();
+            const aiResult = await openaiService.calculateAdvancedLeadScore(leadData, enrichedData || undefined);
+            aiScore = aiResult.score;
+            notes = `IA: ${aiResult.reasoning} | Priorités: ${aiResult.priorities.join(', ')}`;
+          } catch (error) {
+            console.warn("OpenAI scoring failed, using basic scoring:", error);
+            aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
+            notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null;
+          }
+        } else {
+          aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
+          notes = enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null;
+        }
         
         // Save to database
         const lead = await storage.createLead({
@@ -291,7 +315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           aiScore,
           status: 'new',
           source: 'external',
-          notes: enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null
+          notes
         });
         
         savedLeads.push(lead);
@@ -325,14 +349,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const leadData of importResult.successful) {
         // Calculate AI score if not provided
         if (!leadData.aiScore) {
-          leadData.aiScore = AILeadScoringService.calculateLeadScore({
-            firstName: leadData.firstName || "",
-            lastName: leadData.lastName || "",
-            email: leadData.email || "",
-            company: leadData.company || "",
-            sector: leadData.sector || "",
-            position: leadData.position || ""
-          });
+          if (process.env.OPENAI_API_KEY) {
+            try {
+              const openaiService = new OpenAILeadScoringService();
+              const aiResult = await openaiService.calculateAdvancedLeadScore({
+                firstName: leadData.firstName || "",
+                lastName: leadData.lastName || "",
+                email: leadData.email || "",
+                company: leadData.company || "",
+                sector: leadData.sector || "",
+                position: leadData.position || ""
+              });
+              leadData.aiScore = aiResult.score;
+              if (!leadData.notes) {
+                leadData.notes = `IA: ${aiResult.reasoning}`;
+              }
+            } catch (error) {
+              console.warn("OpenAI scoring failed for CSV import, using basic scoring:", error);
+              leadData.aiScore = AILeadScoringService.calculateLeadScore({
+                firstName: leadData.firstName || "",
+                lastName: leadData.lastName || "",
+                email: leadData.email || "",
+                company: leadData.company || "",
+                sector: leadData.sector || "",
+                position: leadData.position || ""
+              });
+            }
+          } else {
+            leadData.aiScore = AILeadScoringService.calculateLeadScore({
+              firstName: leadData.firstName || "",
+              lastName: leadData.lastName || "",
+              email: leadData.email || "",
+              company: leadData.company || "",
+              sector: leadData.sector || "",
+              position: leadData.position || ""
+            });
+          }
         }
         
         const lead = await storage.createLead(leadData);

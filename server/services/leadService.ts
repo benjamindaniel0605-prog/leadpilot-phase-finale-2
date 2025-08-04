@@ -257,9 +257,15 @@ export class ExternalLeadService implements LeadGenerationService {
 
 // Factory to get the appropriate lead service
 export function getLeadService(): LeadGenerationService {
-  // Use external service if API key is available, otherwise use mock
-  if (process.env.LEAD_API_KEY && process.env.LEAD_API_URL) {
-    return new ExternalLeadService();
+  // Use Apollo if API key is available, otherwise use mock
+  if (process.env.APOLLO_API_KEY) {
+    try {
+      const { ApolloLeadService } = require('./apolloService');
+      return new ApolloLeadService();
+    } catch (error) {
+      console.warn("Apollo service not available, falling back to mock:", error);
+      return new MockLeadService();
+    }
   }
   return new MockLeadService();
 }
