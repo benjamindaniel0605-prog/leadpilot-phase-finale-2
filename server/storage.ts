@@ -328,12 +328,13 @@ export class DatabaseStorage implements IStorage {
     const randomTransformation = transformations[Math.floor(Math.random() * transformations.length)];
     const result = randomTransformation(originalContent);
     
-    // Post-traitement pour corriger la ponctuation et les espaces
+    // Post-traitement pour corriger la ponctuation tout en préservant la structure
     return result
-      .replace(/\s+/g, ' ') // Espaces multiples → espace simple
+      .replace(/\n\s+\n/g, '\n\n') // Préserver les sauts de ligne doubles
       .replace(/,\s*,/g, ',') // Virgules doubles
       .replace(/\.\s*\./g, '.') // Points doubles
       .replace(/\s+([,.;!?])/g, '$1') // Espaces avant ponctuation
+      .replace(/([^\n])\s{2,}([^\n])/g, '$1 $2') // Réduire espaces multiples sans affecter structure
       .trim();
   }
 
