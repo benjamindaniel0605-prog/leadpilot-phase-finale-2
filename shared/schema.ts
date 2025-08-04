@@ -34,6 +34,7 @@ export const users = pgTable("users", {
   plan: varchar("plan").notNull().default("free"),
   leadsUsed: integer("leads_used").notNull().default(0),
   aiVariationsUsed: integer("ai_variations_used").notNull().default(0),
+  variationHistory: jsonb("variation_history").default([]),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

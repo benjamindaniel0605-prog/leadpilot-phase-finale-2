@@ -243,7 +243,7 @@ export class DatabaseStorage implements IStorage {
     return variations[Math.floor(Math.random() * variations.length)];
   }
 
-  async generateContentVariation(originalContent: string): Promise<string> {
+  async generateContentVariation(originalContent: string, userId?: string): Promise<string> {
     // Transformations qui préservent la structure française et la cohérence
     const transformations = [
       // Style 1: Professionnel soutenu
@@ -324,18 +324,84 @@ export class DatabaseStorage implements IStorage {
         .replace(/échanger avec vous/gi, "faire votre connaissance")
     ];
     
-    // Sélectionner une transformation aléatoire
-    const randomTransformation = transformations[Math.floor(Math.random() * transformations.length)];
-    const result = randomTransformation(originalContent);
+    // Récupérer l'historique des variations pour éviter les doublons
+    let variationHistory: string[] = [];
+    if (userId) {
+      const user = await this.getUser(userId);
+      variationHistory = (user as any)?.variationHistory || [];
+    }
+
+    let result = originalContent;
+    let attempts = 0;
+    const maxAttempts = 20;
+
+    // Générer une variation unique
+    do {
+      const randomIndex = Math.floor(Math.random() * transformations.length);
+      const transformation = transformations[randomIndex];
+      result = transformation(originalContent);
+      
+      // Ajouter de la randomisation supplémentaire basée sur le timestamp
+      const timeBasedSeed = Date.now() % 8;
+      result = this.addTimeBasedVariations(result, timeBasedSeed);
+      
+      attempts++;
+    } while (variationHistory.includes(result) && attempts < maxAttempts);
+
+    // Préserver EXACTEMENT les sauts de ligne et espaces originaux
+    result = this.preserveExactFormatting(originalContent, result);
     
-    // Post-traitement pour corriger la ponctuation tout en préservant la structure
+    // Stocker dans l'historique si userId fourni
+    if (userId) {
+      const updatedHistory = [...variationHistory, result].slice(-100); // Garder les 100 dernières
+      await db.update(users)
+        .set({ variationHistory: updatedHistory })
+        .where(eq(users.id, userId));
+    }
+    
+    return result;
+  }
+
+  private addTimeBasedVariations(text: string, seed: number): string {
+    // Variations supplémentaires pour garantir l'unicité
+    const additionalVariations = [
+      (t: string) => t.replace(/\bexcellent\b/gi, 'remarquable'),
+      (t: string) => t.replace(/\bparfait\b/gi, 'idéal'),
+      (t: string) => t.replace(/\brapidement\b/gi, 'sans tarder'),
+      (t: string) => t.replace(/\bcontacter\b/gi, 'joindre'),
+      (t: string) => t.replace(/\béchanger\b/gi, 'collaborer'),
+      (t: string) => t.replace(/\brencontrer\b/gi, 'nous voir'),
+      (t: string) => t.replace(/\bproposer\b/gi, 'offrir'),
+      (t: string) => t.replace(/\bprésenter\b/gi, 'exposer'),
+    ];
+
+    const variationIndex = seed % additionalVariations.length;
+    return additionalVariations[variationIndex](text);
+  }
+
+  private preserveExactFormatting(original: string, transformed: string): string {
+    // Conserver EXACTEMENT la structure de l'original
+    const originalLines = original.split('\n');
+    const transformedLines = transformed.split('\n');
+    
+    // Reconstituer en gardant les sauts de ligne originaux
+    let result = '';
+    for (let i = 0; i < originalLines.length; i++) {
+      if (i < transformedLines.length) {
+        result += transformedLines[i];
+      } else {
+        result += originalLines[i]; // Fallback sur l'original
+      }
+      
+      if (i < originalLines.length - 1) {
+        result += '\n'; // Préserver chaque saut de ligne
+      }
+    }
+    
     return result
-      .replace(/\n\s+\n/g, '\n\n') // Préserver les sauts de ligne doubles
       .replace(/,\s*,/g, ',') // Virgules doubles
       .replace(/\.\s*\./g, '.') // Points doubles
-      .replace(/\s+([,.;!?])/g, '$1') // Espaces avant ponctuation
-      .replace(/([^\n])\s{2,}([^\n])/g, '$1 $2') // Réduire espaces multiples sans affecter structure
-      .trim();
+      .replace(/\s+([,.;!?])/g, '$1'); // Espaces avant ponctuation
   }
 
   async deleteCampaign(id: string): Promise<void> {

@@ -454,7 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Générer la variation
-      const variation = await storage.generateContentVariation(content);
+      const variation = await storage.generateContentVariation(content, userId);
       
       // Incrémenter le compteur
       await storage.incrementVariationUsage(userId);
