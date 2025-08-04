@@ -98,3 +98,11 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **Quota Monitoring**: Real-time quota display in sidebar and variation success notifications showing remaining usage
 - **Error Resolution**: Fixed cascading transformation bug that created incoherent French phrases, implemented independent style application directly on original content
 - **Variation Quality Control**: Each of the 6 styles now applies transformations independently to prevent grammatical errors and maintain coherent French text
+
+### Campaign System Enhancement (August 4, 2025)
+- **Email Selection Update**: Changed "Templates Email" label to "Email" and switched dropdown from templates to custom emails
+- **Advanced Lead Targeting**: Implemented checkbox-based lead selection system with individual lead selection capability
+- **Quick Selection Actions**: Added "Tous les leads", "Score > 80%", and "Désélectionner tout" buttons for efficient lead management
+- **Real-time Selection Feedback**: Interface shows count of selected leads with visual badges for lead scores
+- **Database Schema Update**: Modified campaigns table to use emailId (referencing custom emails) and leadTargets (comma-separated lead IDs) instead of templateId
+- **Flexible Campaign Creation**: Users can now select any combination of leads, use quick filters, or manually choose specific prospects for targeted campaigns

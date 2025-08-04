@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +26,7 @@ export default function CampaignsSection() {
   const [campaignForm, setCampaignForm] = useState({
     name: "",
     emailId: "",
-    leadTargets: "qualified",
+    selectedLeads: [] as string[],
     status: "draft"
   });
 
@@ -55,7 +56,7 @@ export default function CampaignsSection() {
         title: "Campagne créée",
         description: "Votre campagne a été créée avec succès.",
       });
-      setCampaignForm({ name: "", emailId: "", leadTargets: "qualified", status: "draft" });
+      setCampaignForm({ name: "", emailId: "", selectedLeads: [], status: "draft" });
     },
     onError: (error) => {
       toast({
@@ -88,16 +89,56 @@ export default function CampaignsSection() {
   });
 
   const handleCreateCampaign = () => {
-    if (!campaignForm.name || !campaignForm.emailId) {
+    if (!campaignForm.name || !campaignForm.emailId || campaignForm.selectedLeads.length === 0) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires.",
+        description: "Veuillez remplir tous les champs et sélectionner au moins un lead.",
         variant: "destructive",
       });
       return;
     }
 
-    createCampaignMutation.mutate(campaignForm);
+    const { selectedLeads, ...formData } = campaignForm;
+    createCampaignMutation.mutate({
+      ...formData,
+      leadTargets: selectedLeads.join(',')
+    });
+  };
+
+  const handleLeadSelection = (leadId: string, checked: boolean) => {
+    if (checked) {
+      setCampaignForm(prev => ({
+        ...prev,
+        selectedLeads: [...prev.selectedLeads, leadId]
+      }));
+    } else {
+      setCampaignForm(prev => ({
+        ...prev,
+        selectedLeads: prev.selectedLeads.filter(id => id !== leadId)
+      }));
+    }
+  };
+
+  const handleSelectAllLeads = () => {
+    setCampaignForm(prev => ({
+      ...prev,
+      selectedLeads: leads.map(lead => lead.id)
+    }));
+  };
+
+  const handleSelectHighScoreLeads = () => {
+    const highScoreLeads = leads.filter(lead => (lead.aiScore || 0) > 80);
+    setCampaignForm(prev => ({
+      ...prev,
+      selectedLeads: highScoreLeads.map(lead => lead.id)
+    }));
+  };
+
+  const handleDeselectAll = () => {
+    setCampaignForm(prev => ({
+      ...prev,
+      selectedLeads: []
+    }));
   };
 
   const getStatusBadge = (status: string) => {
@@ -174,27 +215,68 @@ export default function CampaignsSection() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Leads cibles
+                Leads cibles ({campaignForm.selectedLeads.length} sélectionnés)
               </label>
-              <Select 
-                value={campaignForm.leadTargets} 
-                onValueChange={(value) => setCampaignForm({ ...campaignForm, leadTargets: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les leads</SelectItem>
-                  <SelectItem value="high-score">Score {'>'} 80%</SelectItem>
-                  {leads.map((lead: Lead) => (
-                    <SelectItem key={lead.id} value={`lead-${lead.id}`}>
-                      {lead.firstName} {lead.lastName} - {lead.company}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              
+              {/* Actions rapides */}
+              <div className="flex gap-2 mb-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSelectAllLeads}
+                >
+                  Tous les leads ({leads.length})
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSelectHighScoreLeads}
+                >
+                  Score {'>'} 80% ({leads.filter(lead => (lead.aiScore || 0) > 80).length})
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleDeselectAll}
+                >
+                  Désélectionner tout
+                </Button>
+              </div>
+
+              {/* Liste des leads avec cases à cocher */}
+              <div className="border rounded-lg p-3 max-h-48 overflow-y-auto bg-gray-50">
+                {leads.length === 0 ? (
+                  <p className="text-gray-500 text-sm">Aucun lead disponible</p>
+                ) : (
+                  <div className="space-y-2">
+                    {leads.map((lead: Lead) => (
+                      <div key={lead.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`lead-${lead.id}`}
+                          checked={campaignForm.selectedLeads.includes(lead.id)}
+                          onCheckedChange={(checked) => handleLeadSelection(lead.id, checked as boolean)}
+                        />
+                        <label 
+                          htmlFor={`lead-${lead.id}`}
+                          className="text-sm cursor-pointer flex-1 flex justify-between"
+                        >
+                          <span>{lead.firstName} {lead.lastName} - {lead.company}</span>
+                          {lead.aiScore && (
+                            <Badge variant={lead.aiScore > 80 ? "default" : "secondary"}>
+                              {Math.round(lead.aiScore)}%
+                            </Badge>
+                          )}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
