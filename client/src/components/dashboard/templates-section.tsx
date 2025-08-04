@@ -436,14 +436,14 @@ export default function TemplatesSection() {
 
       {/* Dialog d'édition */}
       <Dialog open={!!editingTemplate} onOpenChange={() => setEditingTemplate(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Modifier le Template</DialogTitle>
             <DialogDescription>
               Personnalisez l'objet et le contenu de votre template d'email.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
             <div>
               <Label htmlFor="subject">Objet de l'email</Label>
               <Input
@@ -453,45 +453,45 @@ export default function TemplatesSection() {
                 placeholder="Objet de votre email..."
               />
             </div>
-            <div>
+            <div className="flex-1">
               <Label htmlFor="content">Contenu de l'email</Label>
               <Textarea
                 id="content"
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
                 placeholder="Contenu de votre email..."
-                rows={15}
-                className="resize-none font-mono text-sm"
+                rows={20}
+                className="resize-none font-mono text-sm min-h-[400px]"
               />
               <div className="text-xs text-muted-foreground mt-2">
                 💡 <strong>Commandes utiles :</strong> [PRENOM], [ENTREPRISE], [POSTE], [SECTEUR]
               </div>
             </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setEditingTemplate(null)}>
-                Annuler
-              </Button>
-              <Button 
-                onClick={handleSaveEdit}
-                disabled={editTemplateMutation.isPending}
-              >
-                {editTemplateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
-              </Button>
-            </div>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setEditingTemplate(null)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleSaveEdit}
+              disabled={editTemplateMutation.isPending}
+            >
+              {editTemplateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Dialog email personnalisé */}
       <Dialog open={showCustomEmailDialog} onOpenChange={setShowCustomEmailDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Créer un Email Personnalisé</DialogTitle>
             <DialogDescription>
               Rédigez votre propre template d'email. Disponible pour tous les plans.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
             <div>
               <Label htmlFor="customSubject">Objet de l'email</Label>
               <Input
@@ -501,7 +501,7 @@ export default function TemplatesSection() {
                 placeholder="Ex: Collaboration avec [ENTREPRISE]"
               />
             </div>
-            <div>
+            <div className="flex-1">
               <Label htmlFor="customContent">Contenu de l'email</Label>
               <Textarea
                 id="customContent"
@@ -513,24 +513,24 @@ J'espère que vous allez bien. Je me permets de vous contacter car...
 
 Cordialement,
 [EXPEDITEUR]`}
-                rows={15}
-                className="resize-none font-mono text-sm"
+                rows={20}
+                className="resize-none font-mono text-sm min-h-[400px]"
               />
               <div className="text-xs text-muted-foreground mt-2">
                 💡 <strong>Variables disponibles :</strong> [PRENOM], [ENTREPRISE], [POSTE], [SECTEUR], [EXPEDITEUR]
               </div>
             </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowCustomEmailDialog(false)}>
-                Annuler
-              </Button>
-              <Button 
-                onClick={() => createCustomEmailMutation.mutate({ subject: customSubject, content: customContent })}
-                disabled={createCustomEmailMutation.isPending || !customSubject.trim() || !customContent.trim()}
-              >
-                {createCustomEmailMutation.isPending ? "Création..." : "Créer l'Email"}
-              </Button>
-            </div>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setShowCustomEmailDialog(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={() => createCustomEmailMutation.mutate({ subject: customSubject, content: customContent })}
+              disabled={createCustomEmailMutation.isPending || !customSubject.trim() || !customContent.trim()}
+            >
+              {createCustomEmailMutation.isPending ? "Création..." : "Créer l'Email"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -149,37 +149,120 @@ export class DatabaseStorage implements IStorage {
       // Utiliser le service OpenAI pour générer une variation complète
       const openaiService = await import('./services/openaiService');
       
-      const prompt = `Génère une variation complète de cet email en français, en gardant exactement la même structure mais en changeant quasiment tout le contenu. Garde le même ton professionnel et le même objectif :
+      const prompt = `Tu es un expert en rédaction d'emails commerciaux en français. Je vais te donner un template d'email et tu dois créer une version complètement différente mais qui respecte exactement la même structure et le même objectif commercial.
 
-Objet original: ${template.subject}
-Contenu original: ${template.content}
+CONSIGNES STRICTES :
+- Change TOUS les mots et phrases possibles
+- Garde exactement la même structure (paragraphes, salutations, etc.)
+- Garde le même objectif commercial et le même ton professionnel
+- Utilise un vocabulaire français varié et naturel
+- Évite les répétitions du template original
+- Garde les variables [PRENOM], [ENTREPRISE], etc. telles quelles
 
-Retourne uniquement un JSON avec "subject" et "content", sans markdown ni explication.`;
+EMAIL ORIGINAL :
+Objet: ${template.subject}
+Contenu: ${template.content}
+
+Réponds UNIQUEMENT avec un JSON valide au format :
+{"subject": "nouveau sujet complètement différent", "content": "nouveau contenu complètement réécrit"}`;
 
       const response = await openaiService.generateText(prompt);
       
       try {
-        const parsed = JSON.parse(response);
-        return {
-          subject: parsed.subject || template.subject,
-          content: parsed.content || template.content
-        };
+        // Nettoyer la réponse si elle contient du markdown
+        const cleanResponse = response.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
+        const parsed = JSON.parse(cleanResponse);
+        
+        if (parsed.subject && parsed.content) {
+          return {
+            subject: parsed.subject,
+            content: parsed.content
+          };
+        } else {
+          throw new Error("Invalid response format");
+        }
       } catch (parseError) {
-        // Fallback si le JSON n'est pas valide
-        console.error("Failed to parse OpenAI response:", parseError);
+        console.error("Failed to parse OpenAI response:", parseError, "Response:", response);
+        // Fallback avec variations substantielles
         return {
-          subject: template.subject.replace("Bonjour", "Salut").replace("Découvrez", "Explorez"),
-          content: template.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous")
+          subject: this.generateSubjectVariation(template.subject),
+          content: this.generateContentVariation(template.content)
         };
       }
     } catch (error) {
       console.error("Error generating AI variation:", error);
-      // Fallback simple si OpenAI échoue
+      // Fallback avec variations substantielles
       return {
-        subject: template.subject + " - Version alternative",
-        content: template.content.replace("Bonjour", "Salut").replace("vous", "tu")
+        subject: this.generateSubjectVariation(template.subject),
+        content: this.generateContentVariation(template.content)
       };
     }
+  }
+
+  private generateSubjectVariation(originalSubject: string): string {
+    const variations = [
+      originalSubject.replace(/Bonjour/gi, "Salutations")
+        .replace(/votre/gi, "votre organisation")
+        .replace(/entreprise/gi, "société")
+        .replace(/découvrez/gi, "explorez")
+        .replace(/opportunité/gi, "possibilité"),
+      
+      originalSubject.replace(/\b(\w+)\b/g, (match) => {
+        const synonyms: { [key: string]: string } = {
+          'bonjour': 'salut',
+          'collaboration': 'partenariat',
+          'découvrir': 'explorer',
+          'opportunité': 'occasion',
+          'solution': 'approche',
+          'développer': 'améliorer',
+          'croissance': 'expansion'
+        };
+        return synonyms[match.toLowerCase()] || match;
+      }),
+      
+      originalSubject + " - Proposition personnalisée"
+    ];
+    
+    return variations[Math.floor(Math.random() * variations.length)];
+  }
+
+  private generateContentVariation(originalContent: string): string {
+    const variations = [
+      originalContent
+        .replace(/Bonjour/gi, "Salutations")
+        .replace(/j'espère que vous allez bien/gi, "j'espère que tout va bien de votre côté")
+        .replace(/je me permets de vous contacter/gi, "je prends la liberté de vous écrire")
+        .replace(/intéressé/gi, "curieux de découvrir")
+        .replace(/solution/gi, "approche innovante")
+        .replace(/entreprise/gi, "organisation")
+        .replace(/développer/gi, "faire évoluer")
+        .replace(/croissance/gi, "expansion")
+        .replace(/Cordialement/gi, "Bien à vous")
+        .replace(/j'aimerais/gi, "je souhaiterais")
+        .replace(/discuter/gi, "échanger"),
+      
+      originalContent
+        .replace(/Bonjour/gi, "Bonsoir")
+        .replace(/vous/gi, "tu")
+        .replace(/votre/gi, "ta")
+        .replace(/Monsieur/gi, "")
+        .replace(/Madame/gi, "")
+        .replace(/société/gi, "entreprise")
+        .replace(/proposer/gi, "présenter")
+        .replace(/rencontrer/gi, "voir")
+        .replace(/Cordialement/gi, "À bientôt"),
+      
+      originalContent
+        .replace(/je me permets/gi, "je prends l'initiative")
+        .replace(/dans le but de/gi, "afin de")
+        .replace(/en effet/gi, "effectivement")
+        .replace(/par ailleurs/gi, "de plus")
+        .replace(/ainsi/gi, "de cette manière")
+        .replace(/notamment/gi, "en particulier")
+        .replace(/actuellement/gi, "présentement")
+    ];
+    
+    return variations[Math.floor(Math.random() * variations.length)];
   }
 
   async deleteCampaign(id: string): Promise<void> {
