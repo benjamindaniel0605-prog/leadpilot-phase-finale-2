@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit3, Trash2, Eye, Copy, Wand2 } from "lucide-react";
+import { Plus, Edit3, Trash2, Eye, Copy, Wand2, RotateCcw } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -31,6 +31,7 @@ export default function CustomEmailsSection() {
   const [editedName, setEditedName] = useState("");
   const [editedSubject, setEditedSubject] = useState("");
   const [editedContent, setEditedContent] = useState("");
+  const [originalContent, setOriginalContent] = useState("");
   const [generatingVariation, setGeneratingVariation] = useState(false);
 
   const { data: customEmails = [], isLoading } = useQuery<CustomEmail[]>({
@@ -98,6 +99,7 @@ export default function CustomEmailsSection() {
     setEditedName(customEmail.name);
     setEditedSubject(customEmail.subject);
     setEditedContent(customEmail.content);
+    setOriginalContent(customEmail.content); // Sauvegarder le contenu original
   };
 
   const handleSaveEdit = () => {
@@ -140,6 +142,14 @@ export default function CustomEmailsSection() {
     if (!editedContent.trim()) return;
     setGeneratingVariation(true);
     generateVariationMutation.mutate(editedContent);
+  };
+
+  const handleResetToOriginal = () => {
+    setEditedContent(originalContent);
+    toast({
+      title: "Contenu restauré",
+      description: "Le contenu original a été restauré.",
+    });
   };
 
   if (isLoading) {
@@ -367,24 +377,36 @@ export default function CustomEmailsSection() {
             </div>
           </div>
           <div className="flex justify-between pt-4 border-t">
-            <Button 
-              variant="outline"
-              onClick={handleGenerateVariation}
-              disabled={generatingVariation || !editedContent.trim()}
-              className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
-            >
-              {generatingVariation ? (
-                <>
-                  <Wand2 className="h-4 w-4 mr-2 animate-spin" />
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="h-4 w-4 mr-2" />
-                  Variation
-                </>
-              )}
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline"
+                onClick={handleGenerateVariation}
+                disabled={generatingVariation || !editedContent.trim()}
+                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+              >
+                {generatingVariation ? (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2 animate-spin" />
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Variation
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                variant="outline"
+                onClick={handleResetToOriginal}
+                disabled={editedContent === originalContent}
+                className="bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Original
+              </Button>
+            </div>
             
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => setEditingEmail(null)}>

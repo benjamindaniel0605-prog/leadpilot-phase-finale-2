@@ -154,30 +154,22 @@ export default function TemplatesSection() {
   // Mutation pour créer un email personnalisé
   const createCustomEmailMutation = useMutation({
     mutationFn: async ({ subject, content }: { subject: string; content: string }) => {
-      const response = await fetch(`/api/templates`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          name: "Email Personnalisé", 
-          subject, 
-          content, 
-          plan: userPlan,
-          category: "personnalise",
-          variables: []
-        }),
+      const response = await apiRequest("POST", "/api/custom-emails", {
+        name: "Email Personnalisé", 
+        subject, 
+        content
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return await response.json();
+      return response.json();
     },
     onSuccess: () => {
       toast({
         title: "Email créé !",
-        description: "Votre email personnalisé a été ajouté",
+        description: "Votre email personnalisé a été ajouté dans 'Mes Emails'",
       });
       setShowCustomEmailDialog(false);
       setCustomSubject("");
       setCustomContent("");
-      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/custom-emails"] });
     },
     onError: () => {
       toast({
