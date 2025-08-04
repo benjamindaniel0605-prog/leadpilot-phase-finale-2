@@ -18,7 +18,7 @@ export default function AnalyticsSection() {
     from: subDays(new Date(), 7),
     to: new Date()
   });
-  const [isSelectingRange, setIsSelectingRange] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [tempDate, setTempDate] = useState<Date | null>(null);
 
   const { data: stats, isLoading: statsLoading } = useQuery<{
@@ -144,13 +144,34 @@ export default function AnalyticsSection() {
                 </div>
 
                 {/* Instructions de sélection manuelle */}
-                <div className="text-sm text-muted-foreground mb-3 p-2 bg-blue-50 rounded">
+                <div className="text-sm text-white mb-3 p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded">
                   📅 <strong>Sélection personnalisée :</strong><br />
                   1. Cliquez sur la date de début<br />
                   2. Cliquez sur la date de fin
                 </div>
 
-                {/* Grille de calendrier simple */}
+                {/* Navigation du mois */}
+                <div className="flex items-center justify-between mb-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+                  >
+                    ←
+                  </Button>
+                  <h3 className="font-medium">
+                    {format(currentMonth, "MMMM yyyy", { locale: fr })}
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}
+                  >
+                    →
+                  </Button>
+                </div>
+
+                {/* Grille de calendrier dynamique */}
                 <div className="grid grid-cols-7 gap-1 text-center text-sm">
                   {/* En-têtes des jours */}
                   {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
@@ -159,52 +180,63 @@ export default function AnalyticsSection() {
                     </div>
                   ))}
                   
-                  {/* Dates du mois actuel - version simple */}
-                  {Array.from({ length: 31 }, (_, i) => {
-                    const date = new Date(2025, 7, i + 1); // Août 2025
-                    const isSelected = selectedRange.from && selectedRange.to && 
-                      date >= selectedRange.from && date <= selectedRange.to;
-                    const isStart = selectedRange.from && 
-                      date.toDateString() === selectedRange.from.toDateString();
-                    const isEnd = selectedRange.to && 
-                      date.toDateString() === selectedRange.to.toDateString();
+                  {/* Dates du mois sélectionné */}
+                  {(() => {
+                    const year = currentMonth.getFullYear();
+                    const month = currentMonth.getMonth();
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    const startDay = (firstDay.getDay() + 6) % 7; // Ajuster pour commencer lundi
                     
-                    return (
-                      <Button
-                        key={i}
-                        variant={isSelected ? "default" : "ghost"}
-                        size="sm"
-                        className={`h-8 w-8 p-0 text-xs ${
-                          isStart || isEnd ? "bg-primary text-primary-foreground" : 
-                          isSelected ? "bg-primary/20" : ""
-                        }`}
-                        onClick={() => {
-                          if (!tempDate) {
-                            // Premier clic - définir le début
-                            setTempDate(date);
-                            setSelectedRange({ from: date, to: null });
-                          } else {
-                            // Deuxième clic - définir la fin
-                            const from = tempDate < date ? tempDate : date;
-                            const to = tempDate < date ? date : tempDate;
-                            setSelectedRange({ from, to });
-                            setTempDate(null);
-                          }
-                        }}
-                      >
-                        {i + 1}
-                      </Button>
-                    );
-                  })}
+                    const cells = [];
+                    
+                    // Cellules vides pour les jours précédents
+                    for (let i = 0; i < startDay; i++) {
+                      cells.push(<div key={`empty-${i}`} className="h-8"></div>);
+                    }
+                    
+                    // Cellules des jours du mois
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      const date = new Date(year, month, day);
+                      const isSelected = selectedRange.from && selectedRange.to && 
+                        date >= selectedRange.from && date <= selectedRange.to;
+                      const isStart = selectedRange.from && 
+                        date.toDateString() === selectedRange.from.toDateString();
+                      const isEnd = selectedRange.to && 
+                        date.toDateString() === selectedRange.to.toDateString();
+                      
+                      cells.push(
+                        <Button
+                          key={day}
+                          variant={isSelected ? "default" : "ghost"}
+                          size="sm"
+                          className={`h-8 w-8 p-0 text-xs ${
+                            isStart || isEnd ? "bg-primary text-primary-foreground" : 
+                            isSelected ? "bg-primary/20" : ""
+                          }`}
+                          onClick={() => {
+                            if (!tempDate) {
+                              // Premier clic - définir le début
+                              setTempDate(date);
+                              setSelectedRange({ from: date, to: null });
+                            } else {
+                              // Deuxième clic - définir la fin
+                              const from = tempDate < date ? tempDate : date;
+                              const to = tempDate < date ? date : tempDate;
+                              setSelectedRange({ from, to });
+                              setTempDate(null);
+                            }
+                          }}
+                        >
+                          {day}
+                        </Button>
+                      );
+                    }
+                    
+                    return cells;
+                  })()}
                 </div>
-
-                {/* Affichage de la sélection actuelle */}
-                {selectedRange.from && selectedRange.to && (
-                  <div className="mt-4 p-2 bg-green-50 rounded text-sm">
-                    <strong>Période sélectionnée :</strong><br />
-                    Du {format(selectedRange.from, "dd MMMM yyyy", { locale: fr })} au {format(selectedRange.to, "dd MMMM yyyy", { locale: fr })}
-                  </div>
-                )}
               </div>
             </PopoverContent>
           </Popover>
@@ -274,21 +306,21 @@ export default function AnalyticsSection() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-purple-600 to-blue-600">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                       Template
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                       Envoyés
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                       Taux d'ouverture
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                       Taux de clic
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                       Réponses
                     </th>
                   </tr>

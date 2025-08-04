@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
 import StatsCards from "@/components/dashboard/stats-cards";
@@ -18,7 +19,18 @@ import ClosingSection from "@/components/dashboard/closing-section";
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  
+  // Récupération des données pour les activités récentes
+  const { data: leads = [] } = useQuery<any[]>({
+    queryKey: ["/api/leads"],
+    enabled: !!user,
+  });
+  
+  const { data: campaigns = [] } = useQuery<any[]>({
+    queryKey: ["/api/campaigns"],
+    enabled: !!user,
+  });
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -56,24 +68,47 @@ export default function Dashboard() {
               <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">Activité Récente</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <span className="text-emerald-600 text-sm">+</span>
+                  {Array.isArray(leads) && leads.length > 0 ? (
+                    <>
+                      {leads.slice(0, 2).map((lead: any, index: number) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                            <span className="text-emerald-600 text-sm">+</span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm text-card-foreground">
+                              Lead ajouté: {lead.firstName} {lead.lastName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {lead.company} - Score: {lead.score}%
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {Array.isArray(campaigns) && campaigns.length > 0 && (
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-blue-600 text-sm">📧</span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm text-card-foreground">
+                              Campagne: {campaigns[0].name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {campaigns[0].leadTargets?.split(',').length || 0} leads ciblés
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-muted-foreground">Aucune activité récente</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Commencez par ajouter des leads !
+                      </p>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-card-foreground">Nouveau lead ajouté</p>
-                      <p className="text-xs text-muted-foreground">Il y a 2 heures</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 text-sm">📧</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-card-foreground">Email envoyé</p>
-                      <p className="text-xs text-muted-foreground">Il y a 4 heures</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
