@@ -23,12 +23,13 @@ export default function CalendarSection() {
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [showNewBookingDialog, setShowNewBookingDialog] = useState(false);
   const [duration, setDuration] = useState("30");
+  const [customDuration, setCustomDuration] = useState("");
   const [availableSlots, setAvailableSlots] = useState({
-    monday: true,
-    tuesday: true,
-    wednesday: true,
-    thursday: true,
-    friday: true
+    monday: { enabled: true, startTime: "09:00", endTime: "17:00" },
+    tuesday: { enabled: true, startTime: "09:00", endTime: "17:00" },
+    wednesday: { enabled: true, startTime: "09:00", endTime: "17:00" },
+    thursday: { enabled: true, startTime: "09:00", endTime: "17:00" },
+    friday: { enabled: true, startTime: "09:00", endTime: "17:00" }
   });
 
   const getStatusBadge = (status: string) => {
@@ -130,9 +131,25 @@ export default function CalendarSection() {
                     <Input id="date" type="date" />
                   </div>
                   <div>
-                    <Label htmlFor="time">Heure</Label>
+                    <Label htmlFor="time">Heure de début</Label>
                     <Input id="time" type="time" />
                   </div>
+                </div>
+                <div>
+                  <Label htmlFor="rdvDuration">Durée du RDV</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir la durée" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="15">15 minutes</SelectItem>
+                      <SelectItem value="30">30 minutes</SelectItem>
+                      <SelectItem value="45">45 minutes</SelectItem>
+                      <SelectItem value="60">1 heure</SelectItem>
+                      <SelectItem value="90">1h30</SelectItem>
+                      <SelectItem value="120">2 heures</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="meetingType">Type de meeting</Label>
@@ -171,16 +188,33 @@ export default function CalendarSection() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="15">15 minutes</SelectItem>
                       <SelectItem value="30">30 minutes</SelectItem>
                       <SelectItem value="45">45 minutes</SelectItem>
                       <SelectItem value="60">60 minutes</SelectItem>
                       <SelectItem value="90">90 minutes</SelectItem>
+                      <SelectItem value="120">2 heures</SelectItem>
+                      <SelectItem value="custom">Durée personnalisée</SelectItem>
                     </SelectContent>
                   </Select>
+                  {duration === "custom" && (
+                    <div className="mt-2">
+                      <Label htmlFor="customDuration">Durée en minutes</Label>
+                      <Input
+                        id="customDuration"
+                        type="number"
+                        placeholder="Ex: 75"
+                        value={customDuration}
+                        onChange={(e) => setCustomDuration(e.target.value)}
+                        min="5"
+                        max="480"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <Label>Jours disponibles</Label>
-                  <div className="space-y-2 mt-2">
+                  <Label>Jours et horaires disponibles</Label>
+                  <div className="space-y-3 mt-2">
                     {[
                       { key: 'monday', label: 'Lundi' },
                       { key: 'tuesday', label: 'Mardi' },
@@ -188,19 +222,52 @@ export default function CalendarSection() {
                       { key: 'thursday', label: 'Jeudi' },
                       { key: 'friday', label: 'Vendredi' }
                     ].map(day => (
-                      <label key={day.key} className="flex items-center space-x-2">
-                        <input 
-                          type="checkbox" 
-                          checked={availableSlots[day.key as keyof typeof availableSlots]}
-                          onChange={(e) => setAvailableSlots(prev => ({
-                            ...prev,
-                            [day.key]: e.target.checked
-                          }))}
-                          className="rounded"
-                        />
-                        <span className="text-sm text-foreground">{day.label} 9h-17h</span>
-                      </label>
+                      <div key={day.key} className="border rounded-lg p-3 space-y-2">
+                        <label className="flex items-center space-x-2">
+                          <input 
+                            type="checkbox" 
+                            checked={availableSlots[day.key as keyof typeof availableSlots].enabled}
+                            onChange={(e) => setAvailableSlots(prev => ({
+                              ...prev,
+                              [day.key]: { ...prev[day.key as keyof typeof prev], enabled: e.target.checked }
+                            }))}
+                            className="rounded"
+                          />
+                          <span className="text-sm font-medium text-foreground">{day.label}</span>
+                        </label>
+                        {availableSlots[day.key as keyof typeof availableSlots].enabled && (
+                          <div className="grid grid-cols-2 gap-2 ml-6">
+                            <div>
+                              <Label className="text-xs">De</Label>
+                              <Input
+                                type="time"
+                                value={availableSlots[day.key as keyof typeof availableSlots].startTime}
+                                onChange={(e) => setAvailableSlots(prev => ({
+                                  ...prev,
+                                  [day.key]: { ...prev[day.key as keyof typeof prev], startTime: e.target.value }
+                                }))}
+                                className="text-xs"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">À</Label>
+                              <Input
+                                type="time"
+                                value={availableSlots[day.key as keyof typeof availableSlots].endTime}
+                                onChange={(e) => setAvailableSlots(prev => ({
+                                  ...prev,
+                                  [day.key]: { ...prev[day.key as keyof typeof prev], endTime: e.target.value }
+                                }))}
+                                className="text-xs"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
+                  </div>
+                  <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-700">
+                    💡 Vous pouvez définir des horaires personnalisés pour chaque jour (ex: 7h-19h)
                   </div>
                 </div>
                 <Button 
@@ -228,7 +295,7 @@ export default function CalendarSection() {
                   Durée des RDV configurée
                 </label>
                 <div className="text-sm text-muted-foreground bg-muted p-2 rounded">
-                  {duration} minutes par défaut
+                  {duration === "custom" && customDuration ? `${customDuration} minutes` : `${duration} minutes`} par défaut
                 </div>
               </div>
               
@@ -237,7 +304,7 @@ export default function CalendarSection() {
                   Créneaux disponibles
                 </label>
                 <div className="space-y-1">
-                  {Object.entries(availableSlots).map(([key, enabled]) => {
+                  {Object.entries(availableSlots).map(([key, slot]) => {
                     const dayNames = {
                       monday: 'Lundi',
                       tuesday: 'Mardi', 
@@ -246,8 +313,8 @@ export default function CalendarSection() {
                       friday: 'Vendredi'
                     };
                     return (
-                      <div key={key} className={`text-sm p-1 rounded ${enabled ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                        {enabled ? '✓' : '✗'} {dayNames[key as keyof typeof dayNames]} 9h-17h
+                      <div key={key} className={`text-sm p-1 rounded ${slot.enabled ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                        {slot.enabled ? '✓' : '✗'} {dayNames[key as keyof typeof dayNames]} {slot.enabled ? `${slot.startTime}-${slot.endTime}` : 'Indisponible'}
                       </div>
                     );
                   })}
