@@ -114,9 +114,9 @@ export default function SettingsSection() {
 
   const planLimits = {
     free: { leads: 5, templates: 1, variations: 5 },
-    starter: { leads: 100, templates: 5, variations: 15 },
-    pro: { leads: 500, templates: 15, variations: 50 },
-    growth: { leads: 1500, templates: 30, variations: 150 }
+    starter: { leads: 100, templates: 5, variations: 100 },
+    pro: { leads: 400, templates: 15, variations: 300 },
+    growth: { leads: 1500, templates: 30, variations: 1000 }
   };
 
   const userPlan = user?.plan || "free";
@@ -124,7 +124,7 @@ export default function SettingsSection() {
   
   // Use real analytics data instead of user properties
   const leadsUsed = (analytics as any)?.leadsGenerated || 0;
-  const variationsUsed = (user as any)?.aiVariationsUsed || 0; // Use user data for variations
+  const variationsUsed = (user as any)?.aiVariationsUsed || 0; // Use user data for variations (should be 3)
   const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
   const variationsUsage = (variationsUsed / currentLimits.variations) * 100;
 

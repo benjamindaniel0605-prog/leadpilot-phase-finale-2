@@ -165,10 +165,10 @@ export class DatabaseStorage implements IStorage {
 
     // Quotas par plan
     const variationLimits = {
-      free: 3,
-      starter: 15,
-      pro: 50,
-      growth: 150
+      free: 5,
+      starter: 100,
+      pro: 300,
+      growth: 1000
     };
 
     const monthlyLimit = variationLimits[user.plan as keyof typeof variationLimits] || 3;

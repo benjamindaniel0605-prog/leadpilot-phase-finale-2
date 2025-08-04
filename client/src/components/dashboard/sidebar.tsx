@@ -45,9 +45,9 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
 
   const planLimits = {
     free: { leads: 5, templates: 1, variations: 5 },
-    starter: { leads: 100, templates: 5, variations: 15 },
-    pro: { leads: 500, templates: 15, variations: 50 },
-    growth: { leads: 1500, templates: 30, variations: 150 }
+    starter: { leads: 100, templates: 5, variations: 100 },
+    pro: { leads: 400, templates: 15, variations: 300 },
+    growth: { leads: 1500, templates: 30, variations: 1000 }
   };
 
   const currentLimits = planLimits[user?.plan as keyof typeof planLimits] || planLimits.free;
