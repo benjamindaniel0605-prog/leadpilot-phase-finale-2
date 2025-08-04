@@ -21,7 +21,7 @@ import {
   type InsertBooking,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, count, sql } from "drizzle-orm";
+import { eq, and, desc, count, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
@@ -118,7 +118,7 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(templates)
-      .where(sql`${templates.plan} = ANY(${allowedPlans})`)
+      .where(inArray(templates.plan, allowedPlans))
       .orderBy(templates.createdAt);
   }
 
