@@ -65,8 +65,8 @@ export default function CalendarSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Calendrier de Booking</h2>
-          <p className="text-gray-600">Gérez vos créneaux et RDV prospects</p>
+          <h2 className="text-2xl font-bold text-foreground">Calendrier de Booking</h2>
+          <p className="text-muted-foreground">Gérez vos créneaux et RDV prospects</p>
         </div>
         <Button>
           <Settings className="h-4 w-4 mr-2" />
@@ -146,8 +146,8 @@ export default function CalendarSection() {
               {bookings.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">Aucun RDV programmé pour le moment.</p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-muted-foreground mb-4">Aucun RDV programmé pour le moment.</p>
+                  <p className="text-sm text-muted-foreground">
                     Partagez votre lien de booking pour recevoir des demandes de RDV.
                   </p>
                 </div>

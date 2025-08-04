@@ -288,7 +288,7 @@ export default function TemplatesSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-card-foreground">Templates d'Emails</h2>
+          <h2 className="text-2xl font-bold text-foreground">Templates d'Emails</h2>
           <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
         <div className="flex space-x-2">

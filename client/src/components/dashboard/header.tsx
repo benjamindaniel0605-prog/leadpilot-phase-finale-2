@@ -43,7 +43,7 @@ export default function Header({ activeSection }: HeaderProps) {
     <header className="bg-card border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-card-foreground">{currentSection.title}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{currentSection.title}</h1>
           <p className="text-muted-foreground">{currentSection.subtitle}</p>
         </div>
         <div className="flex items-center space-x-4">
@@ -59,7 +59,7 @@ export default function Header({ activeSection }: HeaderProps) {
               </AvatarFallback>
             </Avatar>
             <div className="hidden sm:block">
-              <span className="text-card-foreground font-medium">
+              <span className="text-foreground font-medium">
                 {(user as any)?.firstName && (user as any)?.lastName 
                   ? `${(user as any).firstName} ${(user as any).lastName}`
                   : (user as any)?.email || "Utilisateur"
@@ -67,7 +67,7 @@ export default function Header({ activeSection }: HeaderProps) {
               </span>
               <button 
                 onClick={handleLogout}
-                className="block text-sm text-muted-foreground hover:text-card-foreground"
+                className="block text-sm text-muted-foreground hover:text-foreground"
               >
                 Se déconnecter
               </button>

@@ -54,8 +54,8 @@ export default function AnalyticsSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Statistiques & Analytics</h2>
-          <p className="text-gray-600">Analysez vos performances de prospection</p>
+          <h2 className="text-2xl font-bold text-foreground">Statistiques & Analytics</h2>
+          <p className="text-muted-foreground">Analysez vos performances de prospection</p>
         </div>
         <div className="flex space-x-3">
           <Select defaultValue="7days">
@@ -135,35 +135,35 @@ export default function AnalyticsSection() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Template
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Envoyés
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Taux d'ouverture
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Taux de clic
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Réponses
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-card divide-y divide-border">
                   {templates.slice(0, 5).map((template: any) => (
                     <tr key={template.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{template.name}</div>
+                        <div className="text-sm font-medium text-foreground">{template.name}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {template.timesUsed || 0}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900 mr-2">
+                          <div className="text-sm font-medium text-foreground mr-2">
                             {template.openRate || 0}%
                           </div>
                           <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
@@ -176,13 +176,13 @@ export default function AnalyticsSection() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900 mr-2">13%</div>
+                          <div className="text-sm font-medium text-foreground mr-2">13%</div>
                           <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
                             <div className="bg-blue-500 h-2 rounded-full" style={{ width: "13%" }}></div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">1</td>
                     </tr>
                   ))}
                 </tbody>

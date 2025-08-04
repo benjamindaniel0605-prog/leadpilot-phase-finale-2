@@ -52,8 +52,8 @@ export default function SequencesSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Séquences Multi-étapes</h2>
-          <p className="text-gray-600">Automatisez vos follow-ups avec des séquences intelligentes</p>
+          <h2 className="text-2xl font-bold text-foreground">Séquences Multi-étapes</h2>
+          <p className="text-muted-foreground">Automatisez vos follow-ups avec des séquences intelligentes</p>
         </div>
         <Button disabled={!canUseSequences} className="relative">
           {!canUseSequences && <Lock className="h-4 w-4 mr-2" />}
@@ -120,7 +120,7 @@ export default function SequencesSection() {
                   <div className="flex-1">
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-900">{step.title}</h4>
+                        <h4 className="font-medium text-foreground">{step.title}</h4>
                         {step.step > maxSteps && canUseSequences && (
                           <Badge variant="secondary">
                             <Lock className="h-3 w-3 mr-1" />
@@ -128,8 +128,8 @@ export default function SequencesSection() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">Template: {step.template}</p>
-                      <p className="text-xs text-gray-500">Envoi: {step.timing}</p>
+                      <p className="text-sm text-muted-foreground mb-2">Template: {step.template}</p>
+                      <p className="text-xs text-muted-foreground">Envoi: {step.timing}</p>
                     </div>
                   </div>
                 </div>
@@ -149,8 +149,8 @@ export default function SequencesSection() {
             <div className="mt-8 pt-6 border-t">
               <div className="flex justify-between items-center">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">Paramètres Avancés</h4>
-                  <p className="text-sm text-gray-600">
+                  <h4 className="font-medium text-foreground mb-1">Paramètres Avancés</h4>
+                  <p className="text-sm text-muted-foreground">
                     Personnalisez les délais, conditions d'arrêt et A/B testing
                   </p>
                 </div>
