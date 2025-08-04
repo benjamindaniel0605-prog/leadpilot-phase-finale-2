@@ -31,7 +31,7 @@ export default function AnalyticsSection() {
     meetingConversionRate: number;
     avgScore: number;
   }>({
-    queryKey: ["/api/analytics/stats", selectedRange],
+    queryKey: ["/api/analytics/stats"],
   });
 
   const { data: templates = [] } = useQuery<Template[]>({
@@ -62,12 +62,7 @@ export default function AnalyticsSection() {
   const meetingsBooked = stats?.meetingsBooked || 0;
   const meetingConversionRate = stats?.meetingConversionRate || 0;
 
-  // Debug pour vérifier les données
-  console.log('Analytics Debug:', {
-    leadsGenerated,
-    emailsSent,
-    stats
-  });
+
 
   // Entonnoir de conversion basé sur les vraies données
   const conversionData = [
@@ -312,9 +307,6 @@ export default function AnalyticsSection() {
                     <span className="font-semibold text-foreground">{item.value}</span>
                   </div>
                   <Progress value={item.percentage} className="h-2" />
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {item.percentage}% • Debug: {JSON.stringify(item)}
-                  </div>
                 </div>
               ))}
             </div>
