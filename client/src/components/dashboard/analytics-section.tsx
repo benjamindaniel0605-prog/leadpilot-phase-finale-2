@@ -64,18 +64,23 @@ export default function AnalyticsSection() {
 
 
 
-  // Entonnoir de conversion basé sur les vraies données
+  // Calcul des pourcentages réalistes pour l'entonnoir
+  const maxLeads = stats?.monthlyLimit || 5; // Quota maximum pour le plan
+  const leadsPercentage = Math.round((leadsGenerated / maxLeads) * 100);
+  const emailsPercentage = leadsGenerated > 0 ? Math.round((emailsSent / leadsGenerated) * 100) : 0;
+  
+  // Entonnoir de conversion basé sur les vraies données et quotas
   const conversionData = [
     { 
       label: "Leads générés", 
       value: leadsGenerated, 
-      percentage: leadsGenerated > 0 ? 100 : 0, 
+      percentage: leadsPercentage, 
       color: "bg-blue-600" 
     },
     { 
       label: "Emails envoyés", 
       value: emailsSent, 
-      percentage: leadsGenerated > 0 ? Math.round((emailsSent / leadsGenerated) * 100) : 0, 
+      percentage: emailsPercentage, 
       color: "bg-emerald-600" 
     },
     { 
