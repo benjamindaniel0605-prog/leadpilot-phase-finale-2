@@ -397,15 +397,7 @@ export default function TemplatesSection() {
                             <Wand2 className="h-4 w-4 mr-1" />
                             Choisir Template
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => deleteTemplateMutation.mutate(template.id)}
-                            title="Supprimer ce template"
-                            disabled={deleteTemplateMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+
                         </div>
                       </>
                     ) : (

@@ -244,85 +244,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async generateContentVariation(originalContent: string, userId?: string): Promise<string> {
-    // Transformations complètes qui affectent tout le contenu
+    // 6 styles sophistiqués avec transformations complètes
     const transformations = [
-      // Style 1: Professionnel très soutenu
-      (text: string) => text
-        .replace(/Bonjour\s*[^,\n]*/gi, "Madame, Monsieur")
-        .replace(/Salut\s*[^,\n]*/gi, "Madame, Monsieur")
-        .replace(/Hello\s*[^,\n]*/gi, "Madame, Monsieur")
-        .replace(/j'espère que[^.]*\./gi, "j'ai l'espoir que cette correspondance vous trouve en excellente santé.")
-        .replace(/je (vous )?écris|je (vous )?contacte|je prends contact/gi, "j'ai l'honneur de solliciter votre attention")
-        .replace(/\bje\b/gi, "je me permets de")
-        .replace(/\bvous\b/gi, "votre personne")
-        .replace(/\bnotre\b/gi, "notre respectueuse")
-        .replace(/\bvotre\b/gi, "votre estimée")
-        .replace(/\bune\b/gi, "une remarquable")
-        .replace(/\bdes\b/gi, "d'excellentes")
-        .replace(/\bsolution\b/gi, "méthodologie d'excellence")
-        .replace(/\bentreprise\b/gi, "noble organisation")
-        .replace(/\bdévelopper\b/gi, "optimiser avec distinction")
-        .replace(/\baméliorer\b/gi, "perfectionner")
-        .replace(/Cordialement[^.]*\.?/gi, "Veuillez agréer, Madame, Monsieur, l'expression de mes salutations les plus distinguées.")
-        .replace(/À bientôt[^.]*\.?/gi, "Dans l'attente respectueuse de votre retour.")
-        .replace(/Merci[^.]*\.?/gi, "Je vous exprime ma plus vive gratitude."),
-
-      // Style 2: Moderne et décontracté
-      (text: string) => text
-        .replace(/Madame, Monsieur/gi, "Bonjour")
-        .replace(/j'ai l'espoir que[^.]*\./gi, "j'espère que tout va bien !")
-        .replace(/j'ai l'honneur de solliciter/gi, "je vous contacte")
-        .replace(/je me permets de/gi, "je")
-        .replace(/votre personne/gi, "vous")
-        .replace(/notre respectueuse/gi, "notre")
-        .replace(/votre estimée/gi, "votre")
-        .replace(/une remarquable/gi, "une super")
-        .replace(/d'excellentes/gi, "de bonnes")
-        .replace(/méthodologie d'excellence/gi, "solution efficace")
-        .replace(/noble organisation/gi, "boîte")
-        .replace(/optimiser avec distinction/gi, "booster")
-        .replace(/perfectionner/gi, "améliorer")
-        .replace(/Veuillez agréer[^.]*\./gi, "À très bientôt !")
-        .replace(/Dans l'attente respectueuse/gi, "J'ai hâte")
-        .replace(/Je vous exprime ma plus vive gratitude/gi, "Merci beaucoup"),
-
-      // Style 3: Commercial persuasif
-      (text: string) => text
-        .replace(/Bonjour/gi, "Excellente journée")
-        .replace(/j'espère que tout va bien[^.]*\./gi, "j'espère que vos affaires prospèrent magnifiquement.")
-        .replace(/je vous contacte/gi, "je me tourne vers vous avec enthousiasme")
-        .replace(/\bje\b/gi, "j'ai le plaisir de")
-        .replace(/\bvous\b/gi, "votre dynamique personne")
-        .replace(/\bnotre\b/gi, "notre innovante")
-        .replace(/\bvotre\b/gi, "votre florissante")
-        .replace(/une super/gi, "une exceptionnelle")
-        .replace(/de bonnes/gi, "de formidables")
-        .replace(/solution efficace/gi, "opportunité en or")
-        .replace(/boîte/gi, "entreprise leader")
-        .replace(/booster/gi, "propulser vers le succès")
-        .replace(/améliorer/gi, "révolutionner")
-        .replace(/À très bientôt/gi, "Impatient de collaborer")
-        .replace(/J'ai hâte/gi, "Dans l'attente de notre partenariat")
-        .replace(/Merci beaucoup/gi, "Toute ma reconnaissance"),
-
-      // Style 4: Chaleureux et humain
-      (text: string) => text
-        .replace(/Excellente journée/gi, "Belle journée à vous")
-        .replace(/j'espère que vos affaires[^.]*\./gi, "j'espère sincèrement que vous vous portez à merveille.")
-        .replace(/je me tourne vers vous avec enthousiasme/gi, "je prends un moment pour vous écrire")
-        .replace(/j'ai le plaisir de/gi, "j'ai la joie de")
-        .replace(/votre dynamique personne/gi, "vous")
-        .replace(/notre innovante/gi, "notre")
-        .replace(/votre florissante/gi, "votre")
-        .replace(/une exceptionnelle/gi, "une belle")
-        .replace(/de formidables/gi, "de chouettes")
-        .replace(/opportunité en or/gi, "collaboration")
-        .replace(/entreprise leader/gi, "société")
-        .replace(/propulser vers le succès/gi, "accompagner")
-        .replace(/révolutionner/gi, "enrichir")
-        .replace(/Impatient de collaborer/gi, "Bien amicalement")
-        .replace(/Dans l'attente de notre partenariat/gi, "Au plaisir d'échanger")
-        .replace(/Toute ma reconnaissance/gi, "Merci du cœur")
+      (text: string) => this.applyProtocolStyle(text),      // Protocolaire
+      (text: string) => this.applyModernStyle(text),        // Moderne
+      (text: string) => this.applyCommercialStyle(text),    // Commercial
+      (text: string) => this.applyWarmStyle(text),          // Chaleureux
+      (text: string) => this.applyTechnicalStyle(text),     // Technique
+      (text: string) => this.applyCreativeStyle(text)       // Créatif
     ];
     
     // Récupérer l'historique des variations pour éviter les doublons
@@ -418,6 +347,108 @@ export class DatabaseStorage implements IStorage {
 
     const variationIndex = seed % additionalVariations.length;
     return additionalVariations[variationIndex](text);
+  }
+
+  private applyProtocolStyle(text: string): string {
+    return text
+      .replace(/Bonjour\s*[^,\n]*/gi, "Madame, Monsieur")
+      .replace(/j'espère que[^.]*\./gi, "j'ai l'honneur de vous présenter mes respects.")
+      .replace(/je (vous )?écris|je (vous )?contacte|je prends contact/gi, "j'ai l'honneur de solliciter votre bienveillante attention")
+      .replace(/\bje\b/gi, "je me permets de")
+      .replace(/\bvous\b/gi, "votre éminente personne")
+      .replace(/\bnotre\b/gi, "notre distinguée")
+      .replace(/\bvotre\b/gi, "votre honorable")
+      .replace(/\bsolution\b/gi, "méthodologie de référence")
+      .replace(/\bentreprise\b/gi, "organisation de renom")
+      .replace(/\baméliorer\b/gi, "perfectionner avec excellence")
+      .replace(/Cordialement[^.]*\.?/gi, "Veuillez agréer, Madame, Monsieur, l'assurance de ma haute considération.")
+      .replace(/À bientôt[^.]*\.?/gi, "Dans l'attente respectueuse de votre retour.")
+      .replace(/\bdiscuter\b/gi, "avoir l'honneur de vous entretenir")
+      .replace(/\brencontrer\b/gi, "solliciter une audience");
+  }
+
+  private applyModernStyle(text: string): string {
+    return text
+      .replace(/Madame, Monsieur/gi, "Hello")
+      .replace(/j'ai l'honneur de[^.]*\./gi, "j'espère que tout va bien de votre côté !")
+      .replace(/j'ai l'honneur de solliciter/gi, "je vous contacte")
+      .replace(/je me permets de/gi, "je")
+      .replace(/votre éminente personne/gi, "vous")
+      .replace(/notre distinguée/gi, "notre")
+      .replace(/votre honorable/gi, "votre")
+      .replace(/méthodologie de référence/gi, "solution innovante")
+      .replace(/organisation de renom/gi, "startup")
+      .replace(/perfectionner avec excellence/gi, "optimiser")
+      .replace(/Veuillez agréer[^.]*\./gi, "See you soon !")
+      .replace(/Dans l'attente respectueuse/gi, "Hâte")
+      .replace(/avoir l'honneur de vous entretenir/gi, "échanger")
+      .replace(/solliciter une audience/gi, "vous voir");
+  }
+
+  private applyCommercialStyle(text: string): string {
+    return text
+      .replace(/Hello/gi, "Excellente journée")
+      .replace(/j'espère que tout va bien[^.]*\./gi, "j'espère que vos projets connaissent un succès retentissant.")
+      .replace(/je vous contacte/gi, "je me tourne vers vous avec un projet ambitieux")
+      .replace(/\bje\b/gi, "j'ai le privilège de")
+      .replace(/\bvous\b/gi, "votre équipe performante")
+      .replace(/\bnotre\b/gi, "notre révolutionnaire")
+      .replace(/\bvotre\b/gi, "votre prospère")
+      .replace(/solution innovante/gi, "opportunité exceptionnelle")
+      .replace(/startup/gi, "leader du marché")
+      .replace(/optimiser/gi, "transformer radicalement")
+      .replace(/See you soon/gi, "Ensemble vers le succès")
+      .replace(/Hâte/gi, "Impatient de concrétiser")
+      .replace(/échanger/gi, "explorer cette synergie")
+      .replace(/vous voir/gi, "sceller ce partenariat");
+  }
+
+  private applyWarmStyle(text: string): string {
+    return text
+      .replace(/Excellente journée/gi, "Belle journée à vous")
+      .replace(/j'espère que vos projets[^.]*\./gi, "j'espère de tout cœur que vous vous portez à merveille.")
+      .replace(/je me tourne vers vous avec un projet ambitieux/gi, "je prends quelques minutes pour vous écrire")
+      .replace(/j'ai le privilège de/gi, "j'ai la joie de")
+      .replace(/votre équipe performante/gi, "vous")
+      .replace(/notre révolutionnaire/gi, "notre")
+      .replace(/votre prospère/gi, "votre")
+      .replace(/opportunité exceptionnelle/gi, "belle collaboration")
+      .replace(/leader du marché/gi, "société humaine")
+      .replace(/transformer radicalement/gi, "accompagner avec bienveillance")
+      .replace(/Ensemble vers le succès/gi, "Très chaleureusement")
+      .replace(/Impatient de concrétiser/gi, "Au plaisir sincère")
+      .replace(/explorer cette synergie/gi, "avoir une vraie conversation")
+      .replace(/sceller ce partenariat/gi, "faire votre connaissance");
+  }
+
+  private applyTechnicalStyle(text: string): string {
+    return text
+      .replace(/Belle journée à vous/gi, "Bonjour")
+      .replace(/j'espère de tout cœur[^.]*\./gi, "j'espère que vos développements avancent selon vos spécifications.")
+      .replace(/je prends quelques minutes pour vous écrire/gi, "je vous contacte concernant une implémentation")
+      .replace(/j'ai la joie de/gi, "je souhaite")
+      .replace(/belle collaboration/gi, "intégration technique")
+      .replace(/société humaine/gi, "infrastructure")
+      .replace(/accompagner avec bienveillance/gi, "optimiser les performances")
+      .replace(/Très chaleureusement/gi, "Cordialement")
+      .replace(/Au plaisir sincère/gi, "En attente de validation")
+      .replace(/avoir une vraie conversation/gi, "analyser les requirements")
+      .replace(/faire votre connaissance/gi, "planifier la roadmap");
+  }
+
+  private applyCreativeStyle(text: string): string {
+    return text
+      .replace(/Bonjour/gi, "Inspiration du jour")
+      .replace(/j'espère que vos développements[^.]*\./gi, "j'espère que vos créations illuminent votre quotidien.")
+      .replace(/je vous contacte concernant une implémentation/gi, "je vous écris avec une idée qui me passionne")
+      .replace(/je souhaite/gi, "j'ai l'inspiration de")
+      .replace(/intégration technique/gi, "création sur-mesure")
+      .replace(/infrastructure/gi, "univers créatif")
+      .replace(/optimiser les performances/gi, "donner vie à vos idées")
+      .replace(/Cordialement/gi, "Créativement vôtre")
+      .replace(/En attente de validation/gi, "Dans l'effervescence créative")
+      .replace(/analyser les requirements/gi, "co-créer ensemble")
+      .replace(/planifier la roadmap/gi, "imaginer l'impossible");
   }
 
   private preserveExactFormatting(original: string, transformed: string): string {
