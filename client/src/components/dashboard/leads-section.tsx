@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Upload, Plus, Search, Mail, Edit, Trash2 } from "lucide-react";
+import { Upload, Plus, Search, Mail, Edit, Trash2, Download } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Lead } from "@shared/schema";
@@ -45,6 +45,112 @@ export default function LeadsSection() {
       });
     },
   });
+
+  // Lead generation mutation
+  const generateLeadsMutation = useMutation({
+    mutationFn: async (params: any) => {
+      return await apiRequest("POST", "/api/leads/generate", params);
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/stats"] });
+      toast({
+        title: "Leads générés !",
+        description: `${data.message}`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer les leads.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // CSV Import mutation
+  const importCSVMutation = useMutation({
+    mutationFn: async (csvContent: string) => {
+      return await apiRequest("POST", "/api/leads/import-csv", { csvContent });
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/stats"] });
+      toast({
+        title: "Import réussi !",
+        description: `${data.message}`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'importer le fichier CSV.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Handlers
+  const handleGenerateLeads = () => {
+    const params = {
+      sector: "Tech/SaaS",
+      location: "France", 
+      limit: 10
+    };
+    generateLeadsMutation.mutate(params);
+  };
+
+  const handleImportCSV = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const csvContent = e.target?.result as string;
+          importCSVMutation.mutate(csvContent);
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      const response = await fetch('/api/leads/export-csv', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'leads-export.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Export réussi !",
+        description: "Le fichier CSV a été téléchargé.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'exporter les leads.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -101,13 +207,17 @@ export default function LeadsSection() {
         </div>
         <div className="flex space-x-3">
           <AdminSeedButton />
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleImportCSV} disabled={importCSVMutation.isPending}>
             <Upload className="h-4 w-4 mr-2" />
-            Importer
+            {importCSVMutation.isPending ? "Import..." : "Importer CSV"}
           </Button>
-          <Button>
+          <Button variant="outline" onClick={handleExportCSV}>
+            <Download className="h-4 w-4 mr-2" />
+            Exporter CSV
+          </Button>
+          <Button onClick={handleGenerateLeads} disabled={generateLeadsMutation.isPending}>
             <Plus className="h-4 w-4 mr-2" />
-            Générer Leads
+            {generateLeadsMutation.isPending ? "Génération..." : "Générer Leads"}
           </Button>
         </div>
       </div>

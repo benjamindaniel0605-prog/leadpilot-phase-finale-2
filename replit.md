@@ -53,9 +53,15 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **connect-pg-simple** for PostgreSQL-backed session storage
 - **express-session** for session middleware
 
+### Lead Generation and AI Services
+- **Mock Lead Service** for development and testing lead generation
+- **AI Lead Scoring Service** for intelligent prospect qualification
+- **CSV Import/Export Service** for bulk lead management
+- **External Lead API Integration** (configurable via LEAD_API_KEY and LEAD_API_URL)
+
 ### Planned External Integrations
-- **External Lead APIs** for automated lead generation and data enrichment
-- **AI Services** for intelligent lead scoring and email variation generation
+- **External Lead APIs** for automated lead generation and data enrichment (architecture ready)
+- **AI Services** for intelligent lead scoring and email variation generation (basic implementation complete)
 - **Stripe** for subscription billing and payment processing (prepared but not implemented)
 - **SMTP services** for email campaign delivery (configuration ready)
 
@@ -64,3 +70,13 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **ESBuild** for optimized production builds
 - **PostCSS** with Autoprefixer for CSS processing
 - **Replit development plugins** for enhanced development experience
+
+## Recent Changes (August 2025)
+
+### Lead Generation System Implementation
+- **Lead Service Architecture**: Created modular lead generation system with mock service for development and external API integration capability
+- **AI Lead Scoring**: Implemented intelligent lead scoring algorithm considering position seniority, company size, sector value, and enriched data
+- **CSV Management**: Full CSV import/export functionality with smart field mapping and validation
+- **API Endpoints**: Added `/api/leads/generate`, `/api/leads/import-csv`, `/api/leads/export-csv`, and `/api/leads/csv-template`
+- **Frontend Integration**: Enhanced leads section with real-time generation, import/export controls, and loading states
+- **Data Enrichment**: Lead enrichment pipeline with company and person data enhancement capabilities

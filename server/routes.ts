@@ -5,6 +5,8 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertLeadSchema, insertCampaignSchema, insertBookingSchema } from "@shared/schema";
 import { z } from "zod";
 import { seedDatabase, exampleLeads } from "./seed-data";
+import { getLeadService, AILeadScoringService, type LeadSearchParams } from "./services/leadService";
+import { CSVService } from "./services/csvService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -246,6 +248,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Seed templates on startup
   await seedDatabase();
+
+  // Lead generation endpoint
+  app.post('/api/leads/generate', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const searchParams: LeadSearchParams = req.body;
+      
+      // Validate search parameters
+      const schema = z.object({
+        sector: z.string().optional(),
+        location: z.string().optional(),
+        companySize: z.string().optional(),
+        jobTitles: z.array(z.string()).optional(),
+        limit: z.number().min(1).max(100).default(10)
+      });
+      
+      const validatedParams = schema.parse(searchParams);
+      
+      // Generate leads using external service
+      const leadService = getLeadService();
+      const generatedLeads = await leadService.generateLeads(validatedParams);
+      
+      // Calculate AI scores and save to database
+      const savedLeads = [];
+      for (const leadData of generatedLeads) {
+        // Enrich lead data
+        const enrichedData = await leadService.enrichLead(leadData.email);
+        
+        // Calculate AI score
+        const aiScore = AILeadScoringService.calculateLeadScore(leadData, enrichedData || undefined);
+        
+        // Save to database
+        const lead = await storage.createLead({
+          userId,
+          firstName: leadData.firstName,
+          lastName: leadData.lastName,
+          email: leadData.email,
+          company: leadData.company,
+          sector: leadData.sector,
+          position: leadData.position,
+          aiScore,
+          status: 'new',
+          source: 'external',
+          notes: enrichedData ? `Enrichi: ${enrichedData.company?.industry || ''} | ${enrichedData.person?.seniority || ''}` : null
+        });
+        
+        savedLeads.push(lead);
+      }
+      
+      res.json({ 
+        message: `${savedLeads.length} leads generated successfully`,
+        leads: savedLeads 
+      });
+    } catch (error) {
+      console.error("Error generating leads:", error);
+      res.status(500).json({ message: "Failed to generate leads" });
+    }
+  });
+
+  // CSV Import endpoint
+  app.post('/api/leads/import-csv', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { csvContent } = req.body;
+      
+      if (!csvContent || typeof csvContent !== 'string') {
+        return res.status(400).json({ message: "CSV content is required" });
+      }
+      
+      // Parse CSV
+      const importResult = CSVService.parseCSVToLeads(csvContent, userId);
+      
+      // Save successful leads to database
+      const savedLeads = [];
+      for (const leadData of importResult.successful) {
+        // Calculate AI score if not provided
+        if (!leadData.aiScore) {
+          leadData.aiScore = AILeadScoringService.calculateLeadScore({
+            firstName: leadData.firstName || "",
+            lastName: leadData.lastName || "",
+            email: leadData.email || "",
+            company: leadData.company || "",
+            sector: leadData.sector || "",
+            position: leadData.position || ""
+          });
+        }
+        
+        const lead = await storage.createLead(leadData);
+        savedLeads.push(lead);
+      }
+      
+      res.json({
+        message: `Import completed: ${savedLeads.length}/${importResult.total} leads imported`,
+        imported: savedLeads.length,
+        total: importResult.total,
+        errors: importResult.errors,
+        leads: savedLeads
+      });
+    } catch (error) {
+      console.error("Error importing CSV:", error);
+      res.status(500).json({ message: "Failed to import CSV" });
+    }
+  });
+
+  // CSV Export endpoint
+  app.get('/api/leads/export-csv', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const leads = await storage.getLeads(userId);
+      
+      const csvContent = CSVService.exportLeadsToCSV({
+        leads,
+        includeScoring: true,
+        includeNotes: true
+      });
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=leads-export.csv');
+      res.send(csvContent);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      res.status(500).json({ message: "Failed to export CSV" });
+    }
+  });
+
+  // Get sample CSV template
+  app.get('/api/leads/csv-template', isAuthenticated, async (req: any, res) => {
+    try {
+      const csvTemplate = CSVService.generateSampleCSV();
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=leads-template.csv');
+      res.send(csvTemplate);
+    } catch (error) {
+      console.error("Error generating CSV template:", error);
+      res.status(500).json({ message: "Failed to generate CSV template" });
+    }
+  });
 
   // Admin endpoint to seed example leads for testing
   app.post('/api/admin/seed-leads', isAuthenticated, async (req: any, res) => {
