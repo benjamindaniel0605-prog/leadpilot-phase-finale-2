@@ -1,7 +1,7 @@
 import { storage } from "./storage";
 
 export const frenchEmailTemplates = [
-  // FREE TEMPLATES (1)
+  // FREE PLAN - 1 template (Templates 1-1)
   {
     name: "Introduction Simple",
     subject: "Bonjour [PRENOM] - Une solution pour [ENTREPRISE]",
@@ -20,7 +20,7 @@ Cordialement,
     variables: ["PRENOM", "ENTREPRISE", "BENEFICE_PRINCIPAL", "EXPEDITEUR"]
   },
 
-  // STARTER TEMPLATES (5)
+  // STARTER PLAN - 4 nouveaux templates (Templates 2-5)
   {
     name: "Approche Problème-Solution",
     subject: "[PRENOM], comment [ENTREPRISE] peut économiser [MONTANT]€/an",
@@ -128,7 +128,7 @@ Cordialement,
     variables: ["PRENOM", "REUSSITE", "ENTREPRISE", "CLIENT_SIMILAIRE", "RESULTAT_CLIENT", "OBJECTIF", "EXPEDITEUR"]
   },
 
-  // PRO TEMPLATES (15 additional - showing first 5)
+  // PRO PLAN - 10 nouveaux templates (Templates 6-15)
   {
     name: "Multi-Touch Séquence 1",
     subject: "5 minutes pour transformer [PROCESSUS] chez [ENTREPRISE] ?",
@@ -395,7 +395,7 @@ Merci d'avance,
   }
 ];
 
-// GROWTH TEMPLATES (12 templates to reach 30 total)
+// GROWTH PLAN - 15 nouveaux templates (Templates 16-30)
 export const growthTemplates = [
   {
     name: "Proposition de Partenariat",
@@ -917,7 +917,14 @@ export async function seedDatabase() {
   console.log("🌱 Seeding database with French templates and example data...");
   
   try {
-    // Seed all templates
+    // Check if templates already exist
+    const existingTemplates = await storage.getTemplates();
+    if (existingTemplates.length > 0) {
+      console.log(`✅ Templates already seeded (${existingTemplates.length} found)`);
+      return true;
+    }
+
+    // Seed all templates with correct plan distribution
     const allTemplates = [
       ...frenchEmailTemplates,
       ...additionalProTemplates,
@@ -929,9 +936,7 @@ export async function seedDatabase() {
     }
     
     console.log(`✅ Seeded ${allTemplates.length} French email templates`);
-    
-    // Note: We can't seed leads without a real user ID from authentication
-    // This will be done when a user first accesses the dashboard
+    console.log(`📊 Distribution: 1 Free + 4 Starter + 10 Pro + 15 Growth = 30 total`);
     
     return true;
   } catch (error) {
