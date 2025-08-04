@@ -84,3 +84,18 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **Input Field Enhancement**: Improved numeric input field with direct typing capability, auto-selection on focus, and proper validation
 - **Real-time Synchronization**: Fixed sidebar analytics synchronization using live data queries instead of cached user properties
 - **System Validation**: Complete lead generation workflow tested and confirmed working with real Apollo API integration, proper quota tracking, and synchronized UI updates
+
+### Templates System Complete Overhaul (August 4, 2025)
+- **Plan-Based Access Control**: Fixed Free plan to show exactly 1 template (1/30), removed duplicate templates from database
+- **Custom Email Creation**: Replaced "Generate Variations" and "New Template" buttons with unified "Écrire Email Personnel" feature available to all plans
+- **Smart Variations System**: Bouton "Variations" now modifies existing template content with intelligent word substitutions while maintaining style
+- **Template Restoration**: Added "Revenir à l'original" button to restore templates to their base version after variations
+- **Enhanced Edit Interface**: Improved template editing dialog with larger text area (15 rows), monospace font, and helpful variable commands ([PRENOM], [ENTREPRISE], etc.)
+- **Button Functionality Documentation**: 
+  - **Utiliser**: Adds template to email campaigns and increments usage counter
+  - **Variations**: Generates alternative version of template with different words but same style
+  - **Éditer**: Opens full editing interface for manual customization
+  - **Copier**: Copies template content to clipboard
+  - **Revenir à l'original**: Restores template to base version (appears after using Variations)
+- **Database Cleanup**: Removed duplicate variation templates, ensuring Free plan users see only their single allocated template
+- **Error Resolution**: Fixed all TypeScript errors, HTTP method issues, and React rendering warnings

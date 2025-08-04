@@ -79,22 +79,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Route pour générer une variation
-  app.post('/api/templates/:id/variation', isAuthenticated, async (req: any, res) => {
+  // Route pour créer un template personnalisé
+  app.post('/api/templates', isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const template = await storage.getTemplate(req.params.id);
-      
-      if (!template) {
-        return res.status(404).json({ message: "Template not found" });
-      }
-
-      // Créer une variation du template avec des modifications légères
-      const variation = await storage.createTemplateVariation(template, userId);
-      res.json(variation);
+      const template = await storage.createTemplate(req.body);
+      res.json(template);
     } catch (error) {
-      console.error("Error creating template variation:", error);
-      res.status(500).json({ message: "Failed to create template variation" });
+      console.error("Error creating template:", error);
+      res.status(500).json({ message: "Failed to create template" });
     }
   });
 

@@ -18,6 +18,10 @@ export default function TemplatesSection() {
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
   const [editedSubject, setEditedSubject] = useState("");
   const [editedContent, setEditedContent] = useState("");
+  const [showCustomEmailDialog, setShowCustomEmailDialog] = useState(false);
+  const [customSubject, setCustomSubject] = useState("");
+  const [customContent, setCustomContent] = useState("");
+  const [originalTemplates, setOriginalTemplates] = useState<{[key: string]: Template}>({});
   const [generatingVariation, setGeneratingVariation] = useState<string | null>(null);
   
   const { toast } = useToast();
@@ -69,7 +73,7 @@ export default function TemplatesSection() {
     onSuccess: () => {
       toast({
         title: "Template utilisé !",
-        description: "Le template a été ajouté à vos campagnes",
+        description: "Le template a été ajouté à vos campagnes et le compteur d'utilisation mis à jour",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
     },
@@ -82,20 +86,49 @@ export default function TemplatesSection() {
     },
   });
 
-  // Mutation pour générer une variation
+  // Mutation pour générer une variation (modifie le template existant)
   const generateVariationMutation = useMutation({
     mutationFn: async (templateId: string) => {
-      const response = await fetch(`/api/templates/${templateId}/variation`, {
-        method: "POST",
+      const template = templates.find(t => t.id === templateId);
+      if (!template) throw new Error("Template not found");
+      
+      // Sauvegarder l'original s'il n'existe pas
+      if (!originalTemplates[templateId]) {
+        setOriginalTemplates(prev => ({
+          ...prev,
+          [templateId]: { ...template }
+        }));
+      }
+
+      // Générer variations du contenu
+      const variations = {
+        subject: [
+          template.subject.replace("Bonjour", "Salut"),
+          template.subject.replace("votre", "notre"),
+          template.subject + " - Édition spéciale"
+        ],
+        content: [
+          template.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous"),
+          template.content.replace("vous", "tu").replace("votre", "ta"),
+          template.content.replace("intéressé", "curieux").replace("solution", "approche")
+        ]
+      };
+
+      const randomSubject = variations.subject[Math.floor(Math.random() * variations.subject.length)];
+      const randomContent = variations.content[Math.floor(Math.random() * variations.content.length)];
+
+      const response = await fetch(`/api/templates/${templateId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: randomSubject, content: randomContent }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     },
-    onSuccess: (variation, templateId) => {
+    onSuccess: () => {
       toast({
-        title: "Variation générée !",
-        description: "Nouvelle variation créée avec succès",
+        title: "Variation appliquée !",
+        description: "Le template a été modifié avec une nouvelle variation",
       });
       setGeneratingVariation(null);
       queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
@@ -105,6 +138,66 @@ export default function TemplatesSection() {
       toast({
         title: "Erreur",
         description: "Impossible de générer la variation",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation pour restaurer l'original
+  const restoreOriginalMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      const original = originalTemplates[templateId];
+      if (!original) throw new Error("Original not found");
+
+      const response = await fetch(`/api/templates/${templateId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: original.subject, content: original.content }),
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Template restauré !",
+        description: "Le template original a été restauré",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+  });
+
+  // Mutation pour créer un email personnalisé
+  const createCustomEmailMutation = useMutation({
+    mutationFn: async ({ subject, content }: { subject: string; content: string }) => {
+      const response = await fetch(`/api/templates`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          name: "Email Personnalisé", 
+          subject, 
+          content, 
+          plan: userPlan,
+          category: "personnalise",
+          variables: []
+        }),
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Email créé !",
+        description: "Votre email personnalisé a été ajouté",
+      });
+      setShowCustomEmailDialog(false);
+      setCustomSubject("");
+      setCustomContent("");
+      queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer l'email",
         variant: "destructive",
       });
     },
@@ -194,14 +287,13 @@ export default function TemplatesSection() {
           <h2 className="text-2xl font-bold text-card-foreground">Templates d'Emails</h2>
           <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline" disabled={templates.length === 0}>
-            <Wand2 className="h-4 w-4 mr-2" />
-            Générer Variations
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouveau Template
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => setShowCustomEmailDialog(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Écrire Email Personnel
           </Button>
         </div>
       </div>
@@ -263,6 +355,7 @@ export default function TemplatesSection() {
                           size="sm"
                           onClick={() => handleGenerateVariation(template.id)}
                           disabled={generatingVariation === template.id}
+                          title="Générer une variation"
                         >
                           {generatingVariation === template.id ? (
                             <RefreshCw className="h-4 w-4 animate-spin" />
@@ -270,6 +363,17 @@ export default function TemplatesSection() {
                             <Wand2 className="h-4 w-4" />
                           )}
                         </Button>
+                        {originalTemplates[template.id] && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => restoreOriginalMutation.mutate(template.id)}
+                            title="Revenir à l'original"
+                            className="text-amber-600 hover:text-amber-700"
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button 
                           variant="ghost" 
                           size="sm"
@@ -336,6 +440,7 @@ export default function TemplatesSection() {
                           size="sm"
                           onClick={() => useTemplateMutation.mutate(template.id)}
                           disabled={useTemplateMutation.isPending}
+                          title="Ajouter ce template à vos campagnes d'email"
                         >
                           {useTemplateMutation.isPending ? "..." : "Utiliser"}
                         </Button>
@@ -384,9 +489,12 @@ export default function TemplatesSection() {
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
                 placeholder="Contenu de votre email..."
-                rows={12}
-                className="resize-none"
+                rows={15}
+                className="resize-none font-mono text-sm"
               />
+              <div className="text-xs text-muted-foreground mt-2">
+                💡 <strong>Commandes utiles :</strong> [PRENOM], [ENTREPRISE], [POSTE], [SECTEUR]
+              </div>
             </div>
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setEditingTemplate(null)}>
@@ -397,6 +505,59 @@ export default function TemplatesSection() {
                 disabled={editTemplateMutation.isPending}
               >
                 {editTemplateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog email personnalisé */}
+      <Dialog open={showCustomEmailDialog} onOpenChange={setShowCustomEmailDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Créer un Email Personnalisé</DialogTitle>
+            <DialogDescription>
+              Rédigez votre propre template d'email. Disponible pour tous les plans.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="customSubject">Objet de l'email</Label>
+              <Input
+                id="customSubject"
+                value={customSubject}
+                onChange={(e) => setCustomSubject(e.target.value)}
+                placeholder="Ex: Collaboration avec [ENTREPRISE]"
+              />
+            </div>
+            <div>
+              <Label htmlFor="customContent">Contenu de l'email</Label>
+              <Textarea
+                id="customContent"
+                value={customContent}
+                onChange={(e) => setCustomContent(e.target.value)}
+                placeholder={`Bonjour [PRENOM],
+
+J'espère que vous allez bien. Je me permets de vous contacter car...
+
+Cordialement,
+[EXPEDITEUR]`}
+                rows={15}
+                className="resize-none font-mono text-sm"
+              />
+              <div className="text-xs text-muted-foreground mt-2">
+                💡 <strong>Variables disponibles :</strong> [PRENOM], [ENTREPRISE], [POSTE], [SECTEUR], [EXPEDITEUR]
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowCustomEmailDialog(false)}>
+                Annuler
+              </Button>
+              <Button 
+                onClick={() => createCustomEmailMutation.mutate({ subject: customSubject, content: customContent })}
+                disabled={createCustomEmailMutation.isPending || !customSubject.trim() || !customContent.trim()}
+              >
+                {createCustomEmailMutation.isPending ? "Création..." : "Créer l'Email"}
               </Button>
             </div>
           </div>
