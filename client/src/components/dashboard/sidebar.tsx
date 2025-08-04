@@ -51,7 +51,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   };
 
   const currentLimits = planLimits[user?.plan as keyof typeof planLimits] || planLimits.free;
-  const leadsUsed = analytics?.leadsGenerated || 0;
+  const leadsUsed = (analytics as any)?.leadsGenerated || 0;
   const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
 
   return (

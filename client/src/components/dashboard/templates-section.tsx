@@ -12,6 +12,7 @@ import type { Template } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import CustomEmailEditor from "./custom-email-editor";
 
 export default function TemplatesSection() {
   const [activeCategory, setActiveCategory] = useState("all");
