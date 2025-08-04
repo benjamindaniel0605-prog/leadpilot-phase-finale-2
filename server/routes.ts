@@ -341,8 +341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const campaignData = insertCampaignSchema.parse(req.body);
       const campaign = await storage.createCampaign({ ...campaignData, userId });
       
-      // Update template usage
-      await storage.updateTemplateUsage(campaignData.templateId);
+      // Note: Email usage tracking could be added here if needed
       
       res.json(campaign);
     } catch (error) {

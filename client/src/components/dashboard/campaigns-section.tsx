@@ -19,12 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import type { Campaign, Template } from "@shared/schema";
+import type { Campaign, Template, CustomEmail, Lead } from "@shared/schema";
 
 export default function CampaignsSection() {
   const [campaignForm, setCampaignForm] = useState({
     name: "",
-    templateId: "",
+    emailId: "",
+    leadTargets: "qualified",
     status: "draft"
   });
 
@@ -35,8 +36,12 @@ export default function CampaignsSection() {
     queryKey: ["/api/campaigns"],
   });
 
-  const { data: templates = [] } = useQuery<Template[]>({
-    queryKey: ["/api/templates"],
+  const { data: customEmails = [] } = useQuery<CustomEmail[]>({
+    queryKey: ["/api/custom-emails"],
+  });
+
+  const { data: leads = [] } = useQuery<Lead[]>({
+    queryKey: ["/api/leads"],
   });
 
   const createCampaignMutation = useMutation({
@@ -50,7 +55,7 @@ export default function CampaignsSection() {
         title: "Campagne créée",
         description: "Votre campagne a été créée avec succès.",
       });
-      setCampaignForm({ name: "", templateId: "", status: "draft" });
+      setCampaignForm({ name: "", emailId: "", leadTargets: "qualified", status: "draft" });
     },
     onError: (error) => {
       toast({
@@ -83,7 +88,7 @@ export default function CampaignsSection() {
   });
 
   const handleCreateCampaign = () => {
-    if (!campaignForm.name || !campaignForm.templateId) {
+    if (!campaignForm.name || !campaignForm.emailId) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires.",
@@ -151,19 +156,19 @@ export default function CampaignsSection() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Template email
+                Email
               </label>
               <Select 
-                value={campaignForm.templateId} 
-                onValueChange={(value) => setCampaignForm({ ...campaignForm, templateId: value })}
+                value={campaignForm.emailId} 
+                onValueChange={(value) => setCampaignForm({ ...campaignForm, emailId: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un template" />
+                  <SelectValue placeholder="Sélectionner un email" />
                 </SelectTrigger>
                 <SelectContent>
-                  {templates.map((template: Template) => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
+                  {customEmails.map((email: CustomEmail) => (
+                    <SelectItem key={email.id} value={email.id}>
+                      {email.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -173,14 +178,21 @@ export default function CampaignsSection() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Leads cibles
               </label>
-              <Select defaultValue="qualified">
+              <Select 
+                value={campaignForm.leadTargets} 
+                onValueChange={(value) => setCampaignForm({ ...campaignForm, leadTargets: value })}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tous les leads</SelectItem>
-                  <SelectItem value="qualified">Leads qualifiés seulement</SelectItem>
-                  <SelectItem value="high-score">Score {'>'}  80%</SelectItem>
+                  <SelectItem value="high-score">Score {'>'} 80%</SelectItem>
+                  {leads.map((lead: Lead) => (
+                    <SelectItem key={lead.id} value={`lead-${lead.id}`}>
+                      {lead.firstName} {lead.lastName} - {lead.company}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -232,7 +244,7 @@ export default function CampaignsSection() {
                     <div>
                       <h4 className="text-lg font-medium text-gray-900">{campaign.name}</h4>
                       <p className="text-sm text-gray-600">
-                        Template: {templates.find((t: Template) => t.id === campaign.templateId)?.name || "Template inconnu"}
+                        Email: {customEmails.find((e: CustomEmail) => e.id === campaign.emailId)?.name || "Email inconnu"}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -283,7 +295,7 @@ export default function CampaignsSection() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center text-sm text-gray-600">
-                    <span>Créée le {new Date(campaign.createdAt).toLocaleDateString('fr-FR')}</span>
+                    <span>Créée le {campaign.createdAt ? new Date(campaign.createdAt).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
                     <div className="space-x-3">
                       <Button variant="ghost" size="sm">Voir détails</Button>
                       <Button variant="ghost" size="sm">Dupliquer</Button>
