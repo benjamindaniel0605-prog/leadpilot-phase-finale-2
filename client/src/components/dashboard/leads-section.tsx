@@ -359,19 +359,37 @@ export default function LeadsSection() {
                       <Input
                         type="text"
                         className="h-10 text-center"
-                        value={generationCriteria.count}
+                        value={generationCriteria.count.toString()}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           if (value === '') {
                             setGenerationCriteria(prev => ({ ...prev, count: 1 }));
                           } else {
-                            const numValue = Math.max(1, Math.min(parseInt(value), maxLeads));
-                            setGenerationCriteria(prev => ({ ...prev, count: numValue }));
+                            const numValue = parseInt(value);
+                            if (!isNaN(numValue)) {
+                              const clampedValue = Math.max(1, Math.min(numValue, maxLeads));
+                              setGenerationCriteria(prev => ({ ...prev, count: clampedValue }));
+                            }
                           }
                         }}
                         onBlur={() => {
                           if (generationCriteria.count < 1 || isNaN(generationCriteria.count)) {
                             setGenerationCriteria(prev => ({ ...prev, count: 1 }));
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          // Allow backspace, delete, tab, escape, enter
+                          if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                              // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                              (e.keyCode === 65 && e.ctrlKey === true) ||
+                              (e.keyCode === 67 && e.ctrlKey === true) ||
+                              (e.keyCode === 86 && e.ctrlKey === true) ||
+                              (e.keyCode === 88 && e.ctrlKey === true)) {
+                            return;
+                          }
+                          // Ensure that it is a number and stop the keypress
+                          if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                            e.preventDefault();
                           }
                         }}
                       />

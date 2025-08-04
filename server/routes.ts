@@ -82,8 +82,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limits = {
         free: 5,
         starter: 100,
-        pro: 400,
-        growth: 1500
+        pro: 500,
+        growth: 2000
       };
       
       if (leadsCount >= (limits[user.plan as keyof typeof limits] || 5)) {

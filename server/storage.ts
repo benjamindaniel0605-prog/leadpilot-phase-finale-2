@@ -287,7 +287,7 @@ export class DatabaseStorage implements IStorage {
         .from(leads)
         .where(and(
           eq(leads.userId, userId),
-          gte(leads.createdAt, currentMonthStart)
+          sql`${leads.createdAt} >= ${currentMonthStart}`
         ));
 
       const leadsThisMonth = leadsResult?.count || 0;
@@ -296,7 +296,7 @@ export class DatabaseStorage implements IStorage {
       // Get user plan and calculate remaining leads
       const user = await this.getUser(userId);
       const planLimits = {
-        free: 10,
+        free: 5,
         starter: 100,
         pro: 500,
         growth: 2000
@@ -321,9 +321,9 @@ export class DatabaseStorage implements IStorage {
       console.error('Error getting analytics:', error);
       return {
         leadsGenerated: 0,
-        remainingLeads: 10,
+        remainingLeads: 5,
         userPlan: 'free',
-        monthlyLimit: 10,
+        monthlyLimit: 5,
         emailsSent: "0",
         conversionRate: "0%",
         avgScore: "0%"
