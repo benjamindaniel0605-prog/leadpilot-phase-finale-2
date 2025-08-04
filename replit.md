@@ -27,7 +27,7 @@ Authentication is implemented using Replit's OAuth/OpenID Connect system with Pa
 Client-side state is managed through TanStack React Query for server state and local React state for UI interactions. The query client is configured with optimistic caching strategies and includes custom hooks for authentication state management. Form state is handled using React Hook Form with Zod validation schemas.
 
 ### Subscription and Quota Management
-The platform implements a tiered subscription model with usage quotas for leads, templates, AI variations, and sequences. Usage tracking is built into the database schema and enforced at the API level. The system is prepared for Stripe integration for payment processing, though payment functionality appears to be planned for future implementation.
+The platform implements a tiered subscription model with usage quotas for leads, templates, AI variations, and sequences. Current quota limits are: Free (5 leads), Starter (100 leads), Pro (500 leads), Growth (1500 leads). Usage tracking is built into the database schema and enforced at the API level with real-time quota validation and monthly usage calculation. The system is prepared for Stripe integration for payment processing, though payment functionality appears to be planned for future implementation.
 
 ## External Dependencies
 
@@ -80,3 +80,6 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **API Endpoints**: Added `/api/leads/generate`, `/api/leads/import-csv`, `/api/leads/export-csv`, and `/api/leads/csv-template`
 - **Frontend Integration**: Enhanced leads section with real-time generation, import/export controls, and loading states
 - **Data Enrichment**: Lead enrichment pipeline with company and person data enhancement capabilities
+- **Quota System Refinement**: Corrected Growth plan quota to 1500 leads maximum (was incorrectly set to 2000)
+- **Input Field Enhancement**: Improved numeric input field with direct typing capability, auto-selection on focus, and proper validation
+- **Real-time Synchronization**: Fixed sidebar analytics synchronization using live data queries instead of cached user properties

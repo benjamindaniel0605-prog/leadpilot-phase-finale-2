@@ -299,7 +299,7 @@ export class DatabaseStorage implements IStorage {
         free: 5,
         starter: 100,
         pro: 500,
-        growth: 2000
+        growth: 1500
       };
 
       const userPlan = user?.plan || 'free';
