@@ -25,7 +25,7 @@ export default function LeadsSection() {
   const [generationCriteria, setGenerationCriteria] = useState({
     sector: "",
     location: "France",
-    companySize: "",
+    companySize: "all",
     jobTitles: "",
     count: 10
   });
@@ -124,7 +124,7 @@ export default function LeadsSection() {
     const params = {
       sector: generationCriteria.sector,
       location: generationCriteria.location,
-      companySize: generationCriteria.companySize || undefined,
+      companySize: generationCriteria.companySize === "all" ? undefined : generationCriteria.companySize,
       jobTitles: generationCriteria.jobTitles ? generationCriteria.jobTitles.split(',').map(t => t.trim()) : undefined,
       limit: generationCriteria.count
     };
@@ -319,7 +319,7 @@ export default function LeadsSection() {
                       <SelectValue placeholder="Toutes tailles" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Toutes tailles</SelectItem>
+                      <SelectItem value="all">Toutes tailles</SelectItem>
                       <SelectItem value="startup">Startup (1-50)</SelectItem>
                       <SelectItem value="small">PME (51-200)</SelectItem>
                       <SelectItem value="medium">Moyenne (201-500)</SelectItem>
