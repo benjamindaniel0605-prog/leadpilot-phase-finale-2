@@ -40,11 +40,11 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-card border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{currentSection.title}</h1>
-          <p className="text-gray-600">{currentSection.subtitle}</p>
+          <h1 className="text-2xl font-bold text-card-foreground">{currentSection.title}</h1>
+          <p className="text-muted-foreground">{currentSection.subtitle}</p>
         </div>
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm" className="relative">
@@ -53,21 +53,21 @@ export default function Header({ activeSection }: HeaderProps) {
           </Button>
           <div className="flex items-center space-x-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.profileImageUrl} />
+              <AvatarImage src={(user as any)?.profileImageUrl} />
               <AvatarFallback className="bg-primary text-white text-sm">
-                {getInitials(user?.firstName, user?.lastName)}
+                {getInitials((user as any)?.firstName, (user as any)?.lastName)}
               </AvatarFallback>
             </Avatar>
             <div className="hidden sm:block">
-              <span className="text-gray-700 font-medium">
-                {user?.firstName && user?.lastName 
-                  ? `${user.firstName} ${user.lastName}`
-                  : user?.email || "Utilisateur"
+              <span className="text-card-foreground font-medium">
+                {(user as any)?.firstName && (user as any)?.lastName 
+                  ? `${(user as any).firstName} ${(user as any).lastName}`
+                  : (user as any)?.email || "Utilisateur"
                 }
               </span>
               <button 
                 onClick={handleLogout}
-                className="block text-sm text-gray-500 hover:text-gray-700"
+                className="block text-sm text-muted-foreground hover:text-card-foreground"
               >
                 Se déconnecter
               </button>

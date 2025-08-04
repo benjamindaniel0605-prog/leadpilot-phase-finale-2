@@ -23,7 +23,7 @@ export default function TemplatesSection() {
     growth: 30
   };
 
-  const userPlan = user?.plan || "free";
+  const userPlan = (user as any)?.plan || "free";
   const userLimit = planHierarchy[userPlan as keyof typeof planHierarchy];
 
   const categories = [
@@ -42,11 +42,11 @@ export default function TemplatesSection() {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-16 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-muted rounded w-1/3"></div>
+          <div className="h-16 bg-muted rounded"></div>
           <div className="grid lg:grid-cols-2 gap-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-64 bg-gray-200 rounded"></div>
+              <div key={index} className="h-64 bg-muted rounded"></div>
             ))}
           </div>
         </div>
@@ -58,8 +58,8 @@ export default function TemplatesSection() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Templates d'Emails</h2>
-          <p className="text-gray-600">30 templates optimisés avec variations IA</p>
+          <h2 className="text-2xl font-bold text-card-foreground">Templates d'Emails</h2>
+          <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
         <div className="flex space-x-3">
           <Button variant="outline">
@@ -97,7 +97,7 @@ export default function TemplatesSection() {
       <div className="grid lg:grid-cols-2 gap-6">
         {filteredTemplates.length === 0 ? (
           <div className="col-span-2 text-center py-12">
-            <p className="text-gray-500 mb-4">Aucun template disponible pour cette catégorie.</p>
+            <p className="text-muted-foreground mb-4">Aucun template disponible pour cette catégorie.</p>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               Créer un template
@@ -137,15 +137,15 @@ export default function TemplatesSection() {
                 </CardHeader>
                 <CardContent>
                   {/* Template Preview */}
-                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                    <div className="text-sm text-gray-700">
+                  <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                    <div className="text-sm text-card-foreground">
                       <div className="mb-2">
                         <strong>Objet:</strong> {template.subject}
                       </div>
-                      <div className="mb-3 border-t pt-3">
+                      <div className="mb-3 border-t border-border pt-3">
                         <div className="whitespace-pre-line text-sm">
                           {isLocked ? (
-                            <div className="text-gray-400">
+                            <div className="text-muted-foreground">
                               {template.content.substring(0, 100)}...
                               <p className="mt-2 text-amber-600">Contenu verrouillé</p>
                             </div>
@@ -160,7 +160,7 @@ export default function TemplatesSection() {
                   {/* Template Variables */}
                   {!isLocked && template.variables && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Variables disponibles:</h4>
+                      <h4 className="text-sm font-medium text-card-foreground mb-2">Variables disponibles:</h4>
                       <div className="flex flex-wrap gap-2">
                         {(template.variables as string[]).map((variable, index) => (
                           <Badge key={index} variant="outline" className="text-xs">

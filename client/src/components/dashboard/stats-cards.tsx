@@ -10,28 +10,28 @@ export default function StatsCards() {
   const statCards = [
     {
       title: "Leads Générés",
-      value: stats?.leadsGenerated || 0,
+      value: (stats as any)?.leadsGenerated || 0,
       icon: Users,
       change: "+12%",
       color: "bg-blue-100 text-blue-600"
     },
     {
       title: "Emails Envoyés",
-      value: stats?.emailsSent || 0,
+      value: (stats as any)?.emailsSent || 0,
       icon: Mail,
       change: "+25%",
       color: "bg-emerald-100 text-emerald-600"
     },
     {
       title: "Taux d'Ouverture",
-      value: `${stats?.openRate || 0}%`,
+      value: `${(stats as any)?.openRate || 0}%`,
       icon: Eye,
       change: "+5%",
       color: "bg-amber-100 text-amber-600"
     },
     {
       title: "RDV Bookés",
-      value: stats?.meetingsBooked || 0,
+      value: (stats as any)?.meetingsBooked || 0,
       icon: Calendar,
       change: "+100%",
       color: "bg-purple-100 text-purple-600"
@@ -44,7 +44,7 @@ export default function StatsCards() {
         {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index} className="animate-pulse">
             <CardContent className="p-6">
-              <div className="h-16 bg-gray-200 rounded"></div>
+              <div className="h-16 bg-muted rounded"></div>
             </CardContent>
           </Card>
         ))}
@@ -55,20 +55,20 @@ export default function StatsCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statCards.map((stat, index) => (
-        <Card key={index} className="shadow-sm border border-gray-200">
+        <Card key={index} className="shadow-sm border border-border">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+                <p className="text-3xl font-bold text-card-foreground">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
                 <stat.icon className="h-6 w-6" />
               </div>
             </div>
             <div className="flex items-center mt-4">
-              <span className="text-emerald-600 text-sm">{stat.change}</span>
-              <span className="text-gray-500 text-sm ml-2">vs mois dernier</span>
+              <span className="text-emerald-500 text-sm">{stat.change}</span>
+              <span className="text-muted-foreground text-sm ml-2">vs mois dernier</span>
             </div>
           </CardContent>
         </Card>
