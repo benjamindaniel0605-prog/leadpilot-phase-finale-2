@@ -344,18 +344,22 @@ export default function LeadsSection() {
                     <div className="flex items-center space-x-2">
                       <button 
                         type="button"
-                        onClick={() => {
-                          const newValue = Math.max(1, generationCriteria.count - 1);
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const currentCount = generationCriteria.count;
+                          const newValue = Math.max(1, currentCount - 1);
+                          console.log('Minus clicked:', currentCount, '->', newValue);
                           setGenerationCriteria(prev => ({ ...prev, count: newValue }));
                         }}
-                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                        disabled={generationCriteria.count <= 1}
+                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         -
                       </button>
                       <Input
                         type="text"
                         className="h-10 text-center"
-                        value={generationCriteria.count.toString()}
+                        value={generationCriteria.count}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           if (value === '') {
@@ -366,18 +370,22 @@ export default function LeadsSection() {
                           }
                         }}
                         onBlur={() => {
-                          if (generationCriteria.count < 1) {
+                          if (generationCriteria.count < 1 || isNaN(generationCriteria.count)) {
                             setGenerationCriteria(prev => ({ ...prev, count: 1 }));
                           }
                         }}
                       />
                       <button 
                         type="button"
-                        onClick={() => {
-                          const newValue = Math.min(maxLeads, generationCriteria.count + 1);
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const currentCount = generationCriteria.count;
+                          const newValue = Math.min(maxLeads, currentCount + 1);
+                          console.log('Plus clicked:', currentCount, '->', newValue);
                           setGenerationCriteria(prev => ({ ...prev, count: newValue }));
                         }}
-                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                        disabled={generationCriteria.count >= maxLeads}
+                        className="flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         +
                       </button>

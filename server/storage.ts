@@ -272,6 +272,64 @@ export class DatabaseStorage implements IStorage {
       meetingsBooked: bookingsCount.count,
     };
   }
+
+  // Analytics for user dashboard
+  async getAnalytics(userId: string): Promise<any> {
+    try {
+      // Get leads count for current month (UTC time, start of month)
+      const now = new Date();
+      const currentMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+
+      console.log(`Getting analytics for user ${userId}, month start: ${currentMonthStart.toISOString()}`);
+
+      const [leadsResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(leads)
+        .where(and(
+          eq(leads.userId, userId),
+          gte(leads.createdAt, currentMonthStart)
+        ));
+
+      const leadsThisMonth = leadsResult?.count || 0;
+      console.log(`Leads this month for user ${userId}: ${leadsThisMonth}`);
+
+      // Get user plan and calculate remaining leads
+      const user = await this.getUser(userId);
+      const planLimits = {
+        free: 10,
+        starter: 100,
+        pro: 500,
+        growth: 2000
+      };
+
+      const userPlan = user?.plan || 'free';
+      const monthlyLimit = planLimits[userPlan as keyof typeof planLimits] || 10;
+      const remainingLeads = Math.max(0, monthlyLimit - leadsThisMonth);
+
+      console.log(`User plan: ${userPlan}, monthly limit: ${monthlyLimit}, remaining: ${remainingLeads}`);
+
+      return {
+        leadsGenerated: leadsThisMonth,
+        remainingLeads: remainingLeads,
+        userPlan: userPlan,
+        monthlyLimit: monthlyLimit,
+        emailsSent: "0", // À implémenter
+        conversionRate: "0%", // À implémenter  
+        avgScore: "0%" // À implémenter
+      };
+    } catch (error) {
+      console.error('Error getting analytics:', error);
+      return {
+        leadsGenerated: 0,
+        remainingLeads: 10,
+        userPlan: 'free',
+        monthlyLimit: 10,
+        emailsSent: "0",
+        conversionRate: "0%",
+        avgScore: "0%"
+      };
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
