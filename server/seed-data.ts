@@ -395,7 +395,7 @@ Merci d'avance,
   }
 ];
 
-// GROWTH TEMPLATES (30 total - adding the remaining ones)
+// GROWTH TEMPLATES (12 templates to reach 30 total)
 export const growthTemplates = [
   {
     name: "Proposition de Partenariat",
@@ -457,6 +457,396 @@ Intéressé par une discussion exploratoire ?
     plan: "growth",
     category: "acquisition",
     variables: ["PRENOM", "SECTEUR", "ENTREPRISE", "DELAI", "CA_MINIMUM", "CROISSANCE", "DOMAINE", "VALORISATION", "MONTANT_ESTIME", "EXPEDITEUR", "FONDS_INVESTISSEMENT"]
+  },
+  {
+    name: "Révélation Exclusive",
+    subject: "Information confidentielle sur [SECTEUR] - [ENTREPRISE] concernée",
+    content: `[PRENOM],
+
+Information exclusive que je ne peux partager qu'avec vous.
+
+[ENTREPRISE_CONCURRENTE] prépare [MOUVEMENT_STRATEGIQUE] pour [DATE_PREVUE].
+
+Impact probable sur [ENTREPRISE] :
+→ [IMPACT_1]
+→ [IMPACT_2]
+→ [IMPACT_3]
+
+Nous avons développé une contre-stratégie qui permet de :
+• [CONTRE_MESURE_1]
+• [CONTRE_MESURE_2]
+• [CONTRE_MESURE_3]
+
+Temps de réaction critique : [DELAI_ACTION].
+
+Discussion urgente possible ?
+
+[EXPEDITEUR]
+Confidentiel`,
+    plan: "growth",
+    category: "exclusive",
+    variables: ["PRENOM", "SECTEUR", "ENTREPRISE", "ENTREPRISE_CONCURRENTE", "MOUVEMENT_STRATEGIQUE", "DATE_PREVUE", "IMPACT_1", "IMPACT_2", "IMPACT_3", "CONTRE_MESURE_1", "CONTRE_MESURE_2", "CONTRE_MESURE_3", "DELAI_ACTION", "EXPEDITEUR"]
+  },
+  {
+    name: "Méta-Analyse Sectorielle",
+    subject: "Méta-analyse [SECTEUR] : 3 découvertes qui changent tout",
+    content: `[PRENOM],
+
+Méta-analyse de [NB_ETUDES] études sur le secteur [SECTEUR] - conclusions surprenantes.
+
+3 découvertes majeures :
+
+1. [DECOUVERTE_1] → Impact : [IMPACT_1]
+2. [DECOUVERTE_2] → Impact : [IMPACT_2]  
+3. [DECOUVERTE_3] → Impact : [IMPACT_3]
+
+[POURCENTAGE]% des entreprises ignorent ces changements.
+
+Pour [ENTREPRISE], cela signifie [SIGNIFICATION_SPECIFIQUE].
+
+Actions recommandées d'ici [DELAI] :
+• [ACTION_1]
+• [ACTION_2]
+• [ACTION_3]
+
+Je présente ces résultats à [NB_DIRIGEANTS] dirigeants triés sur le volet.
+
+Votre place est réservée - confirmation ?
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "meta-analyse",
+    variables: ["PRENOM", "NB_ETUDES", "SECTEUR", "DECOUVERTE_1", "IMPACT_1", "DECOUVERTE_2", "IMPACT_2", "DECOUVERTE_3", "IMPACT_3", "POURCENTAGE", "ENTREPRISE", "SIGNIFICATION_SPECIFIQUE", "DELAI", "ACTION_1", "ACTION_2", "ACTION_3", "NB_DIRIGEANTS", "EXPEDITEUR"]
+  },
+  {
+    name: "Reverse Psychology",
+    subject: "Pourquoi [ENTREPRISE] ne devrait PAS travailler avec nous",
+    content: `[PRENOM],
+
+Soyons honnêtes : [ENTREPRISE] ne devrait probablement PAS travailler avec nous.
+
+Voici pourquoi :
+
+❌ Vous êtes déjà [POSITION_ACTUELLE]
+❌ Notre solution nécessite [EFFORT_REQUIS]
+❌ Les résultats prennent [DUREE_RESULTATS] à se manifester
+❌ [AUTRE_CONTRAINTE]
+
+En revanche, si [ENTREPRISE] veut [OBJECTIF_AMBITIEUX] et accepte de [CONDITION_ACCEPTANCE], alors notre approche [APPROCHE_UNIQUE] pourrait générer [RESULTAT_POTENTIEL].
+
+[CLIENT_EXEMPLE] était dans la même situation. Résultat : [TRANSFORMATION_OBTENUE].
+
+Mais honnêtement ? Restez sur votre approche actuelle si elle vous convient.
+
+Si elle ne vous convient plus, rappel possible.
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "reverse",
+    variables: ["PRENOM", "ENTREPRISE", "POSITION_ACTUELLE", "EFFORT_REQUIS", "DUREE_RESULTATS", "AUTRE_CONTRAINTE", "OBJECTIF_AMBITIEUX", "CONDITION_ACCEPTANCE", "APPROCHE_UNIQUE", "RESULTAT_POTENTIEL", "CLIENT_EXEMPLE", "TRANSFORMATION_OBTENUE", "EXPEDITEUR"]
+  },
+  {
+    name: "Testimonial Détaillé",
+    subject: "Témoignage [CLIENT] : \"Sans [SOLUTION], [ENTREPRISE_CLIENT] aurait fermé\"",
+    content: `[PRENOM],
+
+Témoignage client reçu hier - il fallait que je vous le partage.
+
+[CLIENT_TEMOIN], [FONCTION] chez [ENTREPRISE_CLIENT] :
+
+"Il y a [PERIODE], [ENTREPRISE_CLIENT] était dans une situation critique. [PROBLEME_CRITIQUE].
+
+J'avais testé [SOLUTION_1], [SOLUTION_2], même [SOLUTION_3]. Rien ne fonctionnait.
+
+En découvrant [NOTRE_SOLUTION], j'étais sceptique. Mais [RAISON_CONFIANCE].
+
+Résultats après [DUREE] :
+• [RESULTAT_1]
+• [RESULTAT_2]
+• [RESULTAT_3]
+
+Sans cette solution, [ENTREPRISE_CLIENT] aurait fermé. C'est factuel."
+
+[ENTREPRISE] fait face aux mêmes défis que [ENTREPRISE_CLIENT] avant notre intervention.
+
+Curieux de connaître notre méthode ?
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "testimonial",
+    variables: ["PRENOM", "CLIENT", "SOLUTION", "ENTREPRISE_CLIENT", "CLIENT_TEMOIN", "FONCTION", "PERIODE", "PROBLEME_CRITIQUE", "SOLUTION_1", "SOLUTION_2", "SOLUTION_3", "NOTRE_SOLUTION", "RAISON_CONFIANCE", "DUREE", "RESULTAT_1", "RESULTAT_2", "RESULTAT_3", "ENTREPRISE", "EXPEDITEUR"]
+  },
+  {
+    name: "Future-Pacing",
+    subject: "[ENTREPRISE] en 2027 : 3 scénarios possibles",
+    content: `[PRENOM],
+
+Exercice de prospective : [ENTREPRISE] en 2027.
+
+Scénario 1 - Status Quo :
+[ENTREPRISE] continue son approche actuelle de [APPROCHE_ACTUELLE].
+Résultat probable : [RESULTAT_STATUS_QUO]
+
+Scénario 2 - Évolution graduelle :
+[ENTREPRISE] adopte [EVOLUTION_GRADUELLE] sur [DUREE_EVOLUTION].
+Résultat probable : [RESULTAT_EVOLUTION]
+
+Scénario 3 - Transformation radicale :
+[ENTREPRISE] révolutionne [DOMAINE_REVOLUTION] avec [NOTRE_APPROCHE].
+Résultat probable : [RESULTAT_TRANSFORMATION]
+
+Selon notre modèle prédictif, [ENTREPRISE] a [PROBABILITE]% de chances d'atteindre le Scénario 3 seule.
+
+Avec notre accompagnement : [PROBABILITE_AVEC_NOUS]%.
+
+Quel scénario visez-vous pour [ENTREPRISE] ?
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "future-pacing",
+    variables: ["PRENOM", "ENTREPRISE", "APPROCHE_ACTUELLE", "RESULTAT_STATUS_QUO", "EVOLUTION_GRADUELLE", "DUREE_EVOLUTION", "RESULTAT_EVOLUTION", "DOMAINE_REVOLUTION", "NOTRE_APPROCHE", "RESULTAT_TRANSFORMATION", "PROBABILITE", "PROBABILITE_AVEC_NOUS", "EXPEDITEUR"]
+  },
+  {
+    name: "Behind-the-Scenes",
+    subject: "Dans les coulisses de [CLIENT_MAJEUR] (confidentiel)",
+    content: `[PRENOM],
+
+Retour des coulisses de [CLIENT_MAJEUR] (avec leur autorisation).
+
+La semaine dernière, réunion de crise chez [CLIENT_MAJEUR]. Sujet : [PROBLEME_CLIENT].
+
+[DIRIGEANT_CLIENT] : "Comment [CONCURRENT] fait-il pour [PERFORMANCE_CONCURRENT] ?"
+
+Ma réponse : "[EXPLICATION_TECHNIQUE]"
+
+Résultat immédiat : [ACTION_ENTREPRISE] → [RESULTAT_IMMEDIAT].
+
+Ce qui m'a frappé : [INSIGHT_STRATEGIQUE].
+
+[ENTREPRISE] pourrait appliquer la même logique pour [APPLICATION_POSSIBLE].
+
+Avantage potentiel : [AVANTAGE_ESTIMÉ] d'ici [DELAI_ESTIMATION].
+
+Cette approche vous intéresse ?
+
+[EXPEDITEUR]
+P.S: [ANECDOTE_BONUS]`,
+    plan: "growth",
+    category: "behind-scenes",
+    variables: ["PRENOM", "CLIENT_MAJEUR", "PROBLEME_CLIENT", "DIRIGEANT_CLIENT", "CONCURRENT", "PERFORMANCE_CONCURRENT", "EXPLICATION_TECHNIQUE", "ACTION_ENTREPRISE", "RESULTAT_IMMEDIAT", "INSIGHT_STRATEGIQUE", "ENTREPRISE", "APPLICATION_POSSIBLE", "AVANTAGE_ESTIMÉ", "DELAI_ESTIMATION", "EXPEDITEUR", "ANECDOTE_BONUS"]
+  },
+  {
+    name: "Invitation Think Tank",
+    subject: "Think Tank privé : L'avenir de [SECTEUR] (invitation exclusive)",
+    content: `[PRENOM],
+
+Invitation exclusive au Think Tank "[TITRE_THINK_TANK]".
+
+Date : [DATE_EVENEMENT]
+Lieu : [LIEU_PRESTIGIEUX]
+Participants : [NB_PARTICIPANTS] dirigeants de [SECTEUR]
+
+Thématiques :
+• [THEMATIQUE_1]
+• [THEMATIQUE_2]
+• [THEMATIQUE_3]
+
+Intervenants confirmés :
+→ [EXPERT_1] ([EXPERTISE_1])
+→ [EXPERT_2] ([EXPERTISE_2])
+→ [EXPERT_3] ([EXPERTISE_3])
+
+Format Chatham House Rules + workshop collaboratif.
+
+Profil recherché pour [ENTREPRISE] :
+✓ [CRITERE_1]
+✓ [CRITERE_2]
+✓ [CRITERE_3]
+
+Cette réflexion collective influencera [IMPACT_SECTORIEL].
+
+Participation ? Places limitées ([NB_PLACES] restantes).
+
+[EXPEDITEUR]
+[ORGANISATION]`,
+    plan: "growth",
+    category: "think-tank",
+    variables: ["PRENOM", "SECTEUR", "TITRE_THINK_TANK", "DATE_EVENEMENT", "LIEU_PRESTIGIEUX", "NB_PARTICIPANTS", "THEMATIQUE_1", "THEMATIQUE_2", "THEMATIQUE_3", "EXPERT_1", "EXPERTISE_1", "EXPERT_2", "EXPERTISE_2", "EXPERT_3", "EXPERTISE_3", "ENTREPRISE", "CRITERE_1", "CRITERE_2", "CRITERE_3", "IMPACT_SECTORIEL", "NB_PLACES", "EXPEDITEUR", "ORGANISATION"]
+  },
+  {
+    name: "Retournement Narratif",
+    subject: "L'erreur que j'ai faite avec [ENTREPRISE_SIMILAIRE] (et comment l'éviter)",
+    content: `[PRENOM],
+
+Confession : j'ai fait une grosse erreur avec [ENTREPRISE_SIMILAIRE].
+
+Contexte : [ENTREPRISE_SIMILAIRE] avait [SITUATION_SIMILAIRE], comme [ENTREPRISE] aujourd'hui.
+
+Mon erreur : j'ai proposé [MAUVAISE_SOLUTION] au lieu de [BONNE_SOLUTION].
+
+Conséquence : [CONSEQUENCE_NEGATIVE] pendant [DUREE_CONSEQUENCE].
+
+Heureusement, nous avons pu corriger avec [SOLUTION_CORRECTIVE].
+Résultat final : [RESULTAT_FINAL].
+
+Cette expérience m'a appris [LECON_APPRISE].
+
+Pour [ENTREPRISE], je ne ferais plus cette erreur. L'approche serait :
+
+Phase 1 : [PHASE_1_CORRECTE]
+Phase 2 : [PHASE_2_CORRECTE]  
+Phase 3 : [PHASE_3_CORRECTE]
+
+Éviter mon erreur avec [ENTREPRISE_SIMILAIRE] vous intéresse ?
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "retournement",
+    variables: ["PRENOM", "ENTREPRISE_SIMILAIRE", "SITUATION_SIMILAIRE", "ENTREPRISE", "MAUVAISE_SOLUTION", "BONNE_SOLUTION", "CONSEQUENCE_NEGATIVE", "DUREE_CONSEQUENCE", "SOLUTION_CORRECTIVE", "RESULTAT_FINAL", "LECON_APPRISE", "PHASE_1_CORRECTE", "PHASE_2_CORRECTE", "PHASE_3_CORRECTE", "EXPEDITEUR"]
+  },
+  {
+    name: "Intelligence Économique",
+    subject: "Intelligence économique : mouvement suspect dans [SECTEUR]",
+    content: `Confidentiel - [PRENOM],
+
+Mouvement suspect détecté dans [SECTEUR].
+
+Observations récentes :
+• [OBSERVATION_1]
+• [OBSERVATION_2]
+• [OBSERVATION_3]
+
+Hypothèse : [HYPOTHESE_STRATEGIQUE].
+
+Si confirmée, impact sur [ENTREPRISE] :
+→ [IMPACT_COURT_TERME] (6 mois)
+→ [IMPACT_MOYEN_TERME] (18 mois)
+→ [IMPACT_LONG_TERME] (3 ans)
+
+Actions préventives possibles :
+1. [ACTION_PREVENTIVE_1]
+2. [ACTION_PREVENTIVE_2]
+3. [ACTION_PREVENTIVE_3]
+
+Nous surveillons [NB_INDICATEURS] indicateurs pour [CLIENT_REFERENCE].
+
+Mise en place de la veille pour [ENTREPRISE] ?
+
+Discussion confidentielle recommandée.
+
+[EXPEDITEUR]
+[CABINET_INTELLIGENCE]`,
+    plan: "growth",
+    category: "intelligence",
+    variables: ["PRENOM", "SECTEUR", "OBSERVATION_1", "OBSERVATION_2", "OBSERVATION_3", "HYPOTHESE_STRATEGIQUE", "ENTREPRISE", "IMPACT_COURT_TERME", "IMPACT_MOYEN_TERME", "IMPACT_LONG_TERME", "ACTION_PREVENTIVE_1", "ACTION_PREVENTIVE_2", "ACTION_PREVENTIVE_3", "NB_INDICATEURS", "CLIENT_REFERENCE", "EXPEDITEUR", "CABINET_INTELLIGENCE"]
+  },
+  {
+    name: "Ultimate Value Stack",
+    subject: "Package complet [ENTREPRISE] : [VALEUR_TOTALE]€ de valeur",
+    content: `[PRENOM],
+
+Package spécialement conçu pour [ENTREPRISE].
+
+Contenu :
+1. [SERVICE_1] (Valeur : [PRIX_1]€)
+2. [SERVICE_2] (Valeur : [PRIX_2]€)
+3. [SERVICE_3] (Valeur : [PRIX_3]€)
+4. [SERVICE_4] (Valeur : [PRIX_4]€)
+5. [BONUS_1] (Valeur : [PRIX_BONUS_1]€)
+6. [BONUS_2] (Valeur : [PRIX_BONUS_2]€)
+
+Valeur totale : [VALEUR_TOTALE]€
+
+Investissement pour [ENTREPRISE] : [PRIX_FINAL]€
+Économie : [ECONOMIE]€ ([POURCENTAGE_REDUCTION]%)
+
+ROI estimé : [ROI]% sur [PERIODE_ROI].
+
+Conditions :
+→ [CONDITION_1]
+→ [CONDITION_2]
+→ [CONDITION_3]
+
+Garantie : [GARANTIE_OFFERTE].
+
+Places limitées : [NB_ENTREPRISES] entreprises max.
+
+[ENTREPRISE] est pré-qualifiée.
+
+Validation avant [DATE_LIMITE] ?
+
+[EXPEDITEUR]`,
+    plan: "growth",
+    category: "value-stack",
+    variables: ["PRENOM", "ENTREPRISE", "VALEUR_TOTALE", "SERVICE_1", "PRIX_1", "SERVICE_2", "PRIX_2", "SERVICE_3", "PRIX_3", "SERVICE_4", "PRIX_4", "BONUS_1", "PRIX_BONUS_1", "BONUS_2", "PRIX_BONUS_2", "PRIX_FINAL", "ECONOMIE", "POURCENTAGE_REDUCTION", "ROI", "PERIODE_ROI", "CONDITION_1", "CONDITION_2", "CONDITION_3", "GARANTIE_OFFERTE", "NB_ENTREPRISES", "DATE_LIMITE", "EXPEDITEUR"]
+  },
+  // Templates 29 et 30 pour atteindre 30 au total
+  {
+    name: "Approche Consultative Ultime",
+    subject: "Diagnostic stratégique gratuit pour [ENTREPRISE] - 72h",
+    content: `[PRENOM],
+
+Diagnostic stratégique complet offert à [ENTREPRISE].
+
+Méthode : [METHODOLOGIE_EXCLUSIVE] développée sur [NB_ANNEES] ans.
+
+Analyse complète en 72h :
+→ Audit [DOMAINE_1] (Valeur : [PRIX_AUDIT_1]€)
+→ Benchmark concurrentiel [DOMAINE_2] (Valeur : [PRIX_AUDIT_2]€)
+→ Plan d'action 90 jours (Valeur : [PRIX_PLAN]€)
+→ Accompagnement mise en œuvre (Valeur : [PRIX_ACCOMPAGNEMENT]€)
+
+Valeur totale : [VALEUR_DIAGNOSTIC]€
+
+Conditions : [CONDITION_DIAGNOSTIC]
+
+Pourquoi gratuit ? [RAISON_GRATUIT].
+
+[CLIENT_PRECEDENT] a obtenu [RESULTAT_CLIENT] grâce à ce diagnostic.
+
+Planning limité : [NB_DIAGNOSTICS] diagnostics/mois max.
+
+[ENTREPRISE] est éligible - confirmation avant [DATE_LIMITE] ?
+
+[EXPEDITEUR]
+[CABINET_CONSEIL]`,
+    plan: "growth",
+    category: "diagnostic",
+    variables: ["PRENOM", "ENTREPRISE", "METHODOLOGIE_EXCLUSIVE", "NB_ANNEES", "DOMAINE_1", "PRIX_AUDIT_1", "DOMAINE_2", "PRIX_AUDIT_2", "PRIX_PLAN", "PRIX_ACCOMPAGNEMENT", "VALEUR_DIAGNOSTIC", "CONDITION_DIAGNOSTIC", "RAISON_GRATUIT", "CLIENT_PRECEDENT", "RESULTAT_CLIENT", "NB_DIAGNOSTICS", "DATE_LIMITE", "EXPEDITEUR", "CABINET_CONSEIL"]
+  },
+  {
+    name: "Email de Clôture Définitive",
+    subject: "Dernière communication - [ENTREPRISE] x [NOTRE_ENTREPRISE]",
+    content: `[PRENOM],
+
+C'est ma dernière communication concernant [SUJET_PRINCIPAL].
+
+Bilan de nos échanges :
+• [DATE_1] : [ECHANGE_1]
+• [DATE_2] : [ECHANGE_2]  
+• [DATE_3] : [ECHANGE_3]
+
+Votre position : [POSITION_CLIENT]
+Notre proposition : [NOTRE_PROPOSITION]
+
+Je respecte votre décision de [DECISION_CLIENT].
+
+Trois scénarios pour la suite :
+
+1) [ENTREPRISE] change d'avis → Contact direct : [CONTACT_DIRECT]
+2) Opportunité future → Je vous recontacte dans [DELAI_FUTUR]
+3) Referral → Si vous connaissez une entreprise intéressée par [SOLUTION]
+
+[ENTREPRISE] restera dans mon estime pour [RAISON_RESPECT].
+
+Succès pour vos projets futurs !
+
+[EXPEDITEUR]
+
+P.S: [MESSAGE_FINAL_POSITIF]`,
+    plan: "growth",
+    category: "cloture",
+    variables: ["PRENOM", "ENTREPRISE", "NOTRE_ENTREPRISE", "SUJET_PRINCIPAL", "DATE_1", "ECHANGE_1", "DATE_2", "ECHANGE_2", "DATE_3", "ECHANGE_3", "POSITION_CLIENT", "NOTRE_PROPOSITION", "DECISION_CLIENT", "CONTACT_DIRECT", "DELAI_FUTUR", "SOLUTION", "RAISON_RESPECT", "EXPEDITEUR", "MESSAGE_FINAL_POSITIF"]
   }
 ];
 

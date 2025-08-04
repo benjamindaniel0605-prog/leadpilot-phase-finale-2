@@ -111,6 +111,10 @@ export class DatabaseStorage implements IStorage {
     
     const allowedPlans = planHierarchy[plan as keyof typeof planHierarchy] || ['free'];
     
+    if (allowedPlans.length === 0) {
+      return [];
+    }
+    
     return await db
       .select()
       .from(templates)
