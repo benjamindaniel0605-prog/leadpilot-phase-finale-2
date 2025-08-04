@@ -35,7 +35,8 @@ export interface IStorage {
   createTemplate(templateData: any): Promise<Template>;
   updateTemplateUsage(id: string): Promise<void>;
   updateTemplate(id: string, data: { subject?: string; content?: string }): Promise<void>;
-  createTemplateVariation(baseTemplate: Template, userId: string): Promise<Template>;
+  generateAIVariation(template: Template): Promise<{ subject: string; content: string }>;
+  deleteCampaign(id: string): Promise<void>;
   
   // Lead operations
   getLeads(userId: string): Promise<Lead[]>;
@@ -143,38 +144,46 @@ export class DatabaseStorage implements IStorage {
       .where(eq(templates.id, id));
   }
 
-  async createTemplateVariation(baseTemplate: Template, userId: string): Promise<Template> {
-    // Générer une variation en modifiant légèrement le contenu
-    const variations = {
-      subject: [
-        baseTemplate.subject,
-        baseTemplate.subject.replace("votre", "notre"),
-        baseTemplate.subject.replace("Découvrez", "Explorez"),
-        baseTemplate.subject + " - Offre spéciale"
-      ],
-      content: [
-        baseTemplate.content,
-        baseTemplate.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous"),
-        baseTemplate.content.replace("vous", "tu").replace("votre", "ta"),
-        baseTemplate.content.replace("intéressé", "curieux").replace("solution", "approche")
-      ]
-    };
+  async generateAIVariation(template: Template): Promise<{ subject: string; content: string }> {
+    try {
+      // Utiliser le service OpenAI pour générer une variation complète
+      const openaiService = await import('./services/openaiService');
+      
+      const prompt = `Génère une variation complète de cet email en français, en gardant exactement la même structure mais en changeant quasiment tout le contenu. Garde le même ton professionnel et le même objectif :
 
-    const randomSubject = variations.subject[Math.floor(Math.random() * variations.subject.length)];
-    const randomContent = variations.content[Math.floor(Math.random() * variations.content.length)];
+Objet original: ${template.subject}
+Contenu original: ${template.content}
 
-    const variationData = {
-      name: `${baseTemplate.name} - Variation`,
-      subject: randomSubject,
-      content: randomContent,
-      plan: baseTemplate.plan,
-      category: baseTemplate.category,
-      variables: baseTemplate.variables,
-      timesUsed: 0,
-      openRate: null
-    };
+Retourne uniquement un JSON avec "subject" et "content", sans markdown ni explication.`;
 
-    return await this.createTemplate(variationData);
+      const response = await openaiService.generateText(prompt);
+      
+      try {
+        const parsed = JSON.parse(response);
+        return {
+          subject: parsed.subject || template.subject,
+          content: parsed.content || template.content
+        };
+      } catch (parseError) {
+        // Fallback si le JSON n'est pas valide
+        console.error("Failed to parse OpenAI response:", parseError);
+        return {
+          subject: template.subject.replace("Bonjour", "Salut").replace("Découvrez", "Explorez"),
+          content: template.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous")
+        };
+      }
+    } catch (error) {
+      console.error("Error generating AI variation:", error);
+      // Fallback simple si OpenAI échoue
+      return {
+        subject: template.subject + " - Version alternative",
+        content: template.content.replace("Bonjour", "Salut").replace("vous", "tu")
+      };
+    }
+  }
+
+  async deleteCampaign(id: string): Promise<void> {
+    await db.delete(campaigns).where(eq(campaigns.id, id));
   }
 
   // Lead operations

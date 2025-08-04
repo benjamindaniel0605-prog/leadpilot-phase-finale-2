@@ -88,14 +88,16 @@ The platform implements a tiered subscription model with usage quotas for leads,
 ### Templates System Complete Overhaul (August 4, 2025)
 - **Plan-Based Access Control**: Fixed Free plan to show exactly 1 template (1/30), removed duplicate templates from database
 - **Custom Email Creation**: Replaced "Generate Variations" and "New Template" buttons with unified "Écrire Email Personnel" feature available to all plans
-- **Smart Variations System**: Bouton "Variations" now modifies existing template content with intelligent word substitutions while maintaining style
+- **AI-Powered Variations System**: Bouton "Variations" now uses OpenAI to completely rewrite template content while maintaining structure and professional tone
 - **Template Restoration**: Added "Revenir à l'original" button to restore templates to their base version after variations
 - **Enhanced Edit Interface**: Improved template editing dialog with larger text area (15 rows), monospace font, and helpful variable commands ([PRENOM], [ENTREPRISE], etc.)
 - **Button Functionality Documentation**: 
   - **Utiliser**: Adds template to email campaigns and increments usage counter
-  - **Variations**: Generates alternative version of template with different words but same style
-  - **Éditer**: Opens full editing interface for manual customization
+  - **Variations**: Uses OpenAI to completely rewrite template content while keeping structure and tone
+  - **Éditer**: Opens full editing interface for manual customization with variable commands display
   - **Copier**: Copies template content to clipboard
   - **Revenir à l'original**: Restores template to base version (appears after using Variations)
+- **Campaign Management**: Added delete campaign functionality with confirmation dialog and proper database cleanup
+- **UI Improvements**: Removed "Variables personnalisables" section from template display as requested
 - **Database Cleanup**: Removed duplicate variation templates, ensuring Free plan users see only their single allocated template
 - **Error Resolution**: Fixed all TypeScript errors, HTTP method issues, and React rendering warnings

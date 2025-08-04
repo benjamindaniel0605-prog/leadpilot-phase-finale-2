@@ -86,7 +86,7 @@ export default function TemplatesSection() {
     },
   });
 
-  // Mutation pour générer une variation (modifie le template existant)
+  // Mutation pour générer une variation avec IA (modifie le template existant)
   const generateVariationMutation = useMutation({
     mutationFn: async (templateId: string) => {
       const template = templates.find(t => t.id === templateId);
@@ -100,35 +100,18 @@ export default function TemplatesSection() {
         }));
       }
 
-      // Générer variations du contenu
-      const variations = {
-        subject: [
-          template.subject.replace("Bonjour", "Salut"),
-          template.subject.replace("votre", "notre"),
-          template.subject + " - Édition spéciale"
-        ],
-        content: [
-          template.content.replace("Bonjour", "Salut").replace("Cordialement", "Bien à vous"),
-          template.content.replace("vous", "tu").replace("votre", "ta"),
-          template.content.replace("intéressé", "curieux").replace("solution", "approche")
-        ]
-      };
-
-      const randomSubject = variations.subject[Math.floor(Math.random() * variations.subject.length)];
-      const randomContent = variations.content[Math.floor(Math.random() * variations.content.length)];
-
-      const response = await fetch(`/api/templates/${templateId}`, {
-        method: "PATCH",
+      // Utiliser l'IA pour générer une variation complète
+      const response = await fetch(`/api/templates/${templateId}/ai-variation`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject: randomSubject, content: randomContent }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Variation appliquée !",
-        description: "Le template a été modifié avec une nouvelle variation",
+        title: "Variation IA appliquée !",
+        description: "Le template a été complètement repensé tout en gardant sa structure",
       });
       setGeneratingVariation(null);
       queryClient.invalidateQueries({ queryKey: ["/api/templates"] });
@@ -137,7 +120,7 @@ export default function TemplatesSection() {
       setGeneratingVariation(null);
       toast({
         title: "Erreur",
-        description: "Impossible de générer la variation",
+        description: "Impossible de générer la variation IA",
         variant: "destructive",
       });
     },
@@ -414,19 +397,7 @@ export default function TemplatesSection() {
                     </div>
                   </div>
 
-                  {/* Template Variations */}
-                  {!isLocked && template.variables && Array.isArray(template.variables) && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-card-foreground mb-2">Variables personnalisables:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {(template.variables as string[]).map((variable, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            [{variable}]
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* Template Stats */}
                   <div className="flex items-center justify-between pt-4 border-t">

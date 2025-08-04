@@ -90,6 +90,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour générer une variation IA d'un template
+  app.post('/api/templates/:id/ai-variation', isAuthenticated, async (req: any, res) => {
+    try {
+      const template = await storage.getTemplate(req.params.id);
+      if (!template) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+
+      // Utiliser OpenAI pour générer une variation complète
+      const variation = await storage.generateAIVariation(template);
+      
+      // Mettre à jour le template avec la variation
+      await storage.updateTemplate(req.params.id, { 
+        subject: variation.subject, 
+        content: variation.content 
+      });
+      
+      res.json({ message: "AI variation applied successfully" });
+    } catch (error) {
+      console.error("Error generating AI variation:", error);
+      res.status(500).json({ message: "Failed to generate AI variation" });
+    }
+  });
+
+  // Route pour supprimer une campagne
+  app.delete('/api/campaigns/:id', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteCampaign(req.params.id);
+      res.json({ message: "Campaign deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting campaign:", error);
+      res.status(500).json({ message: "Failed to delete campaign" });
+    }
+  });
+
   // Leads routes
   app.get('/api/leads', isAuthenticated, async (req: any, res) => {
     try {
