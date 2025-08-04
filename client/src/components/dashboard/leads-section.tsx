@@ -17,7 +17,8 @@ import { AdminSeedButton } from "@/components/admin-seed-button";
 export default function LeadsSection() {
   const [filters, setFilters] = useState({
     sector: "all",
-    score: "all",
+    companySize: "all",
+    score: "all", 
     status: "all"
   });
 
@@ -209,6 +210,7 @@ export default function LeadsSection() {
 
   const filteredLeads = leads.filter((lead: Lead) => {
     if (filters.sector !== "all" && lead.sector !== filters.sector) return false;
+    if (filters.companySize !== "all" && lead.companySize !== filters.companySize) return false;
     if (filters.status !== "all" && lead.status !== filters.status) return false;
     if (filters.score !== "all") {
       const score = lead.aiScore || 0;
@@ -236,25 +238,25 @@ export default function LeadsSection() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header with Lead Generation Form */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-2xl font-bold tracking-tight">Leads</h3>
-            <p className="text-muted-foreground">
-              Gérez vos prospects et leur scoring IA • {remainingLeads} leads restants
-            </p>
+      {/* Header Section */}
+      <div className="space-y-6">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
+          <div className="space-y-2">
+            <h3 className="text-3xl font-bold tracking-tight">Leads</h3>
+            <div className="flex flex-col space-y-1 md:flex-row md:items-center md:space-y-0 md:space-x-4">
+              <p className="text-base text-muted-foreground">
+                Gérez vos prospects et leur scoring IA
+              </p>
+              <div className="flex items-center space-x-2">
+                <div className="h-2 w-2 rounded-full bg-primary"></div>
+                <span className="text-sm font-medium text-primary">
+                  {remainingLeads} leads restants
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-3">
             <AdminSeedButton />
-            <Button variant="outline" onClick={handleImportCSV} disabled={importCSVMutation.isPending}>
-              <Upload className="h-4 w-4 mr-2" />
-              {importCSVMutation.isPending ? "Import..." : "Importer"}
-            </Button>
-            <Button variant="outline" onClick={handleExportCSV}>
-              <Download className="h-4 w-4 mr-2" />
-              Exporter
-            </Button>
           </div>
         </div>
 
@@ -282,22 +284,27 @@ export default function LeadsSection() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <Label htmlFor="sector" className="text-sm font-medium">Secteur d'activité *</Label>
-                  <Select value={generationCriteria.sector} onValueChange={(value) => 
-                    setGenerationCriteria(prev => ({ ...prev, sector: value }))
-                  }>
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Sélectionner un secteur" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Tech/SaaS">Tech / SaaS</SelectItem>
-                      <SelectItem value="E-commerce">E-commerce</SelectItem>
-                      <SelectItem value="Finance">Finance / Fintech</SelectItem>
-                      <SelectItem value="Marketing">Marketing / Publicité</SelectItem>
-                      <SelectItem value="Conseil">Conseil / Services</SelectItem>
-                      <SelectItem value="Santé">Santé / Médical</SelectItem>
-                      <SelectItem value="Education">Éducation / Formation</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <Input
+                      list="sectors"
+                      className="h-10"
+                      value={generationCriteria.sector}
+                      onChange={(e) => setGenerationCriteria(prev => ({ ...prev, sector: e.target.value }))}
+                      placeholder="Tapez ou sélectionnez un secteur"
+                    />
+                    <datalist id="sectors">
+                      <option value="Tech/SaaS">Tech / SaaS</option>
+                      <option value="E-commerce">E-commerce</option>
+                      <option value="Finance">Finance / Fintech</option>
+                      <option value="Marketing">Marketing / Publicité</option>
+                      <option value="Conseil">Conseil / Services</option>
+                      <option value="Santé">Santé / Médical</option>
+                      <option value="Education">Éducation / Formation</option>
+                      <option value="Industrie">Industrie / Manufacturing</option>
+                      <option value="Immobilier">Immobilier</option>
+                      <option value="Transport">Transport / Logistique</option>
+                    </datalist>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -312,46 +319,44 @@ export default function LeadsSection() {
 
                 <div className="space-y-3">
                   <Label htmlFor="companySize" className="text-sm font-medium">Taille d'entreprise</Label>
-                  <Select value={generationCriteria.companySize} onValueChange={(value) => 
-                    setGenerationCriteria(prev => ({ ...prev, companySize: value }))
-                  }>
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Toutes tailles" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Toutes tailles</SelectItem>
-                      <SelectItem value="startup">Startup (1-50)</SelectItem>
-                      <SelectItem value="small">PME (51-200)</SelectItem>
-                      <SelectItem value="medium">Moyenne (201-500)</SelectItem>
-                      <SelectItem value="large">Grande (500+)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <Input
+                      list="companySizes"
+                      className="h-10"
+                      value={generationCriteria.companySize === "all" ? "" : generationCriteria.companySize}
+                      onChange={(e) => setGenerationCriteria(prev => ({ ...prev, companySize: e.target.value || "all" }))}
+                      placeholder="Tapez ou sélectionnez une taille"
+                    />
+                    <datalist id="companySizes">
+                      <option value="startup">Startup (1-50)</option>
+                      <option value="small">PME (51-200)</option>
+                      <option value="medium">Moyenne (201-500)</option>
+                      <option value="large">Grande (500+)</option>
+                      <option value="micro">Micro-entreprise (1-10)</option>
+                      <option value="enterprise">Entreprise (1000+)</option>
+                    </datalist>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
                   <Label htmlFor="count" className="text-sm font-medium">Nombre de leads</Label>
-                  <Select value={generationCriteria.count.toString()} onValueChange={(value) => 
-                    setGenerationCriteria(prev => ({ ...prev, count: parseInt(value) }))
-                  }>
-                    <SelectTrigger className="h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: Math.min(maxLeads, 10) }, (_, i) => (
-                        <SelectItem key={i + 1} value={(i + 1).toString()}>
-                          {i + 1} lead{i > 0 ? 's' : ''}
-                        </SelectItem>
-                      ))}
-                      {maxLeads > 10 && (
-                        <>
-                          <SelectItem value="15">15 leads</SelectItem>
-                          <SelectItem value="20">20 leads</SelectItem>
-                          {maxLeads >= 25 && <SelectItem value="25">25 leads</SelectItem>}
-                          {maxLeads >= 50 && <SelectItem value="50">50 leads</SelectItem>}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min="1"
+                      max={maxLeads}
+                      className="h-10"
+                      value={generationCriteria.count}
+                      onChange={(e) => {
+                        const value = Math.min(parseInt(e.target.value) || 1, maxLeads);
+                        setGenerationCriteria(prev => ({ ...prev, count: value }));
+                      }}
+                      placeholder={`Max ${maxLeads} leads`}
+                    />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Limite: {maxLeads} leads
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-span-1 md:col-span-2 space-y-3">
@@ -388,64 +393,101 @@ export default function LeadsSection() {
           <div>
             <h3 className="text-lg font-semibold">Tous les Leads ({leads.length})</h3>
           </div>
-          <div className="flex space-x-2">{/* Filter components will be here */}</div>
         </div>
 
         {/* Filters */}
         <Card>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-3">Secteur</label>
-              <Select value={filters.sector} onValueChange={(value) => setFilters({ ...filters, sector: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les secteurs" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les secteurs</SelectItem>
-                  <SelectItem value="Tech/SaaS">Tech/SaaS</SelectItem>
-                  <SelectItem value="E-commerce">E-commerce</SelectItem>
-                  <SelectItem value="Services">Services</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-card-foreground mb-3">Secteur</label>
+                <Input
+                  list="filterSectors"
+                  className="h-10"
+                  value={filters.sector === "all" ? "" : filters.sector}
+                  onChange={(e) => setFilters({ ...filters, sector: e.target.value || "all" })}
+                  placeholder="Tous les secteurs"
+                />
+                <datalist id="filterSectors">
+                  <option value="Tech/SaaS">Tech / SaaS</option>
+                  <option value="E-commerce">E-commerce</option>
+                  <option value="Finance">Finance / Fintech</option>
+                  <option value="Marketing">Marketing / Publicité</option>
+                  <option value="Conseil">Conseil / Services</option>
+                  <option value="Santé">Santé / Médical</option>
+                  <option value="Education">Éducation / Formation</option>
+                  <option value="Industrie">Industrie / Manufacturing</option>
+                  <option value="Immobilier">Immobilier</option>
+                  <option value="Transport">Transport / Logistique</option>
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-card-foreground mb-3">Taille d'entreprise</label>
+                <Input
+                  list="filterCompanySizes"
+                  className="h-10"
+                  value={filters.companySize === "all" ? "" : filters.companySize}
+                  onChange={(e) => setFilters({ ...filters, companySize: e.target.value || "all" })}
+                  placeholder="Toutes les tailles"
+                />
+                <datalist id="filterCompanySizes">
+                  <option value="startup">Startup (1-50)</option>
+                  <option value="small">PME (51-200)</option>
+                  <option value="medium">Moyenne (201-500)</option>
+                  <option value="large">Grande (500+)</option>
+                  <option value="micro">Micro-entreprise (1-10)</option>
+                  <option value="enterprise">Entreprise (1000+)</option>
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-card-foreground mb-3">Score IA</label>
+                <Select value={filters.score} onValueChange={(value) => setFilters({ ...filters, score: value })}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Tous les scores" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les scores</SelectItem>
+                    <SelectItem value="high">Élevé (80-100)</SelectItem>
+                    <SelectItem value="medium">Moyen (60-79)</SelectItem>
+                    <SelectItem value="low">Faible (0-59)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-card-foreground mb-3">Statut</label>
+                <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Tous les statuts" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="new">Nouveau</SelectItem>
+                    <SelectItem value="contacted">Contacté</SelectItem>
+                    <SelectItem value="qualified">Qualifié</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-end">
+                <Button 
+                  className="w-full h-10"
+                  onClick={() => {
+                    // Reset filters
+                    setFilters({
+                      sector: "all",
+                      companySize: "all", 
+                      score: "all",
+                      status: "all"
+                    });
+                  }}
+                  variant="outline"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Réinitialiser
+                </Button>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-3">Score IA</label>
-              <Select value={filters.score} onValueChange={(value) => setFilters({ ...filters, score: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les scores" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les scores</SelectItem>
-                  <SelectItem value="high">Élevé (80-100)</SelectItem>
-                  <SelectItem value="medium">Moyen (60-79)</SelectItem>
-                  <SelectItem value="low">Faible (0-59)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-3">Statut</label>
-              <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les statuts" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les statuts</SelectItem>
-                  <SelectItem value="new">Nouveau</SelectItem>
-                  <SelectItem value="contacted">Contacté</SelectItem>
-                  <SelectItem value="qualified">Qualifié</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-end">
-              <Button className="w-full">
-                <Search className="h-4 w-4 mr-2" />
-                Filtrer
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Leads Table */}
