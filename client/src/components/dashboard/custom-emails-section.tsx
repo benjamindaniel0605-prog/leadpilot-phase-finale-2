@@ -122,19 +122,32 @@ export default function CustomEmailsSection() {
       return response.json();
     },
     onSuccess: (data) => {
+      if (data.quotaExhausted) {
+        toast({
+          title: "Quota épuisé",
+          description: data.message,
+          variant: "destructive",
+        });
+        setGeneratingVariation(false);
+        return;
+      }
+      
       setLastGeneratedContent(editedContent); // Sauvegarder le contenu précédent
       setEditedContent(data.variation);
       setGeneratingVariation(false);
       toast({
         title: "Variation générée !",
-        description: "Une nouvelle version de votre email a été créée.",
+        description: `Il vous reste ${data.remainingVariations}/${data.monthlyLimit} variations ce mois.`,
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       setGeneratingVariation(false);
+      const errorMessage = error?.message?.includes("429") 
+        ? "Quota de variations épuisé pour ce mois"
+        : "Impossible de générer une variation. Réessayez.";
       toast({
         title: "Erreur",
-        description: "Impossible de générer une variation. Réessayez.",
+        description: errorMessage,
         variant: "destructive",
       });
     },

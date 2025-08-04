@@ -85,8 +85,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deleteTemplate(req.params.id);
       res.json({ message: "Template deleted successfully" });
     } catch (error) {
-      console.error("Error updating template:", error);
-      res.status(500).json({ message: "Failed to update template" });
+      console.error("Error deleting template:", error);
+      res.status(500).json({ message: "Failed to delete template" });
+    }
+  });
+
+  // Route pour générer une variation d'email avec quota
+  app.post('/api/templates/:id/variation', isAuthenticated, async (req: any, res) => {
+    try {
+      const templateId = req.params.id;
+      const userId = req.user.claims.sub;
+      
+      // Vérifier les quotas
+      const quotaCheck = await storage.checkVariationQuota(userId);
+      if (!quotaCheck.canGenerate) {
+        return res.status(429).json({ 
+          message: "Quota de variations épuisé pour ce mois",
+          remainingVariations: quotaCheck.remainingVariations,
+          monthlyLimit: quotaCheck.monthlyLimit
+        });
+      }
+
+      const template = await storage.getTemplate(templateId);
+      if (!template) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+
+      // Générer la variation
+      const variation = await storage.generateAIVariation(template);
+      
+      // Incrémenter le compteur
+      await storage.incrementVariationUsage(userId);
+      
+      res.json({
+        ...variation,
+        remainingVariations: quotaCheck.remainingVariations - 1
+      });
+    } catch (error) {
+      console.error("Error generating variation:", error);
+      res.status(500).json({ message: "Failed to generate variation" });
     }
   });
 
@@ -104,12 +141,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Route pour générer une variation IA d'un template
   app.post('/api/templates/:id/ai-variation', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
+      
+      // Vérifier les quotas
+      const quotaCheck = await storage.checkVariationQuota(userId);
+      if (!quotaCheck.canGenerate) {
+        return res.status(429).json({ 
+          message: "Quota de variations épuisé pour ce mois",
+          remainingVariations: quotaCheck.remainingVariations,
+          monthlyLimit: quotaCheck.monthlyLimit
+        });
+      }
+
       const template = await storage.getTemplate(req.params.id);
       if (!template) {
         return res.status(404).json({ message: "Template not found" });
       }
 
-      // Utiliser OpenAI pour générer une variation complète
+      // Utiliser l'IA pour générer une variation complète
       const variation = await storage.generateAIVariation(template);
       
       // Mettre à jour le template avec la variation
@@ -118,7 +167,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: variation.content 
       });
       
-      res.json({ message: "AI variation applied successfully" });
+      // Incrémenter le compteur
+      await storage.incrementVariationUsage(userId);
+      
+      res.json({ 
+        message: "AI variation applied successfully",
+        remainingVariations: quotaCheck.remainingVariations - 1
+      });
     } catch (error) {
       console.error("Error generating AI variation:", error);
       res.status(500).json({ message: "Failed to generate AI variation" });
@@ -381,15 +436,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/custom-emails/generate-variation', isAuthenticated, async (req: any, res) => {
     try {
       const { content } = req.body;
+      const userId = req.user.claims.sub;
       
       if (!content || typeof content !== 'string') {
         return res.status(400).json({ message: "Content is required" });
       }
 
-      // Utiliser le service de génération de variations existant
+      // Vérifier les quotas
+      const quotaCheck = await storage.checkVariationQuota(userId);
+      if (!quotaCheck.canGenerate) {
+        return res.status(429).json({ 
+          message: `Quota épuisé ! Plan actuel permet ${quotaCheck.monthlyLimit} variations/mois.`,
+          remainingVariations: quotaCheck.remainingVariations,
+          monthlyLimit: quotaCheck.monthlyLimit,
+          quotaExhausted: true
+        });
+      }
+
+      // Générer la variation
       const variation = await storage.generateContentVariation(content);
       
-      res.json({ variation });
+      // Incrémenter le compteur
+      await storage.incrementVariationUsage(userId);
+      
+      res.json({ 
+        variation,
+        remainingVariations: quotaCheck.remainingVariations - 1,
+        monthlyLimit: quotaCheck.monthlyLimit
+      });
     } catch (error) {
       console.error("Error generating custom email variation:", error);
       res.status(500).json({ message: "Failed to generate variation" });
