@@ -168,6 +168,10 @@ export default function CustomEmailsSection({ onSectionChange }: CustomEmailsSec
       setLastGeneratedContent(editedContent); // Sauvegarder le contenu précédent
       setEditedContent(data.variation);
       setGeneratingVariation(false);
+      
+      // Invalider le cache utilisateur pour mettre à jour les quotas
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+      
       toast({
         title: "Variation générée !",
         description: `Il vous reste ${data.remainingVariations}/${data.monthlyLimit} variations ce mois.`,

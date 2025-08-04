@@ -56,6 +56,13 @@ export default function SettingsSection() {
     queryKey: ['/api/analytics/stats'],
     enabled: !!user,
   });
+
+  // Get fresh user data for variations count
+  const { data: freshUser } = useQuery({
+    queryKey: ['/api/auth/user'],
+    enabled: !!user,
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
   
   // Update form when user data is available
   useEffect(() => {
@@ -122,9 +129,9 @@ export default function SettingsSection() {
   const userPlan = user?.plan || "free";
   const currentLimits = planLimits[userPlan as keyof typeof planLimits];
   
-  // Use real analytics data instead of user properties
+  // Use real analytics data and fresh user data
   const leadsUsed = (analytics as any)?.leadsGenerated || 0;
-  const variationsUsed = (user as any)?.aiVariationsUsed || 0; // Use user data for variations (should be 3)
+  const variationsUsed = (freshUser as any)?.aiVariationsUsed || (user as any)?.aiVariationsUsed || 0;
   const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
   const variationsUsage = (variationsUsed / currentLimits.variations) * 100;
 
