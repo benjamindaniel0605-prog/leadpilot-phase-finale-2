@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit3, Trash2, Eye, Copy } from "lucide-react";
+import { Plus, Edit3, Trash2, Eye, Copy, Wand2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -31,6 +31,7 @@ export default function CustomEmailsSection() {
   const [editedName, setEditedName] = useState("");
   const [editedSubject, setEditedSubject] = useState("");
   const [editedContent, setEditedContent] = useState("");
+  const [generatingVariation, setGeneratingVariation] = useState(false);
 
   const { data: customEmails = [], isLoading } = useQuery<CustomEmail[]>({
     queryKey: ["/api/custom-emails"],
@@ -108,6 +109,38 @@ export default function CustomEmailsSection() {
       subject: editedSubject,
       content: editedContent,
     });
+  };
+
+  const generateVariationMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const response = await apiRequest("POST", "/api/templates/generate-variation", {
+        content: content,
+        type: "custom_email"
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setEditedContent(data.variation);
+      setGeneratingVariation(false);
+      toast({
+        title: "Variation générée !",
+        description: "Une nouvelle version de votre email a été créée avec l'IA.",
+      });
+    },
+    onError: () => {
+      setGeneratingVariation(false);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer une variation. Réessayez.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleGenerateVariation = () => {
+    if (!editedContent.trim()) return;
+    setGeneratingVariation(true);
+    generateVariationMutation.mutate(editedContent);
   };
 
   if (isLoading) {
@@ -334,16 +367,37 @@ export default function CustomEmailsSection() {
               </div>
             </div>
           </div>
-          <div className="flex justify-end space-x-2 pt-4 border-t">
-            <Button variant="outline" onClick={() => setEditingEmail(null)}>
-              Annuler
-            </Button>
+          <div className="flex justify-between pt-4 border-t">
             <Button 
-              onClick={handleSaveEdit}
-              disabled={updateEmailMutation.isPending || !editedName.trim() || !editedSubject.trim() || !editedContent.trim()}
+              variant="outline"
+              onClick={handleGenerateVariation}
+              disabled={generatingVariation || !editedContent.trim()}
+              className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
             >
-              {updateEmailMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+              {generatingVariation ? (
+                <>
+                  <Wand2 className="h-4 w-4 mr-2 animate-spin" />
+                  Génération...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Variation IA
+                </>
+              )}
             </Button>
+            
+            <div className="flex space-x-2">
+              <Button variant="outline" onClick={() => setEditingEmail(null)}>
+                Annuler
+              </Button>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={updateEmailMutation.isPending || !editedName.trim() || !editedSubject.trim() || !editedContent.trim()}
+              >
+                {updateEmailMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
