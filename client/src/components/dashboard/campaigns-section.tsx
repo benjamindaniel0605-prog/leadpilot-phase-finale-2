@@ -101,8 +101,9 @@ export default function CampaignsSection() {
     const { selectedLeads, ...formData } = campaignForm;
     createCampaignMutation.mutate({
       ...formData,
-      leadTargets: selectedLeads.join(',')
-    });
+      leadTargets: selectedLeads.join(','),
+      status: 'draft'
+    } as any);
   };
 
   const handleLeadSelection = (leadId: string, checked: boolean) => {
@@ -139,6 +140,39 @@ export default function CampaignsSection() {
       ...prev,
       selectedLeads: []
     }));
+  };
+
+  const handleViewCampaignDetails = (campaignId: string) => {
+    // Pour l'instant, on affiche une alerte avec les détails
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (campaign) {
+      const details = `
+Détails de la campagne: ${campaign.name}
+
+• Email utilisé: ${customEmails.find((e: CustomEmail) => e.id === campaign.emailId)?.name || "Email inconnu"}
+• Leads ciblés: ${campaign.leadTargets ? campaign.leadTargets.split(',').length : 0} leads
+• Statut: ${campaign.status}
+• Créée le: ${campaign.createdAt ? new Date(campaign.createdAt).toLocaleDateString('fr-FR') : 'Date inconnue'}
+
+Statistiques:
+• Envoyés: ${campaign.totalSent}
+• Ouverts: ${campaign.totalOpened}
+• Clics: ${campaign.totalClicked}
+• Réponses: ${campaign.totalReplied}
+      `.trim();
+      alert(details);
+    }
+  };
+
+  const handleDuplicateCampaign = (campaign: Campaign) => {
+    setCampaignForm({
+      name: `${campaign.name} (copie)`,
+      emailId: campaign.emailId,
+      selectedLeads: campaign.leadTargets ? campaign.leadTargets.split(',') : [],
+      status: 'draft'
+    });
+    // Scroll vers le formulaire
+    document.querySelector('.campaigns-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const getStatusBadge = (status: string) => {
@@ -178,7 +212,7 @@ export default function CampaignsSection() {
       </div>
 
       {/* Campaign Creation Form */}
-      <Card className="mb-6">
+      <Card className="mb-6 campaigns-form">
         <CardHeader>
           <CardTitle>Créer une Campagne</CardTitle>
         </CardHeader>
@@ -341,7 +375,7 @@ export default function CampaignsSection() {
         <CardContent>
           {campaigns.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">Aucune campagne créée pour le moment.</p>
+              <p className="text-muted-foreground mb-4">Aucune campagne créée pour le moment.</p>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer votre première campagne
@@ -350,11 +384,11 @@ export default function CampaignsSection() {
           ) : (
             <div className="space-y-4">
               {campaigns.map((campaign: Campaign) => (
-                <div key={campaign.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={campaign.id} className="border border-border rounded-lg p-4 bg-card">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900">{campaign.name}</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="text-lg font-medium text-foreground">{campaign.name}</h4>
+                      <p className="text-sm text-muted-foreground">
                         Email: {customEmails.find((e: CustomEmail) => e.id === campaign.emailId)?.name || "Email inconnu"}
                       </p>
                     </div>
@@ -389,27 +423,41 @@ export default function CampaignsSection() {
                   </div>
                   <div className="grid grid-cols-4 gap-4 mb-3">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{campaign.totalSent}</div>
-                      <div className="text-sm text-gray-600">Envoyés</div>
+                      <div className="text-2xl font-bold text-foreground">{campaign.totalSent}</div>
+                      <div className="text-sm text-muted-foreground">Envoyés</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-emerald-600">{campaign.totalOpened}</div>
-                      <div className="text-sm text-gray-600">Ouverts</div>
+                      <div className="text-2xl font-bold text-emerald-400">{campaign.totalOpened}</div>
+                      <div className="text-sm text-muted-foreground">Ouverts</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{campaign.totalClicked}</div>
-                      <div className="text-sm text-gray-600">Clics</div>
+                      <div className="text-2xl font-bold text-blue-400">{campaign.totalClicked}</div>
+                      <div className="text-sm text-muted-foreground">Clics</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">{campaign.totalReplied}</div>
-                      <div className="text-sm text-gray-600">Réponses</div>
+                      <div className="text-2xl font-bold text-purple-400">{campaign.totalReplied}</div>
+                      <div className="text-sm text-muted-foreground">Réponses</div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm text-gray-600">
+                  <div className="flex justify-between items-center text-sm text-muted-foreground">
                     <span>Créée le {campaign.createdAt ? new Date(campaign.createdAt).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
                     <div className="space-x-3">
-                      <Button variant="ghost" size="sm">Voir détails</Button>
-                      <Button variant="ghost" size="sm">Dupliquer</Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleViewCampaignDetails(campaign.id)}
+                        className="text-foreground hover:text-primary"
+                      >
+                        Voir détails
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDuplicateCampaign(campaign)}
+                        className="text-foreground hover:text-primary"
+                      >
+                        Dupliquer
+                      </Button>
                     </div>
                   </div>
                 </div>
