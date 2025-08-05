@@ -70,6 +70,8 @@ export interface IStorage {
   // Booking operations
   getBookings(userId: string): Promise<Booking[]>;
   createBooking(booking: InsertBooking): Promise<Booking>;
+  deleteBooking(bookingId: string, userId: string): Promise<void>;
+  updateBookingConversion(bookingId: string, userId: string, conversionStatus: string): Promise<void>;
   
   // Analytics
   getUserStats(userId: string): Promise<{
@@ -912,6 +914,19 @@ export class DatabaseStorage implements IStorage {
         })
         .where(eq(users.id, userId));
     }
+  }
+
+  async deleteBooking(bookingId: string, userId: string): Promise<void> {
+    await db
+      .delete(bookings)
+      .where(and(eq(bookings.id, bookingId), eq(bookings.userId, userId)));
+  }
+
+  async updateBookingConversion(bookingId: string, userId: string, conversionStatus: string): Promise<void> {
+    await db
+      .update(bookings)
+      .set({ conversionStatus, status: 'completed' })
+      .where(and(eq(bookings.id, bookingId), eq(bookings.userId, userId)));
   }
 }
 

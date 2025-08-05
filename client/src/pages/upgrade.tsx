@@ -367,6 +367,24 @@ export default function UpgradePage() {
           <p className="text-sm text-slate-400">
             Paiement sécurisé avec Stripe • Résiliable à tout moment • Support 24/7
           </p>
+          
+          {/* Lien d'annulation pour les utilisateurs avec plan payant */}
+          {user?.plan && user.plan !== 'free' && (
+            <div className="mt-8 p-4 bg-slate-700 rounded-lg border border-slate-600 max-w-md mx-auto">
+              <h3 className="text-lg font-semibold text-white mb-2">Gérer votre abonnement</h3>
+              <p className="text-slate-300 text-sm mb-3">
+                Besoin d'annuler ou de modifier votre abonnement ?
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setLocation('/cancel-subscription')}
+                className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+              >
+                Annuler l'abonnement
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

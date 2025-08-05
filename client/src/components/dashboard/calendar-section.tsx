@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Booking } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function CalendarSection() {
   const { data: bookings = [], isLoading } = useQuery<Booking[]>({
@@ -19,6 +21,7 @@ export default function CalendarSection() {
   });
 
   const { user } = useAuth();
+  const { toast } = useToast();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [showNewBookingDialog, setShowNewBookingDialog] = useState(false);
@@ -83,6 +86,50 @@ export default function CalendarSection() {
       month: 'long',
       year: 'numeric'
     });
+  };
+
+  const handleDeleteBooking = async (bookingId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce RDV ?')) return;
+    
+    try {
+      const response = await apiRequest('DELETE', `/api/bookings/${bookingId}`);
+      if (response.ok) {
+        toast({
+          title: "RDV supprimé",
+          description: "Le rendez-vous a été supprimé avec succès.",
+        });
+        queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de supprimer le RDV.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleConversionUpdate = async (bookingId: string, conversionStatus: string) => {
+    try {
+      const response = await apiRequest('PATCH', `/api/bookings/${bookingId}/conversion`, {
+        conversionStatus
+      });
+      if (response.ok) {
+        toast({
+          title: "Statut mis à jour",
+          description: conversionStatus === 'converted' 
+            ? "RDV marqué comme converti !" 
+            : "RDV marqué comme non concluant.",
+        });
+        queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de mettre à jour le statut.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -423,10 +470,11 @@ export default function CalendarSection() {
                   {bookings.map((booking: Booking) => (
                     <div 
                       key={booking.id} 
-                      className={`border rounded-lg p-4 ${
-                        booking.status === 'confirmed' ? 'border-emerald-200 bg-emerald-50' :
-                        booking.status === 'scheduled' ? 'border-blue-200 bg-blue-50' :
-                        'border-gray-200 bg-gray-50'
+                      className={`border rounded-lg p-4 relative ${
+                        booking.status === 'confirmed' ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100' :
+                        booking.status === 'scheduled' ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100' :
+                        booking.status === 'completed' ? 'border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100' :
+                        'border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -464,6 +512,47 @@ export default function CalendarSection() {
                           )}
                           {booking.meetingType === 'video' ? 'Visio' : 'Téléphone'}
                         </span>
+                      </div>
+                      
+                      {/* Boutons d'action */}
+                      <div className="mt-4 flex justify-between items-center">
+                        <div className="flex gap-2">
+                          {booking.status === 'completed' && !booking.conversionStatus && (
+                            <>
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() => handleConversionUpdate(booking.id, 'converted')}
+                              >
+                                ✅ Converti
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleConversionUpdate(booking.id, 'not_converted')}
+                              >
+                                ❌ Non concluant
+                              </Button>
+                            </>
+                          )}
+                          {booking.conversionStatus && (
+                            <span className={`text-sm px-2 py-1 rounded ${
+                              booking.conversionStatus === 'converted' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {booking.conversionStatus === 'converted' ? '✅ Conversion réussie' : '❌ Non concluant'}
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDeleteBooking(booking.id)}
+                        >
+                          🗑️ Supprimer
+                        </Button>
                       </div>
                     </div>
                   ))}

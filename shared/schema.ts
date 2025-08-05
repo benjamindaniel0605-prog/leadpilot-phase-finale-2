@@ -133,6 +133,11 @@ export const bookings = pgTable("bookings", {
   endTime: timestamp("end_time").notNull(),
   status: varchar("status").notNull().default("scheduled"),
   meetingType: varchar("meeting_type").default("video"),
+  conversionStatus: varchar("conversion_status"), // converted, not_converted, pending
+  contactName: varchar("contact_name"),
+  contactEmail: varchar("contact_email"),
+  contactPhone: varchar("contact_phone"),
+  company: varchar("company"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

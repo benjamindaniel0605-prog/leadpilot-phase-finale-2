@@ -10,6 +10,7 @@ import UpgradePage from "@/pages/upgrade";
 import PaymentSuccess from "@/pages/payment-success";
 import TestPlans from "@/pages/test-plans";
 import BookMeeting from "@/pages/book-meeting";
+import CancelSubscription from "@/pages/cancel-subscription";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
           <Route path="/payment-success" component={PaymentSuccess} />
           <Route path="/test-plans" component={TestPlans} />
           <Route path="/book-meeting" component={BookMeeting} />
+          <Route path="/cancel-subscription" component={CancelSubscription} />
         </>
       )}
       <Route component={NotFound} />

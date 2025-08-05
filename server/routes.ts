@@ -477,6 +477,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Supprimer un booking
+  app.delete('/api/bookings/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const bookingId = req.params.id;
+      
+      await storage.deleteBooking(bookingId, userId);
+      res.json({ message: "RDV supprimé avec succès" });
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      res.status(500).json({ message: "Erreur lors de la suppression" });
+    }
+  });
+
+  // Mettre à jour le statut de conversion d'un booking
+  app.patch('/api/bookings/:id/conversion', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const bookingId = req.params.id;
+      const { conversionStatus } = req.body;
+      
+      if (!['converted', 'not_converted'].includes(conversionStatus)) {
+        return res.status(400).json({ message: "Statut de conversion invalide" });
+      }
+
+      await storage.updateBookingConversion(bookingId, userId, conversionStatus);
+      res.json({ message: "Statut de conversion mis à jour" });
+    } catch (error) {
+      console.error("Error updating conversion status:", error);
+      res.status(500).json({ message: "Erreur lors de la mise à jour" });
+    }
+  });
+
   // Route publique pour que les prospects puissent booker directement
   app.post('/api/bookings/public', async (req: any, res) => {
     try {
@@ -800,6 +833,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error seeding leads:", error);
       res.status(500).json({ message: "Failed to seed leads" });
+    }
+  });
+
+  // Route pour annuler l'abonnement
+  app.post('/api/cancel-subscription', isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { reason } = req.body;
+      
+      console.log(`🚫 Demande d'annulation d'abonnement pour ${userId}: ${reason}`);
+      
+      // Downgrade vers le plan gratuit
+      const updatedUser = await storage.updateUserPlan(userId, 'free', false);
+      
+      // Log de la raison pour analyse (en production, sauvegarder en base)
+      console.log(`📝 Raison d'annulation: "${reason}"`);
+      
+      res.json({ 
+        success: true, 
+        message: "Abonnement annulé avec succès",
+        user: updatedUser 
+      });
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      res.status(500).json({ message: 'Erreur lors de l\'annulation' });
     }
   });
 
