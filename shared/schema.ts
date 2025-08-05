@@ -35,6 +35,14 @@ export const users = pgTable("users", {
   leadsUsed: integer("leads_used").notNull().default(0),
   aiVariationsUsed: integer("ai_variations_used").notNull().default(0),
   variationHistory: jsonb("variation_history").default([]),
+  // OAuth email connections
+  googleEmailConnected: boolean("google_email_connected").default(false),
+  googleEmailToken: text("google_email_token"),
+  googleRefreshToken: text("google_refresh_token"),
+  outlookEmailConnected: boolean("outlook_email_connected").default(false),
+  outlookEmailToken: text("outlook_email_token"),
+  outlookRefreshToken: text("outlook_refresh_token"),
+  connectedEmailAddress: varchar("connected_email_address"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

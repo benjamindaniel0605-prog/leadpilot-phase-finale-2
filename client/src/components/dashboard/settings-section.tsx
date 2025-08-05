@@ -26,6 +26,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import OAuthConnections from "./oauth-connections";
 
 export default function SettingsSection() {
   const [profileForm, setProfileForm] = useState({
@@ -306,75 +307,14 @@ export default function SettingsSection() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Mail className="h-5 w-5 mr-2" />
-                Configuration Email
+                Connexion Email
               </CardTitle>
               <p className="text-sm text-gray-600">
-                Configurez votre serveur SMTP pour l'envoi d'emails automatisés. 
-                Ces paramètres sont nécessaires pour envoyer vos campagnes email.
+                Connectez votre compte Google ou Outlook pour envoyer vos campagnes email directement depuis votre boîte mail.
               </p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Serveur SMTP</label>
-                <Input
-                  type="text"
-                  value={emailConfig.smtpServer}
-                  onChange={(e) => setEmailConfig({ ...emailConfig, smtpServer: e.target.value })}
-                  placeholder="smtp.gmail.com"
-                />
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Port</label>
-                  <Input
-                    type="text"
-                    value={emailConfig.port}
-                    onChange={(e) => setEmailConfig({ ...emailConfig, port: e.target.value })}
-                    placeholder="587"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Sécurité</label>
-                  <Select 
-                    value={emailConfig.security} 
-                    onValueChange={(value) => setEmailConfig({ ...emailConfig, security: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TLS">TLS</SelectItem>
-                      <SelectItem value="SSL">SSL</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
-                  <Input
-                    type="text"
-                    value={emailConfig.username}
-                    onChange={(e) => setEmailConfig({ ...emailConfig, username: e.target.value })}
-                    placeholder="votre-email@gmail.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
-                  <Input
-                    type="password"
-                    value={emailConfig.password}
-                    onChange={(e) => setEmailConfig({ ...emailConfig, password: e.target.value })}
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-              <Button 
-                onClick={handleTestEmailConfig}
-                disabled={testEmailConfigMutation.isPending}
-              >
-                {testEmailConfigMutation.isPending ? "Test en cours..." : "Tester la Configuration"}
-              </Button>
+            <CardContent className="space-y-6">
+              <OAuthConnections />
             </CardContent>
           </Card>
 

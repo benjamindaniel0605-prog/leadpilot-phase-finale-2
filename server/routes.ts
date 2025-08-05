@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupOAuthRoutes } from "./oauth-email";
 import { insertLeadSchema, insertCampaignSchema, insertBookingSchema } from "@shared/schema";
 import { z } from "zod";
 import { seedDatabase, exampleLeads } from "./seed-data";
@@ -13,6 +14,9 @@ import { registerEmailVariationRoutes } from "./routes/emailVariations";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // OAuth email routes
+  setupOAuthRoutes(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {

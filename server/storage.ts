@@ -77,6 +77,15 @@ export interface IStorage {
     openRate: number;
     meetingsBooked: number;
   }>;
+
+  // OAuth email operations
+  updateUserOAuthTokens(userId: string, oauthData: {
+    provider: 'google' | 'microsoft';
+    accessToken: string;
+    refreshToken: string;
+    emailAddress: string;
+  }): Promise<void>;
+  disconnectOAuthProvider(userId: string, provider: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -761,6 +770,63 @@ export class DatabaseStorage implements IStorage {
         meetingConversionRate: 0,
         avgScore: 0
       };
+    }
+  }
+  // OAuth email operations
+  async updateUserOAuthTokens(userId: string, oauthData: {
+    provider: 'google' | 'microsoft';
+    accessToken: string;
+    refreshToken: string;
+    emailAddress: string;
+  }): Promise<void> {
+    if (oauthData.provider === 'google') {
+      await db
+        .update(users)
+        .set({
+          googleEmailConnected: true,
+          googleEmailToken: oauthData.accessToken,
+          googleRefreshToken: oauthData.refreshToken,
+          connectedEmailAddress: oauthData.emailAddress,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, userId));
+    } else if (oauthData.provider === 'microsoft') {
+      await db
+        .update(users)
+        .set({
+          outlookEmailConnected: true,
+          outlookEmailToken: oauthData.accessToken,
+          outlookRefreshToken: oauthData.refreshToken,
+          connectedEmailAddress: oauthData.emailAddress,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, userId));
+    }
+  }
+
+  async disconnectOAuthProvider(userId: string, provider: string): Promise<void> {
+    if (provider === 'google') {
+      await db
+        .update(users)
+        .set({
+          googleEmailConnected: false,
+          googleEmailToken: null,
+          googleRefreshToken: null,
+          connectedEmailAddress: null,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, userId));
+    } else if (provider === 'microsoft') {
+      await db
+        .update(users)
+        .set({
+          outlookEmailConnected: false,
+          outlookEmailToken: null,
+          outlookRefreshToken: null,
+          connectedEmailAddress: null,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, userId));
     }
   }
 }
