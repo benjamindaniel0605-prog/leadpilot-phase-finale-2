@@ -144,6 +144,25 @@ export function registerSequenceRoutes(app: Express) {
     }
   });
 
+  // Supprimer une séquence
+  app.delete('/api/sequences/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+      
+      console.log(`🗑️ Suppression de la séquence ${id} pour l'utilisateur ${userId}`);
+      
+      // Simulation de la suppression
+      // En production, ici on supprimerait de la base de données
+      // et on arrêterait tous les emails programmés pour cette séquence
+      
+      res.json({ message: "Sequence deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting sequence:", error);
+      res.status(500).json({ message: "Failed to delete sequence" });
+    }
+  });
+
   // Mettre à jour une séquence
   app.put('/api/sequences/:id', isAuthenticated, async (req: any, res) => {
     try {

@@ -22,6 +22,10 @@ interface SequenceStep {
   isActive: boolean;
 }
 
+interface SequenceConfig {
+  selectedLeads: string[];
+}
+
 export default function SequencesSection() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -34,6 +38,9 @@ export default function SequencesSection() {
   const [selectedSequence, setSelectedSequence] = useState<string | null>(null);
   const [isEditingSteps, setIsEditingSteps] = useState(false);
   const [sequenceSteps, setSequenceSteps] = useState<SequenceStep[]>([]);
+  const [sequenceConfig, setSequenceConfig] = useState<SequenceConfig>({
+    selectedLeads: []
+  });
 
   // TEMPORAIRE : Autoriser les séquences pour le plan Free pour les tests
   const canUseSequences = true; // user?.plan === "pro" || user?.plan === "growth";
@@ -48,6 +55,12 @@ export default function SequencesSection() {
   // Récupération des emails personnalisés
   const { data: customEmails = [] } = useQuery({
     queryKey: ["/api/custom-emails"],
+    enabled: canUseSequences,
+  });
+
+  // Récupération des leads
+  const { data: leads = [] } = useQuery({
+    queryKey: ["/api/leads"],
     enabled: canUseSequences,
   });
 
@@ -69,6 +82,27 @@ export default function SequencesSection() {
       toast({
         title: "Erreur",
         description: "Impossible de créer la séquence",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Suppression de séquence
+  const deleteSequenceMutation = useMutation({
+    mutationFn: async (sequenceId: string) => {
+      return await apiRequest("DELETE", `/api/sequences/${sequenceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
+      toast({
+        title: "Séquence supprimée",
+        description: "La séquence a été supprimée avec succès",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la séquence",
         variant: "destructive",
       });
     },
@@ -149,13 +183,14 @@ export default function SequencesSection() {
                     rows={3}
                   />
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-2">Comment ça marche ?</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-3">Comment ça marche ?</h4>
+                  <ul className="text-sm text-blue-800 space-y-2">
                     <li>• Après création, vous pourrez ajouter jusqu'à {maxSteps} étapes</li>
-                    <li>• Chaque étape peut avoir un email et un délai d'attente</li>
-                    <li>• Les emails s'envoient automatiquement si pas de réponse</li>
-                    <li>• La séquence s'arrête dès qu'un prospect répond</li>
+                    <li>• Chaque étape peut avoir un email et un délai d'attente personnalisé</li>
+                    <li>• Les emails s'envoient automatiquement si le prospect ne répond pas</li>
+                    <li>• La séquence s'arrête automatiquement dès qu'un prospect répond</li>
+                    <li>• Vous pourrez sélectionner précisément quels leads cibler</li>
                   </ul>
                 </div>
                 <div className="flex justify-end space-x-2">
@@ -180,11 +215,61 @@ export default function SequencesSection() {
 
       {/* Dialog pour éditer les étapes d'une séquence */}
       <Dialog open={isEditingSteps} onOpenChange={setIsEditingSteps}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Configurer les étapes de votre séquence</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
+            
+            {/* Sélection des leads */}
+            <div className="border rounded-lg p-4">
+              <h4 className="font-medium mb-3 flex items-center">
+                <Users className="h-4 w-4 mr-2" />
+                Sélectionner les leads ({sequenceConfig.selectedLeads.length} sélectionné{sequenceConfig.selectedLeads.length !== 1 ? 's' : ''})
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-40 overflow-y-auto">
+                {leads.map((lead: any) => (
+                  <label key={lead.id} className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={sequenceConfig.selectedLeads.includes(lead.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSequenceConfig(prev => ({
+                            ...prev,
+                            selectedLeads: [...prev.selectedLeads, lead.id]
+                          }));
+                        } else {
+                          setSequenceConfig(prev => ({
+                            ...prev,
+                            selectedLeads: prev.selectedLeads.filter(id => id !== lead.id)
+                          }));
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">
+                        {lead.firstName} {lead.lastName}
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {lead.company} • {lead.email}
+                      </div>
+                    </div>
+                    {lead.score && (
+                      <Badge variant={lead.score >= 80 ? "default" : "secondary"} className="text-xs">
+                        {lead.score}%
+                      </Badge>
+                    )}
+                  </label>
+                ))}
+              </div>
+              {leads.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Aucun lead disponible. Générez d'abord des leads dans la section "Leads".
+                </p>
+              )}
+            </div>
             {/* Ajouter des étapes */}
             <div className="flex justify-between items-center">
               <div>
@@ -277,10 +362,10 @@ export default function SequencesSection() {
 
                     {/* Délai en jours */}
                     <div>
-                      <label className="text-sm font-medium">
-                        Délai {index === 0 ? "(envoi immédiat)" : "(après l'étape précédente)"}
+                      <label className="text-sm font-medium mb-2 block">
+                        Délai {index === 0 ? "(envoi immédiat)" : "(après étape précédente)"}
                       </label>
-                      <div className="flex space-x-2">
+                      <div className="flex items-center space-x-2">
                         <Input
                           type="number"
                           min="0"
@@ -291,9 +376,9 @@ export default function SequencesSection() {
                             ));
                           }}
                           disabled={index === 0}
-                          className="w-20"
+                          className="w-16"
                         />
-                        <span className="text-sm text-muted-foreground self-center">jours</span>
+                        <span className="text-xs text-muted-foreground min-w-[28px]">jours</span>
                         <Input
                           type="number"
                           min="0"
@@ -305,19 +390,28 @@ export default function SequencesSection() {
                             ));
                           }}
                           disabled={index === 0}
-                          className="w-20"
+                          className="w-16"
                         />
-                        <span className="text-sm text-muted-foreground self-center">heures</span>
+                        <span className="text-xs text-muted-foreground">heures</span>
                       </div>
                     </div>
 
                     {/* Statut */}
                     <div>
-                      <label className="text-sm font-medium">Statut</label>
-                      <div className="flex items-center pt-2">
-                        <Badge variant={step.isActive ? "default" : "secondary"}>
+                      <label className="text-sm font-medium mb-2 block">Statut</label>
+                      <div className="flex items-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSequenceSteps(prev => prev.map((s, i) => 
+                              i === index ? { ...s, isActive: !s.isActive } : s
+                            ));
+                          }}
+                          className={`${step.isActive ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
+                        >
                           {step.isActive ? "Active" : "Inactive"}
-                        </Badge>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -349,13 +443,16 @@ export default function SequencesSection() {
               </Button>
               <Button 
                 onClick={async () => {
-                  if (selectedSequence) {
+                  if (selectedSequence && sequenceConfig.selectedLeads.length > 0) {
                     try {
-                      await apiRequest("POST", `/api/sequences/${selectedSequence}/steps`, { steps: sequenceSteps });
+                      await apiRequest("POST", `/api/sequences/${selectedSequence}/steps`, { 
+                        steps: sequenceSteps,
+                        selectedLeads: sequenceConfig.selectedLeads 
+                      });
                       setIsEditingSteps(false);
                       toast({
                         title: "Séquence configurée",
-                        description: `${sequenceSteps.length} étape(s) configurée(s) avec succès`,
+                        description: `${sequenceSteps.length} étape(s) configurée(s) pour ${sequenceConfig.selectedLeads.length} lead(s)`,
                       });
                     } catch (error) {
                       toast({
@@ -366,7 +463,7 @@ export default function SequencesSection() {
                     }
                   }
                 }}
-                disabled={sequenceSteps.length === 0}
+                disabled={sequenceSteps.length === 0 || sequenceConfig.selectedLeads.length === 0}
               >
                 Sauvegarder la séquence
               </Button>
@@ -448,7 +545,7 @@ export default function SequencesSection() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant="outline" className={sequence.isActive ? "bg-green-50 text-green-700" : "bg-gray-50 text-gray-600"}>
-                        {sequence.isActive ? "Active" : "Pauzée"}
+                        {sequence.isActive ? "Active" : "Inactive"}
                       </Badge>
                       <Button 
                         variant="outline" 
@@ -462,6 +559,18 @@ export default function SequencesSection() {
                       </Button>
                       <Button variant="outline" size="sm">
                         {sequence.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (confirm("Êtes-vous sûr de vouloir supprimer cette séquence ?")) {
+                            deleteSequenceMutation.mutate(sequence.id);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
