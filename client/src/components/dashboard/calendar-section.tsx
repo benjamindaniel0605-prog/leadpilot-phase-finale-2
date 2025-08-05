@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Settings, Calendar, Clock, Video, Phone, ChevronLeft, ChevronRight, Copy, Plus } from "lucide-react";
+import { Settings, Calendar, Clock, Video, Phone, ChevronLeft, ChevronRight, Copy, Plus, TrendingUp, Lock, Trash2, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -160,8 +160,8 @@ export default function CalendarSection() {
       const response = await apiRequest('POST', '/api/bookings', {
         title: newBooking.title,
         description: newBooking.description,
-        startTime: startDateTime,
-        endTime: endDateTime,
+        startTime: startDateTime.toISOString(),
+        endTime: endDateTime.toISOString(),
         meetingType: newBooking.meetingType,
         status: 'scheduled'
       });
@@ -299,8 +299,9 @@ export default function CalendarSection() {
                   </div>
                 </div>
                 <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
                   onClick={handleCreateBooking}
+                  disabled={!newBooking.title || !newBooking.date || !newBooking.time}
                 >
                   Créer le RDV
                 </Button>
@@ -416,7 +417,7 @@ export default function CalendarSection() {
       </div>
 
       {/* Statistiques rapides */}
-      <div className="grid grid-cols-1 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-center">
@@ -428,6 +429,35 @@ export default function CalendarSection() {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Taux de conversion - Starter+ */}
+        {['starter', 'pro', 'growth'].includes((user as any)?.plan || 'free') ? (
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-center">
+                <TrendingUp className="h-8 w-8 text-green-500" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Taux de conversion</p>
+                  <div className="text-2xl font-bold text-green-600">
+                    {bookings.length > 0 ? Math.round((bookings.filter(b => b.conversionStatus === 'converted').length / bookings.length) * 100) : 0}%
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-center">
+                <Lock className="h-8 w-8 text-gray-400" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Taux de conversion</p>
+                  <div className="text-sm text-gray-500">Plan Starter+</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -646,25 +676,6 @@ export default function CalendarSection() {
                 </div>
               )}
 
-              {/* Calendar Stats */}
-              <div className="mt-6 grid grid-cols-3 gap-4 pt-6 border-t">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">{bookings.length}</div>
-                  <div className="text-sm text-muted-foreground">RDV ce mois</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">
-                    {bookings.filter(b => b.status === 'confirmed').length}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Confirmés</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {bookings.length > 0 ? Math.round((bookings.filter(b => b.status === 'completed').length / bookings.length) * 100) : 0}%
-                  </div>
-                  <div className="text-sm text-muted-foreground">Taux show-up</div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
