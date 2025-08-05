@@ -10,16 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   User, 
   Mail, 
-  Building, 
-  Settings as SettingsIcon, 
-  Rocket, 
-  Brain, 
-  Download, 
-  HelpCircle, 
-  Trash2,
   Crown,
-  CheckCircle,
-  XCircle,
   Eye,
   EyeOff
 } from "lucide-react";
@@ -136,37 +127,7 @@ export default function SettingsSection() {
   const leadsUsage = (leadsUsed / currentLimits.leads) * 100;
   const variationsUsage = (variationsUsed / currentLimits.variations) * 100;
 
-  const integrations = [
-    {
-      name: "API de Leads",
-      description: "Génération automatique de leads",
-      icon: Rocket,
-      status: "not_configured",
-      color: "bg-purple-100 text-purple-600"
-    },
-    {
-      name: "Intelligence Artificielle",
-      description: "Scoring et variations IA",
-      icon: Brain,
-      status: "not_configured",
-      color: "bg-emerald-100 text-emerald-600"
-    }
-  ];
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      configured: { label: "Configuré", variant: "default" as const, icon: CheckCircle },
-      not_configured: { label: "Non configuré", variant: "destructive" as const, icon: XCircle }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig];
-    return (
-      <Badge variant={config.variant} className="flex items-center">
-        <config.icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
-    );
-  };
 
   const handleProfileUpdate = () => {
     updateProfileMutation.mutate(profileForm);
@@ -318,36 +279,7 @@ export default function SettingsSection() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <SettingsIcon className="h-5 w-5 mr-2" />
-                Intégrations API
-              </CardTitle>
-              <p className="text-sm text-gray-600">
-                Connectez des services externes pour enrichir vos leads et améliorer 
-                la génération automatique avec l'intelligence artificielle.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {integrations.map((integration, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 ${integration.color} rounded-lg flex items-center justify-center`}>
-                        <integration.icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">{integration.name}</h4>
-                        <p className="text-sm text-gray-600">{integration.description}</p>
-                      </div>
-                    </div>
-                    {getStatusBadge(integration.status)}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
 
         {/* Subscription & Usage */}
