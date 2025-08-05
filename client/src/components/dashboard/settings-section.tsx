@@ -12,7 +12,10 @@ import {
   Mail, 
   Crown,
   Eye,
-  EyeOff
+  EyeOff,
+  Download,
+  HelpCircle,
+  Trash2
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -358,9 +361,9 @@ export default function SettingsSection() {
             <CardContent>
               <div className="flex items-center space-x-3 mb-4">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={user?.profileImageUrl} />
+                  <AvatarImage src={user?.profileImageUrl || undefined} />
                   <AvatarFallback className="bg-primary text-white">
-                    {getInitials(user?.firstName, user?.lastName)}
+                    {getInitials(user?.firstName || "", user?.lastName || "")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
