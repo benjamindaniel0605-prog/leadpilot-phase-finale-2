@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { registerAdminRoutes } from "./routes/admin";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -52,6 +53,7 @@ app.use((req, res, next) => {
   }
 
   const server = await registerRoutes(app);
+  registerAdminRoutes(app);
 
   // Démarrer l'automatisation des séquences
   const { startSequenceAutomation } = await import("./services/sequenceAutomation");

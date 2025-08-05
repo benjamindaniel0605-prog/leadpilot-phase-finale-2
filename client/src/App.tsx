@@ -8,6 +8,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import UpgradePage from "@/pages/upgrade";
 import PaymentSuccess from "@/pages/payment-success";
+import TestPlans from "@/pages/test-plans";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
           <Route path="/dashboard/*" component={Dashboard} />
           <Route path="/upgrade" component={UpgradePage} />
           <Route path="/payment-success" component={PaymentSuccess} />
+          <Route path="/test-plans" component={TestPlans} />
         </>
       )}
       <Route component={NotFound} />

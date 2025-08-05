@@ -311,6 +311,7 @@ export function registerPaymentRoutes(app: Express) {
       const userId = req.user.id;
 
       console.log(`💳 Vérification paiement pour user ${userId}:`, { planType, billing });
+      console.log(`👤 Utilisateur connecté:`, req.user.email);
 
       // Mettre à jour le plan de l'utilisateur dans la base de données
       let newPlan = 'free';
