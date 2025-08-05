@@ -28,6 +28,7 @@ export default function LeadsSection() {
     location: "France", 
     companySize: "all",
     jobTitles: "",
+    specification: "", // Nouveau champ pour spécialisation
     count: 1
   });
 
@@ -389,7 +390,7 @@ export default function LeadsSection() {
                         onBlur={() => {
                           // On blur, ensure we have a valid number
                           const currentValue = generationCriteria.count;
-                          if (currentValue === '' || typeof currentValue === 'string' || currentValue < 1 || isNaN(currentValue)) {
+                          if (typeof currentValue === 'string' || currentValue < 1 || isNaN(currentValue)) {
                             setGenerationCriteria(prev => ({ ...prev, count: 1 }));
                           } else if (currentValue > maxLeads) {
                             setGenerationCriteria(prev => ({ ...prev, count: maxLeads }));
@@ -421,14 +422,27 @@ export default function LeadsSection() {
                   </div>
                 </div>
 
-                <div className="col-span-1 md:col-span-2 space-y-3">
+                <div className="space-y-3">
                   <Label htmlFor="jobTitles" className="text-sm font-medium">Postes ciblés (optionnel)</Label>
                   <Input
                     className="h-10"
                     value={generationCriteria.jobTitles}
                     onChange={(e) => setGenerationCriteria(prev => ({ ...prev, jobTitles: e.target.value }))}
-                    placeholder="CEO, Directeur Marketing, CTO... (séparés par des virgules)"
+                    placeholder="CEO, Directeur Marketing, CTO..."
                   />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="specification" className="text-sm font-medium">Spécialisation (facultatif)</Label>
+                  <Input
+                    className="h-10"
+                    value={generationCriteria.specification}
+                    onChange={(e) => setGenerationCriteria(prev => ({ ...prev, specification: e.target.value }))}
+                    placeholder="montres, crypto, IA, marketing digital..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Filtrez par secteur ou produit spécifique
+                  </p>
                 </div>
 
                 <div className="col-span-1 md:col-span-2 flex justify-end space-x-3 pt-4 border-t">
