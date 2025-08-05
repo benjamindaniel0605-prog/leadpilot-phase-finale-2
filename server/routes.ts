@@ -18,6 +18,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // OAuth email routes
   setupOAuthRoutes(app);
+  
+  // Setup OAuth debug routes
+  const { setupOAuthDebug } = await import('./oauth-debug');
+  setupOAuthDebug(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
