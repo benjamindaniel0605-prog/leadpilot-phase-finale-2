@@ -1,35 +1,31 @@
 import type { Express } from "express";
 import { isAuthenticated } from "../replitAuth";
 
+// Données simulées pour les séquences
+const mockSequences: Record<string, any[]> = {
+  "45880930": [
+    {
+      id: "seq-1",
+      userId: "45880930",
+      name: "Prospection initiale",
+      description: "Première approche des prospects",
+      isActive: true,
+      createdAt: new Date(),
+      steps: []
+    }
+  ]
+};
+
 export function registerSequenceRoutes(app: Express) {
   // Récupérer les séquences d'un utilisateur
   app.get('/api/sequences', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       
-      // Pour l'instant, retourner des données mock
-      const mockSequences = [
-        {
-          id: "seq-1",
-          userId,
-          name: "Prospection SaaS B2B",
-          description: "Séquence de prospection pour les entreprises SaaS",
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "seq-2", 
-          userId,
-          name: "Follow-up Clients",
-          description: "Relance automatique des clients existants",
-          isActive: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      ];
+      // Retourner les séquences pour cet utilisateur
+      const userSequences = mockSequences[userId] || [];
       
-      res.json(mockSequences);
+      res.json(userSequences);
     } catch (error) {
       console.error("Error fetching sequences:", error);
       res.status(500).json({ message: "Failed to fetch sequences" });
@@ -152,13 +148,16 @@ export function registerSequenceRoutes(app: Express) {
       
       console.log(`🗑️ Suppression de la séquence ${id} pour l'utilisateur ${userId}`);
       
-      // Supprimer la séquence des données simulées
-      if (mockSequences[userId]) {
-        const initialCount = mockSequences[userId].length;
-        mockSequences[userId] = mockSequences[userId].filter(seq => seq.id !== id);
-        const finalCount = mockSequences[userId].length;
-        console.log(`✅ Séquence ${id} supprimée avec succès (${initialCount} -> ${finalCount})`);
+      // Vérifier si l'utilisateur a des séquences
+      if (!mockSequences[userId]) {
+        mockSequences[userId] = [];
       }
+      
+      // Supprimer la séquence des données simulées
+      const initialCount = mockSequences[userId].length;
+      mockSequences[userId] = mockSequences[userId].filter(seq => seq.id !== id);
+      const finalCount = mockSequences[userId].length;
+      console.log(`✅ Séquence ${id} supprimée avec succès (${initialCount} -> ${finalCount})`);
       
       res.json({ message: "Sequence deleted successfully", sequenceId: id });
     } catch (error) {
@@ -176,15 +175,18 @@ export function registerSequenceRoutes(app: Express) {
       
       console.log(`🔄 Toggle séquence ${id} pour l'utilisateur ${userId}: ${isActive ? 'Active' : 'Inactive'}`);
       
+      // Vérifier si l'utilisateur a des séquences
+      if (!mockSequences[userId]) {
+        mockSequences[userId] = [];
+      }
+      
       // Mettre à jour le statut de la séquence dans les données simulées
-      if (mockSequences[userId]) {
-        const sequenceIndex = mockSequences[userId].findIndex(seq => seq.id === id);
-        if (sequenceIndex !== -1) {
-          mockSequences[userId][sequenceIndex].isActive = isActive;
-          console.log(`✅ Statut mis à jour: ${isActive ? 'Active' : 'Inactive'} pour séquence ${id}`);
-        } else {
-          console.log(`❌ Séquence ${id} non trouvée`);
-        }
+      const sequenceIndex = mockSequences[userId].findIndex(seq => seq.id === id);
+      if (sequenceIndex !== -1) {
+        mockSequences[userId][sequenceIndex].isActive = isActive;
+        console.log(`✅ Statut mis à jour: ${isActive ? 'Active' : 'Inactive'} pour séquence ${id}`);
+      } else {
+        console.log(`❌ Séquence ${id} non trouvée dans les données`);
       }
       
       res.json({ 
