@@ -4,10 +4,20 @@ import { storage } from './storage';
 import { isAuthenticated } from './replitAuth';
 
 // Configuration Google OAuth
+const getRedirectUri = () => {
+  // En production Replit, utiliser l'URL replit
+  if (process.env.REPLIT_DOMAINS) {
+    const domain = process.env.REPLIT_DOMAINS.split(',')[0];
+    return `https://${domain}/api/oauth/google/callback`;
+  }
+  // En développement local
+  return process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/oauth/google/callback';
+};
+
 const googleOAuth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_ID,  
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/oauth/google/callback'
+  getRedirectUri()
 );
 
 export function setupOAuthRoutes(app: Express) {
@@ -113,7 +123,7 @@ export async function getGoogleAuthClient(userId: string) {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI
+    getRedirectUri()
   );
 
   oauth2Client.setCredentials({
