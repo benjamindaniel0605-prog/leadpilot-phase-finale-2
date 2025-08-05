@@ -18,14 +18,19 @@ function getStripeInstance(): Stripe {
   return stripe;
 }
 
-// Prix des plans (configurés avec Stripe)
+// Prix des plans - REMPLACEZ PAR VOS LIENS DE PAIEMENT TEST STRIPE
 const PLAN_PRICES = {
-  starter_monthly: 'price_1RskslEVZ4LkA0ggJkEDmOOI',
-  starter_yearly: 'price_1RskslEVZ4LkA0ggs1RFihix',
-  pro_monthly: 'price_1RskslEVZ4LkA0ggBpmKn4sC',
-  pro_yearly: 'price_1RskslEVZ4LkA0ggJvLQTxt7',
-  growth_monthly: 'price_1RsksmEVZ4LkA0ggMDvG7AeN',
-  growth_yearly: 'price_1RsksmEVZ4LkA0ggUfjTbpLj'
+  // STARTER PLAN
+  starter_monthly: 'VOTRE_LIEN_STARTER_MENSUEL_ICI',    // Remplacez par votre lien Starter mensuel
+  starter_yearly: 'VOTRE_LIEN_STARTER_ANNUEL_ICI',      // Remplacez par votre lien Starter annuel
+  
+  // PRO PLAN  
+  pro_monthly: 'VOTRE_LIEN_PRO_MENSUEL_ICI',            // Remplacez par votre lien Pro mensuel
+  pro_yearly: 'VOTRE_LIEN_PRO_ANNUEL_ICI',              // Remplacez par votre lien Pro annuel
+  
+  // GROWTH PLAN
+  growth_monthly: 'VOTRE_LIEN_GROWTH_MENSUEL_ICI',      // Remplacez par votre lien Growth mensuel
+  growth_yearly: 'VOTRE_LIEN_GROWTH_ANNUEL_ICI'         // Remplacez par votre lien Growth annuel
 };
 
 export function registerPaymentRoutes(app: Express) {
