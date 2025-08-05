@@ -38,9 +38,10 @@ const plans: Plan[] = [
       '100 leads par mois',
       '5 templates email',
       '100 variations IA par mois',
+      'Lien de booking personnalisé',
       'Essai gratuit 14 jours sans engagement',
       'Support email',
-      'Analytics de base',
+      'Statistiques de conversion',
       'Résiliable à tout moment'
     ]
   },
@@ -58,9 +59,10 @@ const plans: Plan[] = [
       '15 templates email',
       '300 variations IA par mois',
       'Séquences automatisées (3 étapes)',
+      'Lien de booking personnalisé',
       'Essai gratuit 14 jours sans engagement',
       'Connexion Gmail OAuth',
-      'Analytics avancés',
+      'Analyse détaillée des campagnes',
       'Support prioritaire',
       'Résiliable à tout moment'
     ]
@@ -77,8 +79,9 @@ const plans: Plan[] = [
       '30 templates email premium',
       '1000 variations IA par mois',
       'Séquences automatisées (5 étapes)',
-      'Service de closing humain',
-      'Analytics avancés + IA insights',
+      'Lien de booking personnalisé',
+      'Analyse avancée + prédictions IA',
+      'Recommandations automatiques',
       'Support 24/7',
       'Résiliable à tout moment'
     ]
