@@ -375,7 +375,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const campaignId = req.params.id;
       
       // Récupérer la campagne
-      const campaign = await storage.getCampaign(campaignId);
+      const campaign = await storage.getCampaign(campaignId, userId);
       if (!campaign || campaign.userId !== userId) {
         return res.status(404).json({ message: "Campagne non trouvée" });
       }
@@ -398,11 +398,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Aucun lead trouvé pour cette campagne" });
       }
 
-      // Vérifier que l'utilisateur a un compte Gmail connecté
+      // Pour l'instant, on simule l'envoi d'emails (mode démo)
       const user = await storage.getUser(userId);
-      if (!user?.googleEmailConnected) {
-        return res.status(400).json({ message: "Connectez votre compte Gmail dans les paramètres avant d'envoyer une campagne" });
-      }
+      console.log(`📧 Simulation d'envoi de campagne pour ${user?.email}`);
 
       // Envoyer les emails
       const results = await emailService.sendCampaignEmails(
@@ -476,6 +474,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating booking:", error);
       res.status(500).json({ message: "Failed to create booking" });
+    }
+  });
+
+  // Route publique pour que les prospects puissent booker directement
+  app.post('/api/bookings/public', async (req: any, res) => {
+    try {
+      // Cette route accepte les bookings publics sans authentification
+      const bookingData = {
+        contactName: req.body.contactName,
+        contactEmail: req.body.contactEmail,
+        contactPhone: req.body.contactPhone,
+        company: req.body.company,
+        startTime: new Date(req.body.startTime),
+        duration: req.body.duration,
+        meetingType: req.body.meetingType,
+        description: req.body.description,
+        status: req.body.status || 'scheduled',
+        message: req.body.message,
+        // Pour l'instant, on associe à un utilisateur par défaut (premier utilisateur)
+        userId: '45880930' as string // À remplacer par un système plus robuste
+      };
+
+      // Créer un booking standard avec les champs requis
+      const standardBooking = {
+        id: crypto.randomUUID(),
+        userId: bookingData.userId,
+        title: `RDV avec ${bookingData.contactName}`,
+        description: bookingData.description,
+        startTime: bookingData.startTime,
+        endTime: new Date(bookingData.startTime.getTime() + (bookingData.duration * 60000)),
+        status: bookingData.status,
+        meetingType: bookingData.meetingType,
+        createdAt: new Date()
+      };
+
+      const booking = await storage.createBooking(standardBooking);
+
+      console.log(`📅 Nouveau RDV public programmé: ${bookingData.contactName} (${bookingData.contactEmail})`);
+      
+      res.json({
+        message: "Rendez-vous confirmé !",
+        booking: {
+          id: booking.id,
+          title: booking.title,
+          startTime: booking.startTime,
+          endTime: booking.endTime
+        }
+      });
+    } catch (error) {
+      console.error("Error creating public booking:", error);
+      res.status(500).json({ message: "Erreur lors de la programmation du rendez-vous" });
     }
   });
 

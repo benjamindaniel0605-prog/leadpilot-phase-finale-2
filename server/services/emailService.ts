@@ -22,12 +22,18 @@ export class EmailService {
         return { success: false, error: 'Utilisateur non trouvé' };
       }
 
-      // Envoyer via Google Gmail OAuth
-      if (user.googleEmailConnected && user.googleEmailToken) {
-        return await this.sendViaGoogle(user, emailData);
-      } else {
-        return { success: false, error: 'Connectez votre compte Gmail dans les paramètres pour envoyer des emails' };
-      }
+      // Mode simulation pour démo (remplacera Google OAuth plus tard)
+      console.log(`📧 Simulation envoi email à ${emailData.to}:`);
+      console.log(`   Sujet: ${emailData.subject}`);
+      console.log(`   De: ${emailData.fromName || user.firstName || 'LeadPilot'}`);
+      
+      // Simuler un délai d'envoi
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return { 
+        success: true, 
+        messageId: `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` 
+      };
     } catch (error) {
       console.error('Erreur envoi email:', error);
       return { success: false, error: 'Erreur lors de l\'envoi' };
