@@ -254,9 +254,16 @@ export default function UpgradePage() {
 
       const data = await response.json();
       
-      // Redirection directe vers Stripe
+      // Redirection directe vers Stripe dans un nouvel onglet pour éviter les blocages
       if (data.url) {
-        window.location.href = data.url;
+        // Ouvrir dans un nouvel onglet pour éviter les problèmes de navigation
+        window.open(data.url, '_blank');
+        
+        // Afficher un message de confirmation
+        toast({
+          title: "Redirection vers Stripe",
+          description: "La page de paiement s'ouvre dans un nouvel onglet",
+        });
       } else {
         throw new Error('URL de paiement non reçue');
       }
@@ -322,20 +329,20 @@ export default function UpgradePage() {
         </div>
 
         {/* Toggle mensuel/annuel */}
-        <div className="flex items-center justify-center mb-8 space-x-4">
-          <span className={`text-sm ${!isYearly ? 'font-semibold text-white' : 'text-slate-400'}`}>
+        <div className="flex items-center justify-center mb-8 space-x-6 bg-slate-700/50 rounded-xl p-4 max-w-md mx-auto">
+          <span className={`text-base font-medium transition-colors ${!isYearly ? 'text-white' : 'text-slate-400'}`}>
             Mensuel
           </span>
           <Switch
             checked={isYearly}
             onCheckedChange={setIsYearly}
-            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-green-600 data-[state=checked]:to-emerald-600"
+            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-green-500 data-[state=checked]:to-emerald-500 scale-125"
           />
-          <span className={`text-sm ${isYearly ? 'font-semibold text-white' : 'text-slate-400'}`}>
+          <span className={`text-base font-medium transition-colors ${isYearly ? 'text-white' : 'text-slate-400'}`}>
             Annuel
           </span>
           {isYearly && (
-            <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium px-3 py-1">
               2 mois offerts
             </Badge>
           )}
