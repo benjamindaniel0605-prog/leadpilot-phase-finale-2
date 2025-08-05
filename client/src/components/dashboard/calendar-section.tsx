@@ -160,8 +160,8 @@ export default function CalendarSection() {
       const response = await apiRequest('POST', '/api/bookings', {
         title: newBooking.title,
         description: newBooking.description,
-        startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString(),
+        startTime: startDateTime,
+        endTime: endDateTime,
         meetingType: newBooking.meetingType,
         status: 'scheduled'
       });
@@ -558,10 +558,10 @@ export default function CalendarSection() {
                     <div 
                       key={booking.id} 
                       className={`border rounded-lg p-4 relative ${
-                        booking.status === 'confirmed' ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100' :
-                        booking.status === 'scheduled' ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100' :
-                        booking.status === 'completed' ? 'border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100' :
-                        'border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100'
+                        booking.status === 'confirmed' ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20' :
+                        booking.status === 'scheduled' ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20' :
+                        booking.status === 'completed' ? 'border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20' :
+                        'border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/20 dark:to-gray-700/20'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">

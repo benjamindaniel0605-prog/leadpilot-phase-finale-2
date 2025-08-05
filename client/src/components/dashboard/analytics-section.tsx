@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { Download, TrendingUp, Mail, Eye, MousePointer, Calendar, CalendarDays } from "lucide-react";
+import { Download, TrendingUp, Mail, Eye, MousePointer, Calendar, CalendarDays, Lock, Crown } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Template } from "@shared/schema";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AnalyticsSection() {
+  const { user } = useAuth();
+  const userPlan = (user as any)?.plan || 'free';
+  
   const [selectedRange, setSelectedRange] = useState<{
     from: Date | null;
     to: Date | null;
@@ -296,60 +300,114 @@ export default function AnalyticsSection() {
 
       {/* Performance Charts */}
       <div className="grid lg:grid-cols-2 gap-6 mb-6">
+        {/* Entonnoir de Conversion - Starter+ */}
+        {['starter', 'pro', 'growth'].includes(userPlan) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2" />
+                Entonnoir de Conversion
+                <Badge variant="outline" className="ml-2 text-xs">Starter+</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {conversionData.map((item, index) => (
+                  <div key={index}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">{item.label}</span>
+                      <span className="font-semibold text-foreground">{item.value}</span>
+                    </div>
+                    <Progress value={item.percentage} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Lock className="h-5 w-5 mr-2 text-gray-400" />
+                Entonnoir de Conversion
+                <Badge variant="secondary" className="ml-2 text-xs">Starter+</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center py-8">
+              <Lock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">Analyse de l'entonnoir de conversion</p>
+              <p className="text-sm text-gray-500 mb-4">
+                Suivez vos prospects de la génération à la conversion avec des métriques détaillées.
+              </p>
+              <Button size="sm" variant="outline">
+                Upgrader vers Starter
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Métriques Clés - Pro+ */}
+        {['pro', 'growth'].includes(userPlan) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                Métriques Clés
+                <Badge variant="outline" className="ml-2 text-xs">Pro+</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {keyMetrics.map((metric, index) => (
+                  <div key={index} className={`text-center p-4 rounded-lg ${metric.color}`}>
+                    <div className="text-2xl font-bold">{metric.value}</div>
+                    <div className="text-sm opacity-80">{metric.label}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Crown className="h-5 w-5 mr-2 text-yellow-500" />
+                Métriques Clés
+                <Badge variant="secondary" className="ml-2 text-xs">Pro+</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center py-8">
+              <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">Analytics avancés avec métriques détaillées</p>
+              <p className="text-sm text-gray-500 mb-4">
+                Accès aux taux d'ouverture, clics, conversions et tableaux de bord personnalisés.
+              </p>
+              <Button size="sm" variant="outline">
+                Upgrader vers Pro
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Performance par Template - Starter+ */}
+      {['starter', 'pro', 'growth'].includes(userPlan) ? (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <TrendingUp className="h-5 w-5 mr-2" />
-              Entonnoir de Conversion
+              Performance par Template
+              <Badge variant="outline" className="ml-2 text-xs">Starter+</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {conversionData.map((item, index) => (
-                <div key={index}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-600">{item.label}</span>
-                    <span className="font-semibold text-foreground">{item.value}</span>
-                  </div>
-                  <Progress value={item.percentage} className="h-2" />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Métriques Clés</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              {keyMetrics.map((metric, index) => (
-                <div key={index} className={`text-center p-4 rounded-lg ${metric.color}`}>
-                  <div className="text-2xl font-bold">{metric.value}</div>
-                  <div className="text-sm opacity-80">{metric.label}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Detailed Stats */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance par Template</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {templates.length === 0 ? (
-            <div className="text-center py-8">
-              <Mail className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Aucune donnée de template disponible.</p>
-              <p className="text-sm text-gray-400 mt-2">
-                Créez des campagnes pour voir les statistiques de performance.
-              </p>
-            </div>
-          ) : (
+            {templates.length === 0 ? (
+              <div className="text-center py-8">
+                <Mail className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">Aucune donnée de template disponible.</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Créez des campagnes pour voir les statistiques de performance.
+                </p>
+              </div>
+            ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-purple-600 to-blue-600">
@@ -420,9 +478,30 @@ export default function AnalyticsSection() {
                 </tbody>
               </table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Lock className="h-5 w-5 mr-2 text-gray-400" />
+              Performance par Template
+              <Badge variant="secondary" className="ml-2 text-xs">Starter+</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center py-8">
+            <Lock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">Analyses détaillées des performances par template</p>
+            <p className="text-sm text-gray-500 mb-4">
+              Suivez les taux d'ouverture, clics et conversions pour chaque template d'email.
+            </p>
+            <Button size="sm" variant="outline">
+              Upgrader vers Starter
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
