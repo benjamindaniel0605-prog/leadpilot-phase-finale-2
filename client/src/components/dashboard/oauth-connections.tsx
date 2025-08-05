@@ -114,17 +114,22 @@ export default function OAuthConnections() {
   return (
     <div className="space-y-4">
       {/* Information */}
-      <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 mb-6">
+      <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
         <div className="flex items-start space-x-3">
-          <Mail className="h-5 w-5 text-primary mt-0.5" />
+          <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
           <div>
-            <h3 className="font-medium text-foreground mb-1">
-              Connexion Email Requise
+            <h3 className="font-medium text-amber-900 dark:text-amber-100 mb-1">
+              Configuration Google OAuth Requise
             </h3>
-            <p className="text-sm text-muted-foreground">
-              Connectez votre compte Gmail pour envoyer des campagnes email. 
-              Vos identifiants sont sécurisés et utilisés uniquement pour l'envoi d'emails.
+            <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
+              Pour connecter Gmail, vous devez d'abord configurer votre projet Google Cloud Console.
             </p>
+            <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900 rounded p-2">
+              <strong>URL de redirection à ajouter :</strong><br/>
+              <code className="text-xs">
+                https://{window.location.hostname}/api/oauth/google/callback
+              </code>
+            </div>
           </div>
         </div>
       </div>
