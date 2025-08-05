@@ -29,8 +29,10 @@ import { eq, and, desc, count, sql, inArray } from "drizzle-orm";
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
+  getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
-  updateUserPlan(userId: string, plan: string, isYearly: boolean): Promise<User>;
+  updateUserPlan(userId: string, plan: string, isYearly?: boolean): Promise<User>;
+  updateUserStripeInfo(userId: string, stripeInfo: { stripeCustomerId?: string; stripeSubscriptionId?: string | null }): Promise<void>;
   
   // Template operations
   getTemplates(): Promise<Template[]>;
@@ -116,17 +118,15 @@ export class DatabaseStorage implements IStorage {
   // Méthodes Stripe
   async updateUserStripeInfo(userId: string, stripeData: { 
     stripeCustomerId?: string; 
-    stripeSubscriptionId?: string; 
-  }): Promise<User> {
-    const [user] = await db
+    stripeSubscriptionId?: string | null; 
+  }): Promise<void> {
+    await db
       .update(users)
       .set({
         ...stripeData,
         updatedAt: new Date(),
       })
-      .where(eq(users.id, userId))
-      .returning();
-    return user;
+      .where(eq(users.id, userId));
   }
 
   async getUserByStripeCustomerId(customerId: string): Promise<User | undefined> {

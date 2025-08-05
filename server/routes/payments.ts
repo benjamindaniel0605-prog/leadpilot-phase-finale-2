@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import Stripe from "stripe";
 import { storage } from "../storage";
 import { isAuthenticated } from "../replitAuth";
@@ -348,6 +349,107 @@ export function registerPaymentRoutes(app: Express) {
     } catch (error) {
       console.error('Erreur vérification paiement:', error);
       res.status(500).json({ error: 'Erreur lors de la vérification du paiement' });
+    }
+  });
+
+  // Webhook Stripe pour traitement automatique des paiements
+  app.post("/api/stripe/webhook", express.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      console.log('⚠️ Webhook Stripe configuré mais STRIPE_WEBHOOK_SECRET manquant');
+      return res.status(400).send('Webhook secret not configured');
+    }
+
+    let event;
+
+    try {
+      const stripe = getStripeInstance();
+      event = stripe.webhooks.constructEvent(req.body, sig!, webhookSecret);
+      console.log(`🔔 Webhook Stripe reçu: ${event.type}`);
+    } catch (err: any) {
+      console.error(`❌ Erreur signature webhook: ${err.message}`);
+      return res.status(400).send(`Webhook signature verification failed: ${err.message}`);
+    }
+
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object as Stripe.Checkout.Session;
+          console.log(`✅ Paiement réussi pour session: ${session.id}`);
+
+          if (session.customer && session.metadata?.userId) {
+            const userId = session.metadata.userId;
+            const planId = session.metadata.planId || 'starter';
+            const isYearly = session.metadata.isYearly === 'true';
+
+            console.log(`📈 Mise à jour du plan utilisateur ${userId} vers ${planId} (${isYearly ? 'annuel' : 'mensuel'})`);
+
+            // Mettre à jour le plan de l'utilisateur
+            await storage.updateUserPlan(userId, planId);
+            
+            // Enregistrer les infos Stripe si c'est un abonnement
+            if (session.subscription) {
+              await storage.updateUserStripeInfo(userId, {
+                stripeCustomerId: session.customer as string,
+                stripeSubscriptionId: session.subscription as string
+              });
+            }
+
+            console.log(`✅ Plan utilisateur ${userId} mis à jour avec succès`);
+          }
+          break;
+        }
+
+        case 'customer.subscription.updated': {
+          const subscription = event.data.object as Stripe.Subscription;
+          console.log(`🔄 Abonnement mis à jour: ${subscription.id}, statut: ${subscription.status}`);
+
+          // Trouver l'utilisateur par customer ID
+          const user = await storage.getUserByStripeCustomerId(subscription.customer as string);
+          if (user) {
+            // Mettre à jour le statut si l'abonnement est annulé ou suspendu
+            if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
+              await storage.updateUserPlan(user.id, 'free');
+              console.log(`📉 Plan utilisateur ${user.id} rétrogradé vers Free suite à l'annulation`);
+            }
+          }
+          break;
+        }
+
+        case 'customer.subscription.deleted': {
+          const subscription = event.data.object as Stripe.Subscription;
+          console.log(`🗑️ Abonnement supprimé: ${subscription.id}`);
+
+          // Trouver l'utilisateur et le remettre en plan gratuit
+          const user = await storage.getUserByStripeCustomerId(subscription.customer as string);
+          if (user) {
+            await storage.updateUserPlan(user.id, 'free');
+            await storage.updateUserStripeInfo(user.id, {
+              stripeCustomerId: user.stripeCustomerId,
+              stripeSubscriptionId: null
+            });
+            console.log(`📉 Plan utilisateur ${user.id} rétrogradé vers Free suite à la suppression`);
+          }
+          break;
+        }
+
+        case 'invoice.payment_failed': {
+          const invoice = event.data.object as Stripe.Invoice;
+          console.log(`❌ Échec de paiement pour facture: ${invoice.id}`);
+          // Optionnel: notifier l'utilisateur ou suspendre temporairement
+          break;
+        }
+
+        default:
+          console.log(`ℹ️ Événement webhook non traité: ${event.type}`);
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      console.error('❌ Erreur traitement webhook:', error);
+      res.status(500).json({ error: 'Webhook processing failed' });
     }
   });
 }
