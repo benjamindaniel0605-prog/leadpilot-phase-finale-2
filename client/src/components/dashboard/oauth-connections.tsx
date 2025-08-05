@@ -125,17 +125,6 @@ export default function OAuthConnections() {
               Connectez votre compte Gmail pour envoyer des campagnes email directement depuis LeadPilot. 
               Vos identifiants sont sécurisés et utilisés uniquement pour l'envoi d'emails.
             </p>
-            {!oauthStatus?.google?.connected && (
-              <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded">
-                <p className="text-xs text-amber-700 dark:text-amber-300">
-                  <strong>Note :</strong> Si vous obtenez une erreur "n'autorise pas la connexion", 
-                  votre projet Google Cloud Console doit autoriser le domaine : 
-                  <code className="ml-1 px-1 bg-amber-100 dark:bg-amber-900 rounded">
-                    {window.location.hostname}
-                  </code>
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

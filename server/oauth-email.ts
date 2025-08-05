@@ -30,44 +30,66 @@ export function setupOAuthRoutes(app: Express) {
         'https://www.googleapis.com/auth/userinfo.email'
       ];
 
-      const redirectUri = getRedirectUri();
-      console.log(`🔗 OAuth Redirect URI: ${redirectUri}`);
-      console.log(`🔑 Client ID: ${process.env.GOOGLE_CLIENT_ID?.substring(0, 20)}...`);
+      // Utiliser une nouvelle instance pour chaque requête
+      const currentRedirectUri = getRedirectUri();
+      const oauthClient = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        currentRedirectUri
+      );
 
-      const authUrl = googleOAuth2Client.generateAuthUrl({
+      const authUrl = oauthClient.generateAuthUrl({
         access_type: 'offline',
         scope: scopes,
         prompt: 'consent',
-        state: req.user.claims.sub // ID utilisateur pour sécurité
+        include_granted_scopes: true,
+        state: req.user.claims.sub
       });
 
-      console.log(`🚀 Generated OAuth URL: ${authUrl}`);
-      res.json({ authUrl, redirectUri });
+      console.log(`🔐 OAuth request for user: ${req.user.claims.sub}`);
+      res.json({ authUrl });
     } catch (error) {
-      console.error('❌ Erreur génération URL OAuth:', error);
-      res.status(500).json({ message: 'Erreur configuration OAuth' });
+      console.error('❌ OAuth error:', error);
+      res.status(500).json({ message: 'Configuration OAuth échouée' });
     }
   });
 
   // Google OAuth - Callback
   app.get('/api/oauth/google/callback', async (req: any, res) => {
     try {
-      const { code, state } = req.query;
+      const { code, state, error: oauthError } = req.query;
+      
+      console.log(`📥 OAuth callback received - Code: ${!!code}, State: ${state}, Error: ${oauthError}`);
+      
+      if (oauthError) {
+        console.error('❌ OAuth error from Google:', oauthError);
+        return res.redirect('/?oauth=google&status=error&reason=access_denied');
+      }
       
       if (!code || !state) {
-        return res.status(400).json({ message: 'Code ou state manquant' });
+        console.error('❌ Missing code or state in callback');
+        return res.redirect('/?oauth=google&status=error&reason=missing_params');
       }
 
+      // Créer une nouvelle instance OAuth client pour le callback
+      const callbackClient = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        getRedirectUri()
+      );
+
       // Récupérer les tokens
-      const { tokens } = await googleOAuth2Client.getToken(code);
-      googleOAuth2Client.setCredentials(tokens);
+      const { tokens } = await callbackClient.getToken(code as string);
+      callbackClient.setCredentials(tokens);
 
       // Récupérer l'email de l'utilisateur
-      const oauth2 = google.oauth2({ version: 'v2', auth: googleOAuth2Client });
+      const oauth2 = google.oauth2({ version: 'v2', auth: callbackClient });
       const userInfo = await oauth2.userinfo.get();
 
+      console.log(`✅ OAuth success for user: ${state}, email: ${userInfo.data.email}`);
+
       // Sauvegarder dans la base de données
-      await storage.updateUserOAuthTokens(state, {
+      await storage.updateUserOAuthTokens(state as string, {
         provider: 'google',
         accessToken: tokens.access_token || '',
         refreshToken: tokens.refresh_token || '',
@@ -78,8 +100,8 @@ export function setupOAuthRoutes(app: Express) {
       res.redirect('/?oauth=google&status=success');
       
     } catch (error) {
-      console.error('Erreur OAuth Google callback:', error);
-      res.redirect('/?oauth=google&status=error');
+      console.error('❌ OAuth callback error:', error);
+      res.redirect('/?oauth=google&status=error&reason=server_error');
     }
   });
 
