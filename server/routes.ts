@@ -23,6 +23,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { setupOAuthDebug } = await import('./oauth-debug');
   setupOAuthDebug(app);
 
+  // Setup sequence routes
+  const { registerSequenceRoutes } = await import('./routes/sequences');
+  registerSequenceRoutes(app);
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {

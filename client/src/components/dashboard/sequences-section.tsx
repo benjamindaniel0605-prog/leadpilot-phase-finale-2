@@ -1,15 +1,67 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lock, CheckCircle, Crown } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Lock, CheckCircle, Crown, Plus, Play, Pause, Edit, Trash2, Clock, Mail, Users, TrendingUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SequencesSection() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newSequence, setNewSequence] = useState({
+    name: "",
+    description: ""
+  });
 
   const canUseSequences = user?.plan === "pro" || user?.plan === "growth";
   const maxSteps = user?.plan === "growth" ? 5 : user?.plan === "pro" ? 3 : 0;
+
+  // Récupération des séquences
+  const { data: sequences = [], isLoading } = useQuery({
+    queryKey: ["/api/sequences"],
+    enabled: canUseSequences,
+  });
+
+  // Récupération des emails personnalisés
+  const { data: customEmails = [] } = useQuery({
+    queryKey: ["/api/custom-emails"],
+    enabled: canUseSequences,
+  });
+
+  // Création de séquence
+  const createSequenceMutation = useMutation({
+    mutationFn: async (data: { name: string; description: string }) => {
+      return await apiRequest("/api/sequences", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
+      setIsCreateDialogOpen(false);
+      setNewSequence({ name: "", description: "" });
+      toast({
+        title: "Séquence créée",
+        description: "Votre nouvelle séquence a été créée avec succès",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la séquence",
+        variant: "destructive",
+      });
+    },
+  });
 
   const sequenceSteps = [
     {

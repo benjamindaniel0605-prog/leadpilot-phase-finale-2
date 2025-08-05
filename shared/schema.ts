@@ -109,8 +109,8 @@ export const campaignEmails = pgTable("campaign_emails", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Email sequences
-export const sequences = pgTable("sequences", {
+// Email sequences (ancienne version - à supprimer plus tard)
+export const oldSequences = pgTable("old_sequences", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
   name: varchar("name").notNull(),
@@ -158,8 +158,6 @@ export type Lead = typeof leads.$inferSelect;
 export type InsertCampaign = typeof campaigns.$inferInsert;
 export type Campaign = typeof campaigns.$inferSelect;
 export type CampaignEmail = typeof campaignEmails.$inferSelect;
-export type InsertSequence = typeof sequences.$inferInsert;
-export type Sequence = typeof sequences.$inferSelect;
 export type InsertBooking = typeof bookings.$inferInsert;
 export type Booking = typeof bookings.$inferSelect;
 
@@ -183,3 +181,66 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
   userId: true,
   createdAt: true,
 });
+
+// Sequences table - Séquences automatisées multi-étapes
+export const sequences = pgTable("sequences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertSequenceSchema = createInsertSchema(sequences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Sequence = typeof sequences.$inferSelect;
+export type InsertSequence = z.infer<typeof insertSequenceSchema>;
+
+// Sequence Steps table - Étapes individuelles des séquences
+export const sequenceSteps = pgTable("sequence_steps", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sequenceId: varchar("sequence_id").notNull().references(() => sequences.id, { onDelete: "cascade" }),
+  stepNumber: integer("step_number").notNull(),
+  name: varchar("name").notNull(),
+  emailId: varchar("email_id").references(() => customEmails.id),
+  delayDays: integer("delay_days").notNull().default(0),
+  delayHours: integer("delay_hours").notNull().default(0),
+  conditions: text("conditions"), // JSON pour les conditions d'envoi
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSequenceStepSchema = createInsertSchema(sequenceSteps).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type SequenceStep = typeof sequenceSteps.$inferSelect;
+export type InsertSequenceStep = z.infer<typeof insertSequenceStepSchema>;
+
+// Sequence Enrollments table - Leads inscrits dans les séquences
+export const sequenceEnrollments = pgTable("sequence_enrollments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sequenceId: varchar("sequence_id").notNull().references(() => sequences.id, { onDelete: "cascade" }),
+  leadId: varchar("lead_id").notNull().references(() => leads.id, { onDelete: "cascade" }),
+  currentStep: integer("current_step").notNull().default(1),
+  status: varchar("status").notNull().default("active"), // active, paused, completed, opted_out
+  enrolledAt: timestamp("enrolled_at").defaultNow(),
+  lastEmailSent: timestamp("last_email_sent"),
+  nextEmailScheduled: timestamp("next_email_scheduled"),
+  completedAt: timestamp("completed_at"),
+});
+
+export const insertSequenceEnrollmentSchema = createInsertSchema(sequenceEnrollments).omit({
+  id: true,
+  enrolledAt: true,
+});
+
+export type SequenceEnrollment = typeof sequenceEnrollments.$inferSelect;
+export type InsertSequenceEnrollment = z.infer<typeof insertSequenceEnrollmentSchema>;
