@@ -42,9 +42,9 @@ export default function SequencesSection() {
     selectedLeads: []
   });
 
-  // TEMPORAIRE : Autoriser les séquences pour le plan Free pour les tests
-  const canUseSequences = true; // user?.plan === "pro" || user?.plan === "growth";
-  const maxSteps = user?.plan === "growth" ? 5 : user?.plan === "pro" ? 3 : user?.plan === "free" ? 2 : 0;
+  // Séquences uniquement pour Pro et Growth
+  const canUseSequences = user?.plan === "pro" || user?.plan === "growth";
+  const maxSteps = user?.plan === "growth" ? 5 : user?.plan === "pro" ? 3 : 0;
 
   // Récupération des séquences
   const { data: sequences = [], isLoading } = useQuery({
@@ -150,7 +150,7 @@ export default function SequencesSection() {
               Fonctionnalité Pro & Growth
             </h3>
             <p className="text-muted-foreground text-center mb-6">
-              Les séquences automatisées sont disponibles uniquement avec les plans Pro et Growth.
+              Les séquences automatisées sont disponibles uniquement avec les plans Pro (3 étapes) et Growth (5 étapes).
               Créez des campagnes multi-étapes intelligentes qui s'adaptent aux réactions de vos prospects.
             </p>
             <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
