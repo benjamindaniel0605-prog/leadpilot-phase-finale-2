@@ -18,19 +18,19 @@ function getStripeInstance(): Stripe {
   return stripe;
 }
 
-// Prix des plans - REMPLACEZ PAR VOS LIENS DE PAIEMENT TEST STRIPE
+// Prix des plans - Liens de paiement Stripe test configurés
 const PLAN_PRICES = {
   // STARTER PLAN
-  starter_monthly: 'VOTRE_LIEN_STARTER_MENSUEL_ICI',    // Remplacez par votre lien Starter mensuel
-  starter_yearly: 'VOTRE_LIEN_STARTER_ANNUEL_ICI',      // Remplacez par votre lien Starter annuel
+  starter_monthly: 'https://buy.stripe.com/test_14AaEXc529FXbOgciFbII01?prefilled_email=exemple%40gmail.com',    // Starter 49€/mois
+  starter_yearly: 'https://buy.stripe.com/test_7sY7sL7OM3hzaKc1E1bII00?prefilled_email=exemple%40gmail.com',      // Starter 490€/an
   
   // PRO PLAN  
-  pro_monthly: 'VOTRE_LIEN_PRO_MENSUEL_ICI',            // Remplacez par votre lien Pro mensuel
-  pro_yearly: 'VOTRE_LIEN_PRO_ANNUEL_ICI',              // Remplacez par votre lien Pro annuel
+  pro_monthly: 'https://buy.stripe.com/test_bJe00j5GE9FX4lO1E1bII02?prefilled_email=exemple%40gmail.com',            // Pro 99€/mois
+  pro_yearly: 'https://buy.stripe.com/test_fZu6oH4CA9FX3hK4QdbII03?prefilled_email=exemple%40gmail.com',              // Pro 990€/an
   
   // GROWTH PLAN
-  growth_monthly: 'VOTRE_LIEN_GROWTH_MENSUEL_ICI',      // Remplacez par votre lien Growth mensuel
-  growth_yearly: 'VOTRE_LIEN_GROWTH_ANNUEL_ICI'         // Remplacez par votre lien Growth annuel
+  growth_monthly: 'https://buy.stripe.com/test_7sYbJ1gli5pHbOgaaxbII04?prefilled_email=exemple%40gmail.com',      // Growth 299€/mois
+  growth_yearly: 'https://buy.stripe.com/test_9B68wP5GE5pH3hK6YlbII05?prefilled_email=exemple%40gmail.com'         // Growth 2990€/an
 };
 
 export function registerPaymentRoutes(app: Express) {
@@ -253,6 +253,40 @@ export function registerPaymentRoutes(app: Express) {
         message: "Erreur lors de la récupération du statut",
         error: error.message 
       });
+    }
+  });
+
+  // Route simple pour redirection directe vers Stripe avec liens personnalisés
+  app.post('/api/payment/direct-checkout', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Non authentifié' });
+      }
+
+      const { plan, billing } = req.body;
+      
+      if (!plan || !billing) {
+        return res.status(400).json({ error: 'Plan et facturation requis' });
+      }
+
+      const priceKey = `${plan}_${billing}` as keyof typeof PLAN_PRICES;
+      let paymentUrl = PLAN_PRICES[priceKey];
+
+      if (!paymentUrl) {
+        return res.status(400).json({ error: 'Plan invalide' });
+      }
+
+      // Remplacer l'email exemple par l'email de l'utilisateur
+      const userEmail = req.user?.email || '';
+      const encodedEmail = encodeURIComponent(userEmail);
+      paymentUrl = paymentUrl.replace('exemple%40gmail.com', encodedEmail);
+
+      console.log(`🔗 Redirection paiement ${plan} ${billing} pour ${userEmail}: ${paymentUrl}`);
+
+      res.json({ url: paymentUrl });
+    } catch (error) {
+      console.error('Erreur redirection checkout:', error);
+      res.status(500).json({ error: 'Erreur lors de la redirection' });
     }
   });
 }

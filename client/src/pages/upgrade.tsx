@@ -159,11 +159,11 @@ const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly
 const PlanCard = ({ 
   plan, 
   isYearly, 
-  onSelect 
+  onDirectPayment 
 }: { 
   plan: Plan; 
   isYearly: boolean; 
-  onSelect: () => void 
+  onDirectPayment: (plan: Plan, billing: string) => void 
 }) => {
   const currentPrice = isYearly ? plan.yearlyPrice : plan.price;
   const period = isYearly ? 'an' : 'mois';
@@ -217,7 +217,7 @@ const PlanCard = ({
           ))}
         </ul>
         <Button 
-          onClick={onSelect}
+          onClick={() => onDirectPayment(plan, isYearly ? 'yearly' : 'monthly')}
           className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90`}
         >
           Choisir {plan.name}
@@ -236,25 +236,33 @@ export default function UpgradePage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSelectPlan = async (plan: Plan) => {
-    setSelectedPlan(plan);
+  const handleDirectPayment = async (plan: Plan, billing: string) => {
     setIsLoading(true);
 
     try {
-      const response = await apiRequest('POST', '/api/create-subscription', {
-        planId: plan.id,
-        isYearly: isYearly
+      const response = await apiRequest('POST', '/api/payment/direct-checkout', {
+        plan: plan.id,
+        billing: billing
       });
 
+      if (!response.ok) {
+        throw new Error('Erreur lors de la génération du lien de paiement');
+      }
+
       const data = await response.json();
-      setClientSecret(data.clientSecret);
-    } catch (error) {
+      
+      // Redirection directe vers Stripe
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL de paiement non reçue');
+      }
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Impossible de créer l'abonnement",
+        description: error.message || "Impossible de créer le lien de paiement",
         variant: "destructive",
       });
-      setSelectedPlan(null);
     } finally {
       setIsLoading(false);
     }
@@ -336,7 +344,7 @@ export default function UpgradePage() {
               key={plan.id} 
               plan={plan} 
               isYearly={isYearly}
-              onSelect={() => handleSelectPlan(plan)}
+              onDirectPayment={handleDirectPayment}
             />
           ))}
         </div>
