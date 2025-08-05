@@ -53,6 +53,10 @@ app.use((req, res, next) => {
 
   const server = await registerRoutes(app);
 
+  // Démarrer l'automatisation des séquences
+  const { startSequenceAutomation } = await import("./services/sequenceAutomation");
+  startSequenceAutomation();
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
