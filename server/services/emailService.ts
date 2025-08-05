@@ -1,5 +1,4 @@
 import { google } from 'googleapis';
-import { Client } from '@microsoft/microsoft-graph-client';
 import { storage } from '../storage';
 
 interface EmailData {
@@ -23,13 +22,11 @@ export class EmailService {
         return { success: false, error: 'Utilisateur non trouvé' };
       }
 
-      // Essayer d'abord Google, puis Outlook
+      // Envoyer via Google Gmail OAuth
       if (user.googleEmailConnected && user.googleEmailToken) {
         return await this.sendViaGoogle(user, emailData);
-      } else if (user.outlookEmailConnected && user.outlookEmailToken) {
-        return await this.sendViaOutlook(user, emailData);
       } else {
-        return { success: false, error: 'Aucun compte email connecté' };
+        return { success: false, error: 'Connectez votre compte Gmail dans les paramètres pour envoyer des emails' };
       }
     } catch (error) {
       console.error('Erreur envoi email:', error);
@@ -74,7 +71,7 @@ export class EmailService {
 
       return {
         success: true,
-        messageId: result.data.id
+        messageId: result.data.id || undefined
       };
     } catch (error: any) {
       console.error('Erreur Gmail:', error);
@@ -116,52 +113,7 @@ export class EmailService {
     }
   }
 
-  private async sendViaOutlook(user: any, emailData: EmailData): Promise<EmailResult> {
-    try {
-      const graphClient = Client.init({
-        authProvider: {
-          getAccessToken: async () => user.outlookEmailToken
-        }
-      });
 
-      const message = {
-        subject: emailData.subject,
-        body: {
-          contentType: 'HTML',
-          content: emailData.content
-        },
-        toRecipients: [{
-          emailAddress: {
-            address: emailData.to
-          }
-        }],
-        from: {
-          emailAddress: {
-            address: user.connectedEmailAddress,
-            name: emailData.fromName || user.firstName || 'LeadPilot'
-          }
-        }
-      };
-
-      const result = await graphClient.api('/me/sendMail').post({
-        message: message
-      });
-
-      return {
-        success: true,
-        messageId: 'outlook-sent'
-      };
-    } catch (error: any) {
-      console.error('Erreur Outlook:', error);
-      
-      // Si le token a expiré
-      if (error.code === 'InvalidAuthenticationToken') {
-        return { success: false, error: 'Token Outlook expiré, reconnectez votre compte' };
-      }
-
-      return { success: false, error: error.message };
-    }
-  }
 
   async sendCampaignEmails(userId: string, campaignId: string, leads: any[], emailContent: string, subject: string): Promise<{ sent: number; failed: number; errors: string[] }> {
     const results = {

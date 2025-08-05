@@ -386,10 +386,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Aucun lead trouvé pour cette campagne" });
       }
 
-      // Vérifier que l'utilisateur a un compte email connecté
+      // Vérifier que l'utilisateur a un compte Gmail connecté
       const user = await storage.getUser(userId);
-      if (!user?.googleEmailConnected && !user?.outlookEmailConnected) {
-        return res.status(400).json({ message: "Connectez un compte email dans les paramètres avant d'envoyer une campagne" });
+      if (!user?.googleEmailConnected) {
+        return res.status(400).json({ message: "Connectez votre compte Gmail dans les paramètres avant d'envoyer une campagne" });
       }
 
       // Envoyer les emails
