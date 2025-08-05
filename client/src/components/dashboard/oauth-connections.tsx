@@ -91,8 +91,8 @@ export default function OAuthConnections() {
       console.error(`Erreur connexion ${provider}:`, error);
       setConnectingProvider(null);
       toast({
-        title: "Erreur",
-        description: "Impossible de démarrer l'authentification Google.",
+        title: "Erreur de connexion",
+        description: "Vérifiez que votre projet Google Cloud Console autorise ce domaine.",
         variant: "destructive",
       });
     }
@@ -114,25 +114,28 @@ export default function OAuthConnections() {
   return (
     <div className="space-y-4">
       {/* Information */}
-      <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
+      <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 mb-6">
         <div className="flex items-start space-x-3">
-          <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+          <Mail className="h-5 w-5 text-primary mt-0.5" />
           <div>
-            <h3 className="font-medium text-amber-900 dark:text-amber-100 mb-1">
-              Configuration Google OAuth Requise
+            <h3 className="font-medium text-foreground mb-1">
+              Connexion Email
             </h3>
-            <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
-              Pour connecter Gmail, vous devez d'abord configurer votre projet Google Cloud Console.
+            <p className="text-sm text-muted-foreground">
+              Connectez votre compte Gmail pour envoyer des campagnes email directement depuis LeadPilot. 
+              Vos identifiants sont sécurisés et utilisés uniquement pour l'envoi d'emails.
             </p>
-            <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900 rounded p-2">
-              <strong>URL à copier dans Google Cloud Console :</strong><br/>
-              <code className="text-xs bg-white dark:bg-gray-800 px-2 py-1 rounded border">
-                https://92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev/api/oauth/google/callback
-              </code>
-              <p className="mt-2 text-xs">
-                Ajoutez cette URL dans "Authorized redirect URIs" de votre projet Google Cloud Console.
-              </p>
-            </div>
+            {!oauthStatus?.google?.connected && (
+              <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded">
+                <p className="text-xs text-amber-700 dark:text-amber-300">
+                  <strong>Note :</strong> Si vous obtenez une erreur "n'autorise pas la connexion", 
+                  votre projet Google Cloud Console doit autoriser le domaine : 
+                  <code className="ml-1 px-1 bg-amber-100 dark:bg-amber-900 rounded">
+                    {window.location.hostname}
+                  </code>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

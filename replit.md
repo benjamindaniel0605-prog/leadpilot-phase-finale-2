@@ -74,13 +74,13 @@ The platform implements a tiered subscription model with usage quotas for leads,
 ## Recent Changes (August 2025)
 
 ### OAuth Email Integration Implementation (August 5, 2025)
-- **SMTP Replacement**: Replaced traditional SMTP configuration with secure OAuth authentication for Google and Outlook
-- **Database Schema Enhancement**: Added OAuth token fields to users table (google_email_connected, google_email_token, google_refresh_token, outlook_email_connected, outlook_email_token, outlook_refresh_token, connected_email_address)
-- **Backend OAuth Service**: Implemented complete OAuth flow with Google APIs and Microsoft Graph integration, including token refresh and secure callback handling
-- **Frontend OAuth Interface**: Created professional OAuth connection interface with real-time status, connect/disconnect buttons, and comprehensive user guidance
+- **SMTP Replacement**: Replaced traditional SMTP configuration with secure OAuth authentication for Gmail only (Outlook removed per user request)
+- **Database Schema Enhancement**: Added OAuth token fields to users table for Google integration (google_email_connected, google_email_token, google_refresh_token, connected_email_address)
+- **Backend OAuth Service**: Implemented complete OAuth flow with Google APIs integration, including token refresh and secure callback handling with comprehensive logging
+- **Frontend OAuth Interface**: Created streamlined OAuth connection interface with real-time status, clear error messages, and domain authorization guidance
 - **Security Implementation**: OAuth tokens stored securely, proper state validation, and conditional service initialization
-- **User Experience**: Clear visual feedback, connection status badges, and informative help text explaining OAuth benefits
-- **Integration Ready**: Backend routes prepared for seamless email sending via connected OAuth accounts instead of SMTP credentials
+- **User Experience**: Removed technical setup messages for end users, added helpful error context for domain authorization issues
+- **Integration Ready**: Gmail OAuth fully operational - backend routes ready for seamless email sending via connected OAuth accounts
 
 ## Recent Changes (August 2025)
 

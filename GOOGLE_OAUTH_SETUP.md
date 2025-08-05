@@ -1,7 +1,12 @@
 # Configuration Google OAuth pour LeadPilot
 
-## Problème actuel
-L'erreur 403 "You do not have access to this page" indique que votre projet Google Cloud Console n'autorise pas l'URL de redirection Replit.
+## Problèmes courants et solutions
+
+### Erreur "n'autorise pas la connexion"
+Cette erreur indique que le domaine Replit n'est pas autorisé dans votre configuration Google Cloud Console.
+
+**Domaines à autoriser :**
+- `92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev`
 
 ## URL de redirection requise
 ```
@@ -23,11 +28,15 @@ https://92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev/ap
 1. Allez dans "APIs & Services" > "Credentials"
 2. Cliquez sur "Create Credentials" > "OAuth 2.0 Client ID"
 3. Choisissez "Web application"
-4. Ajoutez dans "Authorized redirect URIs" :
+4. Dans "Authorized JavaScript origins", ajoutez :
+   ```
+   https://92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev
+   ```
+5. Dans "Authorized redirect URIs", ajoutez :
    ```
    https://92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev/api/oauth/google/callback
    ```
-5. Copiez le Client ID et Client Secret
+6. Copiez le Client ID et Client Secret
 
 ### 3. Mettre à jour les secrets Replit
 

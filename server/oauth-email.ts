@@ -24,18 +24,29 @@ export function setupOAuthRoutes(app: Express) {
   
   // Google OAuth - Démarrer l'authentification
   app.get('/api/oauth/google/auth', isAuthenticated, (req: any, res) => {
-    const scopes = [
-      'https://www.googleapis.com/auth/gmail.send',
-      'https://www.googleapis.com/auth/userinfo.email'
-    ];
+    try {
+      const scopes = [
+        'https://www.googleapis.com/auth/gmail.send',
+        'https://www.googleapis.com/auth/userinfo.email'
+      ];
 
-    const authUrl = googleOAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: scopes,
-      state: req.user.claims.sub // ID utilisateur pour sécurité
-    });
+      const redirectUri = getRedirectUri();
+      console.log(`🔗 OAuth Redirect URI: ${redirectUri}`);
+      console.log(`🔑 Client ID: ${process.env.GOOGLE_CLIENT_ID?.substring(0, 20)}...`);
 
-    res.json({ authUrl });
+      const authUrl = googleOAuth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: scopes,
+        prompt: 'consent',
+        state: req.user.claims.sub // ID utilisateur pour sécurité
+      });
+
+      console.log(`🚀 Generated OAuth URL: ${authUrl}`);
+      res.json({ authUrl, redirectUri });
+    } catch (error) {
+      console.error('❌ Erreur génération URL OAuth:', error);
+      res.status(500).json({ message: 'Erreur configuration OAuth' });
+    }
   });
 
   // Google OAuth - Callback
