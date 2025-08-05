@@ -114,14 +114,14 @@ export default function OAuthConnections() {
   return (
     <div className="space-y-4">
       {/* Information */}
-      <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+      <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 mb-6">
         <div className="flex items-start space-x-3">
-          <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+          <Mail className="h-5 w-5 text-primary mt-0.5" />
           <div>
-            <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-1">
+            <h3 className="font-medium text-foreground mb-1">
               Connexion Email Requise
             </h3>
-            <p className="text-sm text-blue-700 dark:text-blue-300">
+            <p className="text-sm text-muted-foreground">
               Connectez votre compte Gmail pour envoyer des campagnes email. 
               Vos identifiants sont sécurisés et utilisés uniquement pour l'envoi d'emails.
             </p>
@@ -130,16 +130,16 @@ export default function OAuthConnections() {
       </div>
 
       {/* Connexion Google */}
-      <Card className="border-2 hover:border-primary/20 transition-colors">
+      <Card className="border-2 hover:border-primary/30 transition-colors bg-card">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-red-50 rounded-lg">
+              <div className="p-2 bg-primary/10 rounded-lg">
                 <SiGoogle className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-gray-100">Gmail</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="font-medium text-foreground">Gmail</h3>
+                <p className="text-sm text-muted-foreground">
                   {oauthStatus.google.connected 
                     ? `Connecté avec ${oauthStatus.google.email}`
                     : "Connectez votre compte Gmail pour envoyer des emails"
@@ -187,11 +187,11 @@ export default function OAuthConnections() {
       </Card>
 
       {/* Guide d'aide */}
-      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+      <div className="bg-muted/20 border border-muted rounded-lg p-4">
+        <h4 className="font-medium text-foreground mb-2">
           Comment ça fonctionne ?
         </h4>
-        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+        <ul className="text-sm text-muted-foreground space-y-1">
           <li>• Cliquez sur "Connecter avec Google" pour authoriser LeadPilot</li>
           <li>• Vos emails seront envoyés depuis votre compte Gmail</li>
           <li>• Vous pouvez déconnecter à tout moment</li>
