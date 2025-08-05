@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
@@ -23,11 +23,14 @@ export default function TestPlans() {
           description: `Votre plan est maintenant ${plan}`,
         });
         
-        // Redirection vers le dashboard pour voir les changements
+        // Invalider le cache utilisateur pour forcer le rechargement
+        await queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+        await queryClient.invalidateQueries({ queryKey: ['/api/analytics/stats'] });
+        
+        // Redirection après un court délai
         setTimeout(() => {
           setLocation('/');
-          window.location.reload();
-        }, 1000);
+        }, 1500);
       }
     } catch (error) {
       toast({
