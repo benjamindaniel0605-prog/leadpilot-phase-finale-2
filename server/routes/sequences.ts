@@ -156,10 +156,34 @@ export function registerSequenceRoutes(app: Express) {
       // En production, ici on supprimerait de la base de données
       // et on arrêterait tous les emails programmés pour cette séquence
       
-      res.json({ message: "Sequence deleted successfully" });
+      res.json({ message: "Sequence deleted successfully", sequenceId: id });
     } catch (error) {
       console.error("Error deleting sequence:", error);
       res.status(500).json({ message: "Failed to delete sequence" });
+    }
+  });
+
+  // Toggle statut d'une séquence
+  app.patch('/api/sequences/:id/toggle', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+      const userId = req.user.claims.sub;
+      
+      console.log(`🔄 Toggle séquence ${id} pour l'utilisateur ${userId}: ${isActive ? 'Active' : 'Inactive'}`);
+      
+      // Simulation du toggle
+      // En production, ici on mettrait à jour le statut en base de données
+      // et on pauserait/reprendrait les emails programmés
+      
+      res.json({ 
+        message: "Sequence status updated successfully", 
+        sequenceId: id,
+        isActive: isActive 
+      });
+    } catch (error) {
+      console.error("Error toggling sequence:", error);
+      res.status(500).json({ message: "Failed to toggle sequence status" });
     }
   });
 

@@ -90,7 +90,8 @@ export default function SequencesSection() {
   // Suppression de séquence
   const deleteSequenceMutation = useMutation({
     mutationFn: async (sequenceId: string) => {
-      return await apiRequest("DELETE", `/api/sequences/${sequenceId}`);
+      const response = await apiRequest("DELETE", `/api/sequences/${sequenceId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
@@ -100,9 +101,32 @@ export default function SequencesSection() {
       });
     },
     onError: (error) => {
+      console.error("Delete error:", error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la séquence",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Toggle statut de séquence
+  const toggleSequenceMutation = useMutation({
+    mutationFn: async ({ sequenceId, isActive }: { sequenceId: string; isActive: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/sequences/${sequenceId}/toggle`, { isActive });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
+      toast({
+        title: "Statut modifié",
+        description: "Le statut de la séquence a été mis à jour",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le statut",
         variant: "destructive",
       });
     },
@@ -161,7 +185,7 @@ export default function SequencesSection() {
                 Nouvelle Séquence
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Créer une nouvelle séquence automatisée</DialogTitle>
               </DialogHeader>
@@ -185,13 +209,13 @@ export default function SequencesSection() {
                 </div>
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
                   <h4 className="font-medium text-blue-900 mb-3">Comment ça marche ?</h4>
-                  <ul className="text-sm text-blue-800 space-y-2">
-                    <li>• Après création, vous pourrez ajouter jusqu'à {maxSteps} étapes</li>
-                    <li>• Chaque étape peut avoir un email et un délai d'attente personnalisé</li>
-                    <li>• Les emails s'envoient automatiquement si le prospect ne répond pas</li>
-                    <li>• La séquence s'arrête automatiquement dès qu'un prospect répond</li>
-                    <li>• Vous pourrez sélectionner précisément quels leads cibler</li>
-                  </ul>
+                  <div className="text-sm text-blue-800 space-y-2">
+                    <div>• Après création, vous pourrez ajouter jusqu'à {maxSteps} étapes</div>
+                    <div>• Chaque étape peut avoir un email et un délai d'attente personnalisé</div>
+                    <div>• Les emails s'envoient automatiquement si le prospect ne répond pas</div>
+                    <div>• La séquence s'arrête automatiquement dès qu'un prospect répond</div>
+                    <div>• Vous pourrez sélectionner précisément quels leads cibler</div>
+                  </div>
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button
@@ -227,7 +251,47 @@ export default function SequencesSection() {
                 <Users className="h-4 w-4 mr-2" />
                 Sélectionner les leads ({sequenceConfig.selectedLeads.length} sélectionné{sequenceConfig.selectedLeads.length !== 1 ? 's' : ''})
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-40 overflow-y-auto">
+              <div className="mb-4">
+                <div className="flex space-x-2 mb-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSequenceConfig(prev => ({
+                        ...prev,
+                        selectedLeads: leads.map((lead: any) => lead.id)
+                      }));
+                    }}
+                  >
+                    Tous les leads
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSequenceConfig(prev => ({
+                        ...prev,
+                        selectedLeads: leads.filter((lead: any) => lead.score && lead.score > 80).map((lead: any) => lead.id)
+                      }));
+                    }}
+                  >
+                    Score &gt; 80%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSequenceConfig(prev => ({
+                        ...prev,
+                        selectedLeads: []
+                      }));
+                    }}
+                  >
+                    Désélectionner tout
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-40 overflow-y-auto border rounded p-3">
                 {leads.map((lead: any) => (
                   <label key={lead.id} className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
                     <input
@@ -553,21 +617,34 @@ export default function SequencesSection() {
                         onClick={() => {
                           setSelectedSequence(sequence.id);
                           setIsEditingSteps(true);
+                          setSequenceSteps([]);
+                          setSequenceConfig({ selectedLeads: [] });
                         }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          toggleSequenceMutation.mutate({
+                            sequenceId: sequence.id,
+                            isActive: !sequence.isActive
+                          });
+                        }}
+                        disabled={toggleSequenceMutation.isPending}
+                      >
                         {sequence.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          if (confirm("Êtes-vous sûr de vouloir supprimer cette séquence ?")) {
+                          if (window.confirm("Êtes-vous sûr de vouloir supprimer cette séquence ?")) {
                             deleteSequenceMutation.mutate(sequence.id);
                           }
                         }}
+                        disabled={deleteSequenceMutation.isPending}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
