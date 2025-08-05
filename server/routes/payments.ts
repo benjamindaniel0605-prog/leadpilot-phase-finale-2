@@ -280,6 +280,15 @@ export function registerPaymentRoutes(app: Express) {
       const userEmail = req.user?.email || req.user?.claims?.email || '';
       const encodedEmail = encodeURIComponent(userEmail);
       paymentUrl = paymentUrl.replace('exemple%40gmail.com', encodedEmail);
+      
+      // Ajouter les paramètres de retour pour identifier le plan
+      const successUrl = `${req.protocol}://${req.get('host')}/payment-success?plan=${plan}&billing=${billing}`;
+      const encodedSuccessUrl = encodeURIComponent(successUrl);
+      
+      // Ajouter l'URL de succès au lien Stripe si elle n'est pas déjà présente
+      if (!paymentUrl.includes('success_url=')) {
+        paymentUrl += `&success_url=${encodedSuccessUrl}`;
+      }
 
       console.log(`🔗 Redirection paiement ${plan} ${billing} pour ${userEmail}: ${paymentUrl}`);
 
@@ -287,6 +296,56 @@ export function registerPaymentRoutes(app: Express) {
     } catch (error) {
       console.error('Erreur redirection checkout:', error);
       res.status(500).json({ error: 'Erreur lors de la redirection' });
+    }
+  });
+
+  // Route pour vérifier le succès du paiement et mettre à jour le plan utilisateur
+  app.post('/api/payment/verify-success', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Non authentifié' });
+      }
+
+      const { planType, billing } = req.body;
+      const userId = req.user.id;
+
+      console.log(`💳 Vérification paiement pour user ${userId}:`, { planType, billing });
+
+      // Mettre à jour le plan de l'utilisateur dans la base de données
+      let newPlan = 'free';
+      let planName = 'Gratuit';
+
+      switch (planType) {
+        case 'starter':
+          newPlan = 'starter';
+          planName = 'Starter';
+          break;
+        case 'pro':
+          newPlan = 'pro';
+          planName = 'Pro';
+          break;
+        case 'growth':
+          newPlan = 'growth';
+          planName = 'Growth';
+          break;
+        default:
+          return res.status(400).json({ error: 'Plan invalide' });
+      }
+
+      // Mettre à jour le plan utilisateur en base
+      await storage.updateUserPlan(userId, newPlan, billing === 'yearly');
+
+      console.log(`✅ Plan utilisateur ${userId} mis à jour vers ${newPlan} (${billing})`);
+
+      res.json({ 
+        success: true, 
+        planName,
+        message: `Plan ${planName} activé avec succès` 
+      });
+
+    } catch (error) {
+      console.error('Erreur vérification paiement:', error);
+      res.status(500).json({ error: 'Erreur lors de la vérification du paiement' });
     }
   });
 }

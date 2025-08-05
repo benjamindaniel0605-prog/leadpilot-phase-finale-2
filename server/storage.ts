@@ -30,6 +30,7 @@ export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserPlan(userId: string, plan: string, isYearly: boolean): Promise<User>;
   
   // Template operations
   getTemplates(): Promise<Template[]>;
@@ -134,15 +135,20 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserPlan(userId: string, plan: string): Promise<User> {
+  async updateUserPlan(userId: string, plan: string, isYearly: boolean = false): Promise<User> {
     const [user] = await db
       .update(users)
       .set({
         plan,
         updatedAt: new Date(),
+        // Réinitialiser les quotas mensuels lors du changement de plan
+        leadsUsed: 0,
+        aiVariationsUsed: 0,
       })
       .where(eq(users.id, userId))
       .returning();
+    
+    console.log(`📊 Plan utilisateur ${userId} mis à jour: ${plan} (${isYearly ? 'annuel' : 'mensuel'}), quotas réinitialisés`);
     return user;
   }
 
