@@ -22,8 +22,9 @@ export default function SequencesSection() {
     description: ""
   });
 
-  const canUseSequences = user?.plan === "pro" || user?.plan === "growth";
-  const maxSteps = user?.plan === "growth" ? 5 : user?.plan === "pro" ? 3 : 0;
+  // TEMPORAIRE : Autoriser les séquences pour le plan Free pour les tests
+  const canUseSequences = true; // user?.plan === "pro" || user?.plan === "growth";
+  const maxSteps = user?.plan === "growth" ? 5 : user?.plan === "pro" ? 3 : user?.plan === "free" ? 2 : 0;
 
   // Récupération des séquences
   const { data: sequences = [], isLoading } = useQuery({
