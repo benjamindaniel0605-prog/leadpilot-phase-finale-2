@@ -25,6 +25,16 @@ export default function PaymentSuccess() {
           throw new Error('Paramètres de paiement manquants');
         }
 
+        // Attendre un peu pour que la session soit correctement établie
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Vérifier d'abord l'authentification
+        const authResponse = await apiRequest('GET', '/api/auth/user');
+        
+        if (!authResponse.ok) {
+          throw new Error('Utilisateur non authentifié');
+        }
+
         // Appeler l'API pour mettre à jour le statut de paiement
         const response = await apiRequest('POST', '/api/payment/verify-success', {
           planType,
@@ -68,6 +78,7 @@ export default function PaymentSuccess() {
         // Redirection vers la page principale après 5 secondes même en cas d'erreur
         setTimeout(() => {
           setLocation('/');
+          window.location.reload();
         }, 5000);
       }
     };

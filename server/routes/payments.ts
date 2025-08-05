@@ -303,6 +303,7 @@ export function registerPaymentRoutes(app: Express) {
   app.post('/api/payment/verify-success', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
+        console.log('❌ Utilisateur non authentifié lors de la vérification du paiement');
         return res.status(401).json({ error: 'Non authentifié' });
       }
 
