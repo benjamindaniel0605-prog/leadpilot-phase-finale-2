@@ -46,11 +46,13 @@ L'erreur "accounts.google.com n'autorise pas la connexion" indique que votre pro
 7. Cliquez "CREATE"
 
 ### Étape 5 : Copier les nouvelles clés
-1. Copiez le **Client ID**
-2. Copiez le **Client Secret**
-3. Remplacez les anciennes valeurs dans Replit :
-   - GOOGLE_CLIENT_ID = nouveau Client ID
-   - GOOGLE_CLIENT_SECRET = nouveau Client Secret
+1. Copiez le **Client ID** (commence par des chiffres, finit par .apps.googleusercontent.com)
+2. Copiez le **Client Secret** (chaîne alphanumérique)
+3. **IMPORTANT** : Fournissez ces deux clés à l'agent qui les configurera automatiquement
+
+**Format des clés attendu :**
+- GOOGLE_CLIENT_ID : `123456789-abc123def456.apps.googleusercontent.com`
+- GOOGLE_CLIENT_SECRET : `GOCSPX-abc123def456ghi789`
 
 ### Étape 6 : Test
 Une fois les nouvelles clés configurées, la connexion Gmail devrait fonctionner immédiatement !
