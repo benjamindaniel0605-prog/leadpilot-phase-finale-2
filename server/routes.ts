@@ -27,6 +27,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { registerSequenceRoutes } = await import('./routes/sequences');
   registerSequenceRoutes(app);
 
+  // Setup payment routes
+  const { registerPaymentRoutes } = await import('./routes/payments');
+  registerPaymentRoutes(app);
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {

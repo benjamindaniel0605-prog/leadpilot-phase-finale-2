@@ -110,6 +110,42 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  // Méthodes Stripe
+  async updateUserStripeInfo(userId: string, stripeData: { 
+    stripeCustomerId?: string; 
+    stripeSubscriptionId?: string; 
+  }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...stripeData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async getUserByStripeCustomerId(customerId: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.stripeCustomerId, customerId));
+    return user;
+  }
+
+  async updateUserPlan(userId: string, plan: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        plan,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
   // Template operations
   async getTemplates(): Promise<Template[]> {
     return await db.select().from(templates).orderBy(templates.createdAt);
@@ -583,7 +619,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(campaigns.createdAt));
   }
 
-  async getCampaign(id: string): Promise<Campaign | undefined> {
+  async getCampaignById(id: string): Promise<Campaign | undefined> {
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
     return campaign;
   }

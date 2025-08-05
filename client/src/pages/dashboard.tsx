@@ -14,6 +14,7 @@ import SequencesSection from "@/components/dashboard/sequences-section";
 import CalendarSection from "@/components/dashboard/calendar-section";
 import AnalyticsSection from "@/components/dashboard/analytics-section";
 import SettingsSection from "@/components/dashboard/settings-section";
+import UpgradeBanner from "@/components/dashboard/upgrade-banner";
 import ClosingSection from "@/components/dashboard/closing-section";
 
 export default function Dashboard() {
@@ -63,6 +64,7 @@ export default function Dashboard() {
       case "dashboard":
         return (
           <div className="p-6">
+            <UpgradeBanner />
             <StatsCards />
             <div className="grid lg:grid-cols-2 gap-6 mt-8">
               <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
