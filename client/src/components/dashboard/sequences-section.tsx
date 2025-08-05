@@ -90,8 +90,7 @@ export default function SequencesSection() {
   // Suppression de séquence
   const deleteSequenceMutation = useMutation({
     mutationFn: async (sequenceId: string) => {
-      const response = await apiRequest("DELETE", `/api/sequences/${sequenceId}`);
-      return response.json();
+      return await apiRequest("DELETE", `/api/sequences/${sequenceId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
@@ -113,8 +112,7 @@ export default function SequencesSection() {
   // Toggle statut de séquence
   const toggleSequenceMutation = useMutation({
     mutationFn: async ({ sequenceId, isActive }: { sequenceId: string; isActive: boolean }) => {
-      const response = await apiRequest("PATCH", `/api/sequences/${sequenceId}/toggle`, { isActive });
-      return response.json();
+      return await apiRequest("PATCH", `/api/sequences/${sequenceId}/toggle`, { isActive });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
@@ -493,7 +491,7 @@ export default function SequencesSection() {
             </div>
 
             {sequenceSteps.length === 0 && (
-              <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
                 <Mail className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                 <p className="text-gray-500">Aucune étape configurée</p>
                 <p className="text-xs text-gray-400">Cliquez sur "Ajouter une étape" pour commencer</p>
@@ -542,49 +540,49 @@ export default function SequencesSection() {
           {/* Statistiques */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
-              <CardContent className="flex items-center p-6">
-                <div className="p-2 bg-blue-100 rounded-lg mr-4">
-                  <Mail className="h-5 w-5 text-blue-600" />
+              <CardContent className="flex items-center p-4">
+                <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                  <Mail className="h-4 w-4 text-blue-600" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Séquences Actives</p>
-                  <p className="text-2xl font-bold text-foreground">{sequences.filter((s: any) => s.isActive).length}</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="flex items-center p-6">
-                <div className="p-2 bg-green-100 rounded-lg mr-4">
-                  <Users className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Leads Inscrits</p>
-                  <p className="text-2xl font-bold text-foreground">0</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-muted-foreground truncate">Séquences Actives</p>
+                  <p className="text-xl font-bold text-foreground">{sequences.filter((s: any) => s.isActive).length}</p>
                 </div>
               </CardContent>
             </Card>
             
             <Card>
-              <CardContent className="flex items-center p-6">
-                <div className="p-2 bg-purple-100 rounded-lg mr-4">
-                  <Clock className="h-5 w-5 text-purple-600" />
+              <CardContent className="flex items-center p-4">
+                <div className="p-2 bg-green-100 rounded-lg mr-3">
+                  <Users className="h-4 w-4 text-green-600" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Emails Planifiés</p>
-                  <p className="text-2xl font-bold text-foreground">0</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-muted-foreground truncate">Leads Inscrits</p>
+                  <p className="text-xl font-bold text-foreground">0</p>
                 </div>
               </CardContent>
             </Card>
             
             <Card>
-              <CardContent className="flex items-center p-6">
-                <div className="p-2 bg-orange-100 rounded-lg mr-4">
-                  <TrendingUp className="h-5 w-5 text-orange-600" />
+              <CardContent className="flex items-center p-4">
+                <div className="p-2 bg-purple-100 rounded-lg mr-3">
+                  <Clock className="h-4 w-4 text-purple-600" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Taux de Réponse</p>
-                  <p className="text-2xl font-bold text-foreground">--</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-muted-foreground truncate">Emails Planifiés</p>
+                  <p className="text-xl font-bold text-foreground">0</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="flex items-center p-4">
+                <div className="p-2 bg-orange-100 rounded-lg mr-3">
+                  <TrendingUp className="h-4 w-4 text-orange-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-muted-foreground truncate">Taux de Réponse</p>
+                  <p className="text-xl font-bold text-foreground">--</p>
                 </div>
               </CardContent>
             </Card>
