@@ -125,10 +125,13 @@ export default function OAuthConnections() {
               Pour connecter Gmail, vous devez d'abord configurer votre projet Google Cloud Console.
             </p>
             <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900 rounded p-2">
-              <strong>URL de redirection à ajouter :</strong><br/>
-              <code className="text-xs">
-                https://{window.location.hostname}/api/oauth/google/callback
+              <strong>URL à copier dans Google Cloud Console :</strong><br/>
+              <code className="text-xs bg-white dark:bg-gray-800 px-2 py-1 rounded border">
+                https://92767425-60c5-42e8-8376-473b6077814a-00-3qeysuo8dr2t9.kirk.replit.dev/api/oauth/google/callback
               </code>
+              <p className="mt-2 text-xs">
+                Ajoutez cette URL dans "Authorized redirect URIs" de votre projet Google Cloud Console.
+              </p>
             </div>
           </div>
         </div>
