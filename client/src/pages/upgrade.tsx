@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Check, Crown, Zap, Rocket } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
@@ -17,54 +18,81 @@ interface Plan {
   id: string;
   name: string;
   price: number;
+  yearlyPrice: number;
   icon: React.ReactNode;
   features: string[];
   color: string;
   popular?: boolean;
+  trial?: boolean;
 }
 
 const plans: Plan[] = [
   {
+    id: 'starter',
+    name: 'Starter',
+    price: 49,
+    yearlyPrice: 490,
+    icon: <Zap className="h-6 w-6" />,
+    color: 'from-blue-600 to-purple-600',
+    features: [
+      '100 leads par mois',
+      '5 templates email',
+      '100 variations IA par mois',
+      'Essai gratuit 14 jours',
+      'Support email',
+      'Analytics de base',
+      'Résiliable à tout moment'
+    ]
+  },
+  {
     id: 'pro',
     name: 'Pro',
-    price: 29,
+    price: 99,
+    yearlyPrice: 990,
     icon: <Crown className="h-6 w-6" />,
-    color: 'from-purple-600 to-blue-600',
+    color: 'from-purple-600 to-pink-600',
+    popular: true,
+    trial: true,
     features: [
       '400 leads par mois',
       '15 templates email',
       '300 variations IA par mois',
       'Séquences automatisées (3 étapes)',
+      'Essai gratuit 14 jours',
       'Connexion Gmail OAuth',
       'Analytics avancés',
-      'Support prioritaire'
+      'Support prioritaire',
+      'Résiliable à tout moment'
     ]
   },
   {
     id: 'growth',
     name: 'Growth',
-    price: 59,
+    price: 299,
+    yearlyPrice: 2990,
     icon: <Rocket className="h-6 w-6" />,
-    color: 'from-green-600 to-teal-600',
-    popular: true,
+    color: 'from-pink-600 to-red-600',
     features: [
       '1500 leads par mois',
       '30 templates email premium',
       '1000 variations IA par mois',
       'Séquences automatisées (5 étapes)',
-      'Connexion multi-comptes',
-      'Analytics avancés + IA insights',
       'Service de closing humain',
-      'Support 24/7'
+      'Analytics avancés + IA insights',
+      'Support 24/7',
+      'Résiliable à tout moment'
     ]
   }
 ];
 
-const CheckoutForm = ({ selectedPlan }: { selectedPlan: Plan }) => {
+const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly: boolean }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const currentPrice = isYearly ? selectedPlan.yearlyPrice : selectedPlan.price;
+  const period = isYearly ? 'an' : 'mois';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,69 +137,102 @@ const CheckoutForm = ({ selectedPlan }: { selectedPlan: Plan }) => {
         disabled={!stripe || isProcessing}
         className={`w-full bg-gradient-to-r ${selectedPlan.color} hover:opacity-90`}
       >
-        {isProcessing ? "Traitement..." : `Payer ${selectedPlan.price}€/mois`}
+        {isProcessing ? "Traitement..." : `Payer ${currentPrice}€/${period}`}
       </Button>
     </form>
   );
 };
 
-const PlanCard = ({ plan, onSelect }: { plan: Plan; onSelect: () => void }) => (
-  <Card className={`relative ${plan.popular ? 'border-2 border-gradient-to-r border-green-500' : ''}`}>
-    {plan.popular && (
-      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-        <Badge className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-3 py-1">
-          <Zap className="h-3 w-3 mr-1" />
-          Populaire
-        </Badge>
-      </div>
-    )}
-    <CardHeader className="text-center pb-4">
-      <div className={`mx-auto p-3 rounded-full bg-gradient-to-r ${plan.color} text-white w-fit`}>
-        {plan.icon}
-      </div>
-      <CardTitle className="text-2xl">{plan.name}</CardTitle>
-      <div className="text-3xl font-bold">
-        {plan.price}€
-        <span className="text-sm font-normal text-muted-foreground">/mois</span>
-      </div>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <ul className="space-y-3">
-        {plan.features.map((feature, index) => (
-          <li key={index} className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-            <span className="text-sm">{feature}</span>
-          </li>
-        ))}
-      </ul>
-      <Button 
-        onClick={onSelect}
-        className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90`}
-      >
-        Choisir {plan.name}
-      </Button>
-    </CardContent>
-  </Card>
-);
+const PlanCard = ({ 
+  plan, 
+  isYearly, 
+  onSelect 
+}: { 
+  plan: Plan; 
+  isYearly: boolean; 
+  onSelect: () => void 
+}) => {
+  const currentPrice = isYearly ? plan.yearlyPrice : plan.price;
+  const period = isYearly ? 'an' : 'mois';
+  const monthlyEquivalent = isYearly ? Math.round(plan.yearlyPrice / 10) : plan.price;
+  const savings = isYearly ? plan.price * 12 - plan.yearlyPrice : 0;
+
+  return (
+    <Card className={`relative ${plan.popular ? 'border-2 border-gradient-to-r border-purple-500' : ''}`}>
+      {plan.popular && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1">
+            <Crown className="h-3 w-3 mr-1" />
+            Populaire
+          </Badge>
+        </div>
+      )}
+      {isYearly && savings > 0 && (
+        <div className="absolute -top-3 right-4">
+          <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-1">
+            Économisez {savings}€
+          </Badge>
+        </div>
+      )}
+      <CardHeader className="text-center pb-4">
+        <div className={`mx-auto p-3 rounded-full bg-gradient-to-r ${plan.color} text-white w-fit`}>
+          {plan.icon}
+        </div>
+        <CardTitle className="text-2xl">{plan.name}</CardTitle>
+        <div className="text-3xl font-bold">
+          {currentPrice}€
+          <span className="text-sm font-normal text-muted-foreground">/{period}</span>
+        </div>
+        {isYearly && (
+          <div className="text-sm text-muted-foreground">
+            Soit {monthlyEquivalent}€/mois
+          </div>
+        )}
+        {plan.trial && (
+          <div className="text-sm text-green-600 font-medium">
+            ✨ Essai gratuit 14 jours
+          </div>
+        )}
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ul className="space-y-3">
+          {plan.features.map((feature, index) => (
+            <li key={index} className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <Button 
+          onClick={onSelect}
+          className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90`}
+        >
+          Choisir {plan.name}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function UpgradePage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [isYearly, setIsYearly] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePlanSelect = async (plan: Plan) => {
-    setIsLoading(true);
+  const handleSelectPlan = async (plan: Plan) => {
     setSelectedPlan(plan);
+    setIsLoading(true);
 
     try {
-      const response = await apiRequest("POST", "/api/create-subscription", {
+      const response = await apiRequest('POST', '/api/payments/create-subscription', {
         planId: plan.id,
-        priceId: plan.id === 'pro' ? 'price_pro_monthly' : 'price_growth_monthly'
+        yearly: isYearly
       });
-      
+
       const data = await response.json();
       setClientSecret(data.clientSecret);
     } catch (error) {
@@ -205,13 +266,18 @@ export default function UpgradePage() {
             </Button>
             <h1 className="text-3xl font-bold mb-2">Finaliser votre abonnement</h1>
             <p className="text-muted-foreground">
-              Plan {selectedPlan.name} - {selectedPlan.price}€/mois
+              Plan {selectedPlan.name} - {isYearly ? selectedPlan.yearlyPrice : selectedPlan.price}€/{isYearly ? 'an' : 'mois'}
             </p>
+            {selectedPlan.trial && (
+              <p className="text-green-600 text-sm mt-2">
+                ✨ Essai gratuit de 14 jours inclus
+              </p>
+            )}
           </div>
 
           <Card className="p-6">
             <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm selectedPlan={selectedPlan} />
+              <CheckoutForm selectedPlan={selectedPlan} isYearly={isYearly} />
             </Elements>
           </Card>
         </div>
@@ -231,19 +297,40 @@ export default function UpgradePage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {/* Toggle mensuel/annuel */}
+        <div className="flex items-center justify-center mb-8 space-x-4">
+          <span className={`text-sm ${!isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
+            Mensuel
+          </span>
+          <Switch
+            checked={isYearly}
+            onCheckedChange={setIsYearly}
+            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-green-600 data-[state=checked]:to-emerald-600"
+          />
+          <span className={`text-sm ${isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
+            Annuel
+          </span>
+          {isYearly && (
+            <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+              2 mois offerts
+            </Badge>
+          )}
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan) => (
             <PlanCard 
               key={plan.id} 
               plan={plan} 
-              onSelect={() => handlePlanSelect(plan)}
+              isYearly={isYearly}
+              onSelect={() => handleSelectPlan(plan)}
             />
           ))}
         </div>
 
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground">
-            Paiement sécurisé avec Stripe • Annulation à tout moment • Support 24/7
+            Paiement sécurisé avec Stripe • Résiliable à tout moment • Support 24/7
           </p>
         </div>
       </div>
