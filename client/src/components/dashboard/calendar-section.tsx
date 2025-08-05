@@ -415,6 +415,21 @@ export default function CalendarSection() {
         </div>
       </div>
 
+      {/* Statistiques rapides */}
+      <div className="grid grid-cols-1 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-center">
+              <Calendar className="h-8 w-8 text-blue-500" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">RDV ce mois</p>
+                <div className="text-2xl font-bold">{bookingsThisMonth}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar Configuration */}
         <div className="lg:col-span-1">

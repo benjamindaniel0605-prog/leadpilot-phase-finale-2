@@ -11,6 +11,12 @@ import PaymentSuccess from "@/pages/payment-success";
 import TestPlans from "@/pages/test-plans";
 import BookMeeting from "@/pages/book-meeting";
 import CancelSubscription from "@/pages/cancel-subscription";
+import SuccessFreeMonthly from "@/pages/success-free-monthly";
+import SuccessStarterMonthly from "@/pages/success-starter-monthly";
+import SuccessStarterYearly from "@/pages/success-starter-yearly";
+import SuccessProMonthly from "@/pages/success-pro-monthly";
+import SuccessProYearly from "@/pages/success-pro-yearly";
+import SuccessGrowthMonthly from "@/pages/success-growth-monthly";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -29,6 +35,12 @@ function Router() {
           <Route path="/test-plans" component={TestPlans} />
           <Route path="/book-meeting" component={BookMeeting} />
           <Route path="/cancel-subscription" component={CancelSubscription} />
+          <Route path="/success/free-monthly" component={SuccessFreeMonthly} />
+          <Route path="/success/starter-monthly" component={SuccessStarterMonthly} />
+          <Route path="/success/starter-yearly" component={SuccessStarterYearly} />
+          <Route path="/success/pro-monthly" component={SuccessProMonthly} />
+          <Route path="/success/pro-yearly" component={SuccessProYearly} />
+          <Route path="/success/growth-monthly" component={SuccessGrowthMonthly} />
         </>
       )}
       <Route component={NotFound} />
