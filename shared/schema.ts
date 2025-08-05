@@ -85,7 +85,7 @@ export const campaigns = pgTable("campaigns", {
   userId: varchar("user_id").notNull().references(() => users.id),
   name: varchar("name").notNull(),
   emailId: varchar("email_id").notNull().references(() => customEmails.id),
-  leadTargets: varchar("lead_targets").notNull().default("qualified"),
+  leadTargets: varchar("lead_targets").notNull(), // Comma-separated lead IDs
   status: varchar("status").notNull().default("draft"),
   totalSent: integer("total_sent").notNull().default(0),
   totalOpened: integer("total_opened").notNull().default(0),

@@ -10,6 +10,7 @@ import { getLeadService, AILeadScoringService, type LeadSearchParams } from "./s
 import { CSVService } from "./services/csvService";
 import { OpenAILeadScoringService } from "./services/openaiService";
 import { registerEmailVariationRoutes } from "./routes/emailVariations";
+import { emailService } from "./services/emailService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -345,8 +346,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const campaignData = insertCampaignSchema.parse(req.body);
       const campaign = await storage.createCampaign({ ...campaignData, userId });
       
-      // Note: Email usage tracking could be added here if needed
-      
       res.json(campaign);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -354,6 +353,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating campaign:", error);
       res.status(500).json({ message: "Failed to create campaign" });
+    }
+  });
+
+  // Route pour lancer une campagne (envoyer les emails)
+  app.post('/api/campaigns/:id/send', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const campaignId = req.params.id;
+      
+      // Récupérer la campagne
+      const campaign = await storage.getCampaign(campaignId);
+      if (!campaign || campaign.userId !== userId) {
+        return res.status(404).json({ message: "Campagne non trouvée" });
+      }
+
+      if (campaign.status === 'sent') {
+        return res.status(400).json({ message: "Cette campagne a déjà été envoyée" });
+      }
+
+      // Récupérer l'email personnalisé
+      const customEmail = await storage.getCustomEmail(campaign.emailId);
+      if (!customEmail) {
+        return res.status(404).json({ message: "Email non trouvé" });
+      }
+
+      // Récupérer les leads ciblés
+      const leadIds = campaign.leadTargets.split(',');
+      const leads = await storage.getLeadsByIds(leadIds);
+
+      if (leads.length === 0) {
+        return res.status(400).json({ message: "Aucun lead trouvé pour cette campagne" });
+      }
+
+      // Vérifier que l'utilisateur a un compte email connecté
+      const user = await storage.getUser(userId);
+      if (!user?.googleEmailConnected && !user?.outlookEmailConnected) {
+        return res.status(400).json({ message: "Connectez un compte email dans les paramètres avant d'envoyer une campagne" });
+      }
+
+      // Envoyer les emails
+      const results = await emailService.sendCampaignEmails(
+        userId,
+        campaignId,
+        leads,
+        customEmail.content,
+        customEmail.subject
+      );
+
+      // Mettre à jour le statut de la campagne
+      await storage.updateCampaign(campaignId, {
+        status: 'sent',
+        totalSent: results.sent
+      });
+
+      res.json({
+        message: "Campagne envoyée avec succès",
+        results: {
+          sent: results.sent,
+          failed: results.failed,
+          total: leads.length,
+          errors: results.errors.slice(0, 5) // Limiter les erreurs affichées
+        }
+      });
+    } catch (error) {
+      console.error("Erreur envoi campagne:", error);
+      res.status(500).json({ message: "Erreur lors de l'envoi de la campagne" });
     }
   });
 

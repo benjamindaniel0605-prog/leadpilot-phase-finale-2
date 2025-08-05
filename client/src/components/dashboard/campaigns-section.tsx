@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Send, Clock } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -62,6 +62,27 @@ export default function CampaignsSection() {
       toast({
         title: "Erreur",
         description: "Impossible de créer la campagne.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const sendCampaignMutation = useMutation({
+    mutationFn: async (campaignId: string) => {
+      const response = await apiRequest("POST", `/api/campaigns/${campaignId}/send`);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/campaigns"] });
+      toast({
+        title: "Campagne envoyée !",
+        description: `${data.results.sent} emails envoyés avec succès.`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erreur d'envoi",
+        description: error.message || "Impossible d'envoyer la campagne.",
         variant: "destructive",
       });
     },
@@ -394,6 +415,21 @@ Statistiques:
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(campaign.status)}
+                      {campaign.status === 'draft' && (
+                        <Button
+                          size="sm"
+                          onClick={() => sendCampaignMutation.mutate(campaign.id)}
+                          disabled={sendCampaignMutation.isPending}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          {sendCampaignMutation.isPending ? (
+                            <Clock className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Send className="h-4 w-4 mr-2" />
+                          )}
+                          Envoyer
+                        </Button>
+                      )}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">

@@ -583,6 +583,48 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(campaigns.createdAt));
   }
 
+  async getCampaign(id: string): Promise<Campaign | undefined> {
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    return campaign;
+  }
+
+  async updateCampaign(id: string, updates: Partial<Campaign>): Promise<void> {
+    await db
+      .update(campaigns)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(campaigns.id, id));
+  }
+
+  async getLeadsByIds(leadIds: string[]): Promise<Lead[]> {
+    if (leadIds.length === 0) return [];
+    return await db
+      .select()
+      .from(leads)
+      .where(sql`${leads.id} = ANY(${leadIds})`);
+  }
+
+  async getCustomEmail(id: string): Promise<CustomEmail | undefined> {
+    const [email] = await db.select().from(customEmails).where(eq(customEmails.id, id));
+    return email;
+  }
+
+  async createCampaignEmail(campaignEmail: {
+    campaignId: string;
+    leadId: string;
+    subject: string;
+    content: string;
+    status: string;
+    sentAt: Date;
+  }): Promise<void> {
+    await db.insert(campaignEmails).values({
+      id: crypto.randomUUID(),
+      campaignId: campaignEmail.campaignId,
+      leadId: campaignEmail.leadId,
+      status: campaignEmail.status,
+      sentAt: campaignEmail.sentAt
+    });
+  }
+
   async getCampaign(id: string, userId: string): Promise<Campaign | undefined> {
     const [campaign] = await db
       .select()
