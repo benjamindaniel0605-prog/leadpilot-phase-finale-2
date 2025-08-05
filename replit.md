@@ -18,7 +18,7 @@ The frontend utilizes `shadcn/ui` components built on Radix UI primitives, style
 - **Backend**: Node.js, Express, TypeScript, RESTful API design, Passport.js for authentication, `connect-pg-simple` for session management.
 - **Database**: PostgreSQL with Drizzle ORM for type-safe operations.
 - **Lead Management**: Includes AI lead scoring based on various criteria, CSV import/export with field mapping, and lead enrichment capabilities.
-- **Email Campaigns**: Features 30 pre-built French templates, AI-powered email variation generation (6 styles), and a system for creating custom emails. Campaigns support flexible lead targeting with quick selection actions.
+- **Email Campaigns**: Features 30 pre-built French templates (1 Free, 4 Starter, 20 Pro, 5 Growth), AI-powered email variation generation via OpenAI (6 styles) that reformulates templates while maintaining structure, and a system for creating custom emails. Campaigns support flexible lead targeting with quick selection actions.
 - **Automated Sequences**: A comprehensive system for creating multi-step email sequences with configurable delays and smart response detection to stop sequences.
 - **Booking System**: Allows users to propose meeting times via a public booking page, with configurable availability and automatic text insertion into emails.
 - **Subscription & Quota**: Implements a tiered subscription model (Free, Starter, Pro, Growth) with usage-based quotas for features like leads, templates, and AI variations.
