@@ -80,10 +80,11 @@ The platform implements a tiered subscription model with usage quotas for leads,
 - **Advanced Step Configuration**: Each sequence step can be configured with custom email, precise timing (days/hours), and activation status
 - **Lead Enrollment System**: API endpoints for enrolling leads into sequences with automatic email scheduling
 - **Real-time Automation**: Background service processes scheduled emails with comprehensive logging and error handling
-- **Plan-based Limitations**: Free plan temporarily enabled for testing (2 steps max), Pro plan (3 steps), Growth plan (5 steps)
+- **Plan-based Access Control**: Sequences restricted to Pro (3 steps max) and Growth (5 steps max) plans only - Free plan shows upgrade prompt
 - **Complete API Integration**: Routes for sequence creation, step configuration, lead enrollment, and automation statistics
-- **User Interface Enhancement**: Intuitive dialog system for sequence configuration with drag-and-drop step management
+- **User Interface Enhancement**: Intuitive dialog system for sequence configuration with functional delete/pause buttons
 - **Email Personalization**: Automatic variable replacement ([PRENOM], [ENTREPRISE], etc.) in automated emails
+- **100% Functional System**: All sequence automation features tested and confirmed working including lead enrollment, email scheduling, and response detection
 
 ### OAuth Email Integration Implementation (August 5, 2025)
 - **SMTP Replacement**: Replaced traditional SMTP configuration with secure OAuth authentication for Gmail only (Outlook removed per user request)
