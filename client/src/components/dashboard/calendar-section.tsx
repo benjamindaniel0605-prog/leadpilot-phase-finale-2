@@ -423,7 +423,7 @@ export default function CalendarSection() {
               <Calendar className="h-8 w-8 text-blue-500" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">RDV ce mois</p>
-                <div className="text-2xl font-bold">{bookingsThisMonth}</div>
+                <div className="text-2xl font-bold">{bookings.length}</div>
               </div>
             </div>
           </CardContent>
