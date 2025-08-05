@@ -276,8 +276,8 @@ export function registerPaymentRoutes(app: Express) {
         return res.status(400).json({ error: 'Plan invalide' });
       }
 
-      // Remplacer l'email exemple par l'email de l'utilisateur
-      const userEmail = req.user?.email || '';
+      // Remplacer l'email exemple par l'email de l'utilisateur  
+      const userEmail = req.user?.email || req.user?.claims?.email || '';
       const encodedEmail = encodeURIComponent(userEmail);
       paymentUrl = paymentUrl.replace('exemple%40gmail.com', encodedEmail);
 

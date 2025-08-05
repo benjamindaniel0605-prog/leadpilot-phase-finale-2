@@ -38,7 +38,7 @@ const plans: Plan[] = [
       '100 leads par mois',
       '5 templates email',
       '100 variations IA par mois',
-      'Essai gratuit 14 jours',
+      'Essai gratuit 14 jours sans engagement',
       'Support email',
       'Analytics de base',
       'Résiliable à tout moment'
@@ -58,7 +58,7 @@ const plans: Plan[] = [
       '15 templates email',
       '300 variations IA par mois',
       'Séquences automatisées (3 étapes)',
-      'Essai gratuit 14 jours',
+      'Essai gratuit 14 jours sans engagement',
       'Connexion Gmail OAuth',
       'Analytics avancés',
       'Support prioritaire',
@@ -159,11 +159,13 @@ const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly
 const PlanCard = ({ 
   plan, 
   isYearly, 
-  onDirectPayment 
+  onDirectPayment,
+  isLoading 
 }: { 
   plan: Plan; 
   isYearly: boolean; 
-  onDirectPayment: (plan: Plan, billing: string) => void 
+  onDirectPayment: (plan: Plan, billing: string) => void;
+  isLoading: boolean;
 }) => {
   const currentPrice = isYearly ? plan.yearlyPrice : plan.price;
   const period = isYearly ? 'an' : 'mois';
@@ -202,8 +204,8 @@ const PlanCard = ({
           </div>
         )}
         {plan.trial && (
-          <div className="text-sm text-green-600 font-medium">
-            ✨ Essai gratuit 14 jours
+          <div className="text-sm text-green-400 font-medium">
+            ✨ Essai gratuit 14 jours sans engagement
           </div>
         )}
       </CardHeader>
@@ -218,9 +220,10 @@ const PlanCard = ({
         </ul>
         <Button 
           onClick={() => onDirectPayment(plan, isYearly ? 'yearly' : 'monthly')}
+          disabled={isLoading}
           className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90`}
         >
-          Choisir {plan.name}
+          {isLoading ? "Chargement..." : `Choisir ${plan.name}`}
         </Button>
       </CardContent>
     </Card>
@@ -275,7 +278,7 @@ export default function UpgradePage() {
 
   if (selectedPlan && clientSecret) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 p-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <Button 
@@ -290,8 +293,8 @@ export default function UpgradePage() {
               Plan {selectedPlan.name} - {isYearly ? selectedPlan.yearlyPrice : selectedPlan.price}€/{isYearly ? 'an' : 'mois'}
             </p>
             {selectedPlan.trial && (
-              <p className="text-green-600 text-sm mt-2">
-                ✨ Essai gratuit de 14 jours inclus
+              <p className="text-green-400 text-sm mt-2">
+                ✨ Essai gratuit de 14 jours sans engagement inclus
               </p>
             )}
           </div>
@@ -307,20 +310,20 @@ export default function UpgradePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-4xl font-bold mb-4 text-white">
             Passez au niveau supérieur avec LeadPilot
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
             Débloquez toute la puissance de l'automatisation de leads et des séquences intelligentes
           </p>
         </div>
 
         {/* Toggle mensuel/annuel */}
         <div className="flex items-center justify-center mb-8 space-x-4">
-          <span className={`text-sm ${!isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
+          <span className={`text-sm ${!isYearly ? 'font-semibold text-white' : 'text-slate-400'}`}>
             Mensuel
           </span>
           <Switch
@@ -328,7 +331,7 @@ export default function UpgradePage() {
             onCheckedChange={setIsYearly}
             className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-green-600 data-[state=checked]:to-emerald-600"
           />
-          <span className={`text-sm ${isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
+          <span className={`text-sm ${isYearly ? 'font-semibold text-white' : 'text-slate-400'}`}>
             Annuel
           </span>
           {isYearly && (
@@ -345,12 +348,13 @@ export default function UpgradePage() {
               plan={plan} 
               isYearly={isYearly}
               onDirectPayment={handleDirectPayment}
+              isLoading={isLoading}
             />
           ))}
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-400">
             Paiement sécurisé avec Stripe • Résiliable à tout moment • Support 24/7
           </p>
         </div>
