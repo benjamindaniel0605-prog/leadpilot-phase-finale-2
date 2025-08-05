@@ -122,6 +122,7 @@ export default function SequencesSection() {
       });
     },
     onError: (error) => {
+      console.error("Toggle error:", error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier le statut",

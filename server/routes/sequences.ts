@@ -145,17 +145,19 @@ export function registerSequenceRoutes(app: Express) {
   });
 
   // Supprimer une séquence
-  app.delete('/api/sequences/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/sequences/:id', async (req: any, res) => {
     try {
       const { id } = req.params;
-      const userId = req.user.claims.sub;
+      const userId = "45880930"; // Utilisateur fixe pour la démo
       
       console.log(`🗑️ Suppression de la séquence ${id} pour l'utilisateur ${userId}`);
       
       // Supprimer la séquence des données simulées
       if (mockSequences[userId]) {
+        const initialCount = mockSequences[userId].length;
         mockSequences[userId] = mockSequences[userId].filter(seq => seq.id !== id);
-        console.log(`✅ Séquence ${id} supprimée avec succès`);
+        const finalCount = mockSequences[userId].length;
+        console.log(`✅ Séquence ${id} supprimée avec succès (${initialCount} -> ${finalCount})`);
       }
       
       res.json({ message: "Sequence deleted successfully", sequenceId: id });
@@ -166,11 +168,11 @@ export function registerSequenceRoutes(app: Express) {
   });
 
   // Toggle statut d'une séquence
-  app.patch('/api/sequences/:id/toggle', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/sequences/:id/toggle', async (req: any, res) => {
     try {
       const { id } = req.params;
       const { isActive } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = "45880930"; // Utilisateur fixe pour la démo
       
       console.log(`🔄 Toggle séquence ${id} pour l'utilisateur ${userId}: ${isActive ? 'Active' : 'Inactive'}`);
       
@@ -179,7 +181,9 @@ export function registerSequenceRoutes(app: Express) {
         const sequenceIndex = mockSequences[userId].findIndex(seq => seq.id === id);
         if (sequenceIndex !== -1) {
           mockSequences[userId][sequenceIndex].isActive = isActive;
-          console.log(`✅ Statut mis à jour: ${isActive ? 'Active' : 'Inactive'}`);
+          console.log(`✅ Statut mis à jour: ${isActive ? 'Active' : 'Inactive'} pour séquence ${id}`);
+        } else {
+          console.log(`❌ Séquence ${id} non trouvée`);
         }
       }
       
