@@ -104,10 +104,23 @@ const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly
     setIsProcessing(true);
 
     try {
+      // Creer l intention de paiement avec le type de periode
+      const response = await apiRequest('POST', '/api/create-subscription', {
+        planId: selectedPlan.id,
+        isYearly: isYearly
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la creation de l abonnement');
+      }
+      
+      const { clientSecret } = await response.json();
+      
+      // Confirmer le paiement avec Stripe
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/dashboard`,
+          return_url: `${window.location.origin}/dashboard?upgrade=success`,
         },
       });
 
@@ -118,10 +131,10 @@ const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors du paiement",
+        description: error.message || "Une erreur est survenue lors du paiement",
         variant: "destructive",
       });
     } finally {
@@ -228,9 +241,9 @@ export default function UpgradePage() {
     setIsLoading(true);
 
     try {
-      const response = await apiRequest('POST', '/api/payments/create-subscription', {
+      const response = await apiRequest('POST', '/api/create-subscription', {
         planId: plan.id,
-        yearly: isYearly
+        isYearly: isYearly
       });
 
       const data = await response.json();

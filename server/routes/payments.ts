@@ -18,10 +18,14 @@ function getStripeInstance(): Stripe {
   return stripe;
 }
 
-// Prix des plans (à configurer dans Stripe Dashboard)
+// Prix des plans (configurés avec Stripe)
 const PLAN_PRICES = {
-  pro: 'price_pro_monthly',    // À remplacer par le vrai ID de prix Stripe
-  growth: 'price_growth_monthly' // À remplacer par le vrai ID de prix Stripe
+  starter_monthly: 'price_1RskslEVZ4LkA0ggJkEDmOOI',
+  starter_yearly: 'price_1RskslEVZ4LkA0ggs1RFihix',
+  pro_monthly: 'price_1RskslEVZ4LkA0ggBpmKn4sC',
+  pro_yearly: 'price_1RskslEVZ4LkA0ggJvLQTxt7',
+  growth_monthly: 'price_1RsksmEVZ4LkA0ggMDvG7AeN',
+  growth_yearly: 'price_1RsksmEVZ4LkA0ggUfjTbpLj'
 };
 
 export function registerPaymentRoutes(app: Express) {
@@ -30,10 +34,10 @@ export function registerPaymentRoutes(app: Express) {
   app.post("/api/create-subscription", isAuthenticated, async (req: any, res) => {
     try {
       const stripe = getStripeInstance();
-      const { planId } = req.body;
+      const { planId, isYearly } = req.body;  // Ajout de isYearly pour gérer mensuel/annuel
       const userId = req.user.claims.sub;
       
-      console.log(`💳 Création d'abonnement ${planId} pour l'utilisateur ${userId}`);
+      console.log(`💳 Création d'abonnement ${planId} ${isYearly ? 'annuel' : 'mensuel'} pour l'utilisateur ${userId}`);
 
       // Récupérer l'utilisateur
       const user = await storage.getUser(userId);
@@ -73,11 +77,21 @@ export function registerPaymentRoutes(app: Express) {
         console.log(`✅ Client Stripe créé: ${customerId}`);
       }
 
+      // Déterminer le bon prix selon le plan et la période
+      const priceKey = `${planId}_${isYearly ? 'yearly' : 'monthly'}` as keyof typeof PLAN_PRICES;
+      const priceId = PLAN_PRICES[priceKey];
+      
+      if (!priceId) {
+        return res.status(400).json({ 
+          message: `Plan ${planId} ${isYearly ? 'annuel' : 'mensuel'} non disponible` 
+        });
+      }
+
       // Créer l'abonnement
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{
-          price: PLAN_PRICES[planId as keyof typeof PLAN_PRICES] || PLAN_PRICES.pro,
+          price: priceId,
         }],
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
