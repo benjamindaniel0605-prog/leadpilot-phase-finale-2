@@ -54,7 +54,7 @@ export default function SequencesSection() {
   // Création de séquence
   const createSequenceMutation = useMutation({
     mutationFn: async (data: { name: string; description: string }) => {
-      return await apiRequest("/api/sequences", "POST", data);
+      return await apiRequest("POST", "/api/sequences", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sequences"] });
@@ -351,7 +351,7 @@ export default function SequencesSection() {
                 onClick={async () => {
                   if (selectedSequence) {
                     try {
-                      await apiRequest(`/api/sequences/${selectedSequence}/steps`, "POST", { steps: sequenceSteps });
+                      await apiRequest("POST", `/api/sequences/${selectedSequence}/steps`, { steps: sequenceSteps });
                       setIsEditingSteps(false);
                       toast({
                         title: "Séquence configurée",

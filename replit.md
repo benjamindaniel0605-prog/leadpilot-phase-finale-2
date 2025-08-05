@@ -73,6 +73,18 @@ The platform implements a tiered subscription model with usage quotas for leads,
 
 ## Recent Changes (August 2025)
 
+### Complete Sequence Automation System Implementation (August 5, 2025)
+- **Full Sequence Management**: Created comprehensive sequence creation and configuration interface with step-by-step email association
+- **Email Automation Engine**: Implemented complete automation service that sends emails according to configured delays (every 30 seconds for demo, 1 minute for production)
+- **Smart Response Detection**: Automatic sequence stopping when prospects respond, preventing spam and maintaining professional communication
+- **Advanced Step Configuration**: Each sequence step can be configured with custom email, precise timing (days/hours), and activation status
+- **Lead Enrollment System**: API endpoints for enrolling leads into sequences with automatic email scheduling
+- **Real-time Automation**: Background service processes scheduled emails with comprehensive logging and error handling
+- **Plan-based Limitations**: Free plan temporarily enabled for testing (2 steps max), Pro plan (3 steps), Growth plan (5 steps)
+- **Complete API Integration**: Routes for sequence creation, step configuration, lead enrollment, and automation statistics
+- **User Interface Enhancement**: Intuitive dialog system for sequence configuration with drag-and-drop step management
+- **Email Personalization**: Automatic variable replacement ([PRENOM], [ENTREPRISE], etc.) in automated emails
+
 ### OAuth Email Integration Implementation (August 5, 2025)
 - **SMTP Replacement**: Replaced traditional SMTP configuration with secure OAuth authentication for Gmail only (Outlook removed per user request)
 - **Database Schema Enhancement**: Added OAuth token fields to users table for Google integration (google_email_connected, google_email_token, google_refresh_token, connected_email_address)
