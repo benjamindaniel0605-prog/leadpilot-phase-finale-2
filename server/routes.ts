@@ -840,12 +840,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/cancel-subscription', isAuthenticated, async (req, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { reason } = req.body;
+      const { reason, userEmail, userName } = req.body;
       
       console.log(`🚫 Demande d'annulation d'abonnement pour ${userId}: ${reason}`);
       
       // Downgrade vers le plan gratuit
       const updatedUser = await storage.updateUserPlan(userId, 'free', false);
+      
+      // Envoyer email avec la raison de résiliation
+      await sendCancellationNotification(userEmail, userName, reason);
       
       // Log de la raison pour analyse (en production, sauvegarder en base)
       console.log(`📝 Raison d'annulation: "${reason}"`);
@@ -860,6 +863,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Erreur lors de l\'annulation' });
     }
   });
+
+  // Fonction pour envoyer la notification de résiliation
+  async function sendCancellationNotification(userEmail: string, userName: string, reason: string) {
+    try {
+      // Pour le moment, on log simplement - en production, utiliser un service d'email
+      const adminEmail = 'contact@leadpilot.com'; // Tu peux changer cette adresse
+      
+      console.log(`
+📧 NOTIFICATION DE RÉSILIATION
+----------------------------------------
+De: ${userName} (${userEmail})
+Date: ${new Date().toLocaleString('fr-FR')}
+Raison: ${reason}
+
+Utilisateur ID: ${userEmail}
+Envoyé à: ${adminEmail}
+----------------------------------------
+      `);
+      
+      // TODO: Intégrer un service d'email comme SendGrid, Mailgun ou SMTP
+      // await emailService.send({
+      //   to: adminEmail,
+      //   subject: `Résiliation d'abonnement - ${userName}`,
+      //   text: `L'utilisateur ${userName} (${userEmail}) a résilié son abonnement.\n\nRaison: ${reason}`
+      // });
+      
+    } catch (error) {
+      console.error('Erreur envoi email résiliation:', error);
+      // Ne pas faire échouer la résiliation si l'email ne part pas
+    }
+  }
 
   const httpServer = createServer(app);
   return httpServer;

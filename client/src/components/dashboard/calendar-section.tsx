@@ -25,6 +25,16 @@ export default function CalendarSection() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [showNewBookingDialog, setShowNewBookingDialog] = useState(false);
+  
+  // États pour le formulaire de création de RDV
+  const [newBooking, setNewBooking] = useState({
+    title: '',
+    description: '',
+    date: '',
+    time: '',
+    duration: '30',
+    meetingType: 'video'
+  });
   const [duration, setDuration] = useState("30");
   const [customDuration, setCustomDuration] = useState("");
   const [availableSlots, setAvailableSlots] = useState({
@@ -132,6 +142,55 @@ export default function CalendarSection() {
     }
   };
 
+  const handleCreateBooking = async () => {
+    if (!newBooking.title || !newBooking.date || !newBooking.time) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir au minimum le titre, la date et l'heure.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Créer les dates de début et fin
+      const startDateTime = new Date(`${newBooking.date}T${newBooking.time}`);
+      const endDateTime = new Date(startDateTime.getTime() + parseInt(newBooking.duration) * 60000);
+
+      const response = await apiRequest('POST', '/api/bookings', {
+        title: newBooking.title,
+        description: newBooking.description,
+        startTime: startDateTime.toISOString(),
+        endTime: endDateTime.toISOString(),
+        meetingType: newBooking.meetingType,
+        status: 'scheduled'
+      });
+
+      if (response.ok) {
+        toast({
+          title: "RDV créé",
+          description: "Le rendez-vous a été créé avec succès.",
+        });
+        setShowNewBookingDialog(false);
+        setNewBooking({
+          title: '',
+          description: '',
+          date: '',
+          time: '',
+          duration: '30',
+          meetingType: 'video'
+        });
+        queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de créer le RDV.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -170,6 +229,8 @@ export default function CalendarSection() {
                   <Label htmlFor="title" className="text-white">Titre</Label>
                   <Input 
                     id="title" 
+                    value={newBooking.title}
+                    onChange={(e) => setNewBooking({...newBooking, title: e.target.value})}
                     placeholder="Ex: Entretien commercial" 
                     className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   />
@@ -178,6 +239,8 @@ export default function CalendarSection() {
                   <Label htmlFor="description" className="text-white">Description</Label>
                   <Textarea 
                     id="description" 
+                    value={newBooking.description}
+                    onChange={(e) => setNewBooking({...newBooking, description: e.target.value})}
                     placeholder="Détails du rendez-vous..." 
                     className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   />
@@ -188,6 +251,8 @@ export default function CalendarSection() {
                     <Input 
                       id="date" 
                       type="date" 
+                      value={newBooking.date}
+                      onChange={(e) => setNewBooking({...newBooking, date: e.target.value})}
                       className="bg-gray-800 border-gray-600 text-white"
                     />
                   </div>
@@ -196,6 +261,8 @@ export default function CalendarSection() {
                     <Input 
                       id="time" 
                       type="time" 
+                      value={newBooking.time}
+                      onChange={(e) => setNewBooking({...newBooking, time: e.target.value})}
                       className="bg-gray-800 border-gray-600 text-white"
                     />
                   </div>
@@ -203,7 +270,7 @@ export default function CalendarSection() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="rdvDuration" className="text-white">Durée</Label>
-                    <Select>
+                    <Select value={newBooking.duration} onValueChange={(value) => setNewBooking({...newBooking, duration: value})}>
                       <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                         <SelectValue placeholder="Durée" />
                       </SelectTrigger>
@@ -219,7 +286,7 @@ export default function CalendarSection() {
                   </div>
                   <div>
                     <Label htmlFor="meetingType" className="text-white">Type</Label>
-                    <Select>
+                    <Select value={newBooking.meetingType} onValueChange={(value) => setNewBooking({...newBooking, meetingType: value})}>
                       <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                         <SelectValue placeholder="Type" />
                       </SelectTrigger>
@@ -231,7 +298,12 @@ export default function CalendarSection() {
                     </Select>
                   </div>
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Créer le RDV</Button>
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleCreateBooking}
+                >
+                  Créer le RDV
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

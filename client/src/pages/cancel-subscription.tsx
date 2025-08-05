@@ -16,12 +16,13 @@ export default function CancelSubscription() {
   const [reason, setReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [skipReason, setSkipReason] = useState(false);
 
   const handleCancel = async () => {
-    if (!reason.trim()) {
+    if (!skipReason && !reason.trim()) {
       toast({
         title: "Raison requise",
-        description: "Veuillez indiquer la raison de l'annulation.",
+        description: "Veuillez indiquer la raison de l'annulation ou cliquer sur 'Ignorer'.",
         variant: "destructive",
       });
       return;
@@ -31,7 +32,9 @@ export default function CancelSubscription() {
 
     try {
       const response = await apiRequest('POST', '/api/cancel-subscription', {
-        reason: reason.trim()
+        reason: skipReason ? 'Raison non précisée' : reason.trim(),
+        userEmail: user?.email,
+        userName: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email
       });
 
       if (response.ok) {
@@ -156,21 +159,33 @@ export default function CancelSubscription() {
             </div>
 
             {/* Boutons d'action */}
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setLocation('/dashboard')}
-              >
-                Conserver l'abonnement
-              </Button>
-              <Button
-                className="flex-1 bg-red-600 hover:bg-red-700"
-                onClick={handleCancel}
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'Annulation...' : 'Confirmer l\'annulation'}
-              </Button>
+            <div className="space-y-3">
+              {!skipReason && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setSkipReason(true)}
+                >
+                  Ignorer - Ne pas donner de raison
+                </Button>
+              )}
+              
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setLocation('/dashboard')}
+                >
+                  Conserver l'abonnement
+                </Button>
+                <Button
+                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  onClick={handleCancel}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? 'Annulation...' : 'Confirmer l\'annulation'}
+                </Button>
+              </div>
             </div>
 
             <p className="text-xs text-slate-400 text-center">

@@ -15,14 +15,17 @@ import {
   EyeOff,
   Download,
   HelpCircle,
-  Trash2
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
+import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import OAuthConnections from "./oauth-connections";
 
 export default function SettingsSection() {
+  const [, setLocation] = useLocation();
   const [profileForm, setProfileForm] = useState({
     firstName: "",
     lastName: "",
@@ -349,6 +352,18 @@ export default function SettingsSection() {
                   <Trash2 className="h-4 w-4 mr-3" />
                   Supprimer mon compte
                 </Button>
+                
+                {/* Bouton de résiliation d'abonnement */}
+                {user?.plan && user.plan !== 'free' && (
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start text-red-600 hover:text-red-700 border-t border-gray-200 mt-3 pt-3"
+                    onClick={() => setLocation('/cancel-subscription')}
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-3" />
+                    Résilier mon abonnement
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
