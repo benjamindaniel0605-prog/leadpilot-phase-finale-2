@@ -205,9 +205,9 @@ export default function SequencesSection() {
                     rows={3}
                   />
                 </div>
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-3">Comment ça marche ?</h4>
-                  <div className="text-sm text-blue-800 space-y-2">
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <h4 className="font-medium text-green-900 mb-3">Comment ça marche ?</h4>
+                  <div className="text-sm text-green-800 space-y-2">
                     <div>• Après création, vous pourrez ajouter jusqu'à {maxSteps} étapes</div>
                     <div>• Chaque étape peut avoir un email et un délai d'attente personnalisé</div>
                     <div>• Les emails s'envoient automatiquement si le prospect ne répond pas</div>

@@ -152,9 +152,11 @@ export function registerSequenceRoutes(app: Express) {
       
       console.log(`🗑️ Suppression de la séquence ${id} pour l'utilisateur ${userId}`);
       
-      // Simulation de la suppression
-      // En production, ici on supprimerait de la base de données
-      // et on arrêterait tous les emails programmés pour cette séquence
+      // Supprimer la séquence des données simulées
+      if (mockSequences[userId]) {
+        mockSequences[userId] = mockSequences[userId].filter(seq => seq.id !== id);
+        console.log(`✅ Séquence ${id} supprimée avec succès`);
+      }
       
       res.json({ message: "Sequence deleted successfully", sequenceId: id });
     } catch (error) {
@@ -172,9 +174,14 @@ export function registerSequenceRoutes(app: Express) {
       
       console.log(`🔄 Toggle séquence ${id} pour l'utilisateur ${userId}: ${isActive ? 'Active' : 'Inactive'}`);
       
-      // Simulation du toggle
-      // En production, ici on mettrait à jour le statut en base de données
-      // et on pauserait/reprendrait les emails programmés
+      // Mettre à jour le statut de la séquence dans les données simulées
+      if (mockSequences[userId]) {
+        const sequenceIndex = mockSequences[userId].findIndex(seq => seq.id === id);
+        if (sequenceIndex !== -1) {
+          mockSequences[userId][sequenceIndex].isActive = isActive;
+          console.log(`✅ Statut mis à jour: ${isActive ? 'Active' : 'Inactive'}`);
+        }
+      }
       
       res.json({ 
         message: "Sequence status updated successfully", 
@@ -184,33 +191,6 @@ export function registerSequenceRoutes(app: Express) {
     } catch (error) {
       console.error("Error toggling sequence:", error);
       res.status(500).json({ message: "Failed to toggle sequence status" });
-    }
-  });
-
-  // Mettre à jour une séquence
-  app.put('/api/sequences/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-      
-      // Pour l'instant, retourner une réponse mock
-      res.json({ message: "Sequence updated successfully" });
-    } catch (error) {
-      console.error("Error updating sequence:", error);
-      res.status(500).json({ message: "Failed to update sequence" });
-    }
-  });
-
-  // Supprimer une séquence
-  app.delete('/api/sequences/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const { id } = req.params;
-      
-      // Pour l'instant, retourner une réponse mock
-      res.json({ message: "Sequence deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting sequence:", error);
-      res.status(500).json({ message: "Failed to delete sequence" });
     }
   });
 }
