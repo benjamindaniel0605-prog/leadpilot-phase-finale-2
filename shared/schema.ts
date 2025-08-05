@@ -187,6 +187,9 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
   id: true,
   userId: true,
   createdAt: true,
+}).extend({
+  startTime: z.string().transform(str => new Date(str)),
+  endTime: z.string().transform(str => new Date(str))
 });
 
 // Sequences table - Séquences automatisées multi-étapes
