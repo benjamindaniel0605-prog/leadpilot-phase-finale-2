@@ -588,10 +588,10 @@ export default function CalendarSection() {
                     <div 
                       key={booking.id} 
                       className={`border rounded-lg p-4 relative ${
-                        booking.status === 'confirmed' ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20' :
-                        booking.status === 'scheduled' ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20' :
-                        booking.status === 'completed' ? 'border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20' :
-                        'border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/20 dark:to-gray-700/20'
+                        booking.status === 'confirmed' ? 'border-emerald-300 bg-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-600' :
+                        booking.status === 'scheduled' ? 'border-blue-300 bg-blue-100 dark:bg-blue-900/30 dark:border-blue-600' :
+                        booking.status === 'completed' ? 'border-purple-300 bg-purple-100 dark:bg-purple-900/30 dark:border-purple-600' :
+                        'border-gray-300 bg-gray-100 dark:bg-gray-800/60 dark:border-gray-600'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -606,13 +606,13 @@ export default function CalendarSection() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <h4 className="font-medium text-foreground">{booking.title}</h4>
-                            <p className="text-sm text-muted-foreground">{booking.description}</p>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">{booking.title}</h4>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">{booking.description}</p>
                           </div>
                         </div>
                         {getStatusBadge(booking.status)}
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                      <div className="flex items-center text-sm text-gray-700 dark:text-gray-300 space-x-4">
                         <span className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
                           {formatDate(booking.startTime.toString())}
