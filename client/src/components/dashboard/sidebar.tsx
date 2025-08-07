@@ -31,13 +31,13 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   });
 
   const navigationItems = [
-    { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-    { id: "leads", label: "Leads", icon: Users },
-    { id: "templates", label: "Templates", icon: Mail },
+    { id: "dashboard", label: <span translate="no">Dashboard</span>, icon: BarChart3 },
+    { id: "leads", label: <span translate="no">Leads</span>, icon: Users },
+    { id: "templates", label: <span translate="no">Templates</span>, icon: Mail },
     { id: "custom-emails", label: "Mes Emails", icon: Mail },
     { id: "campaigns", label: "Campagnes", icon: Send },
     { id: "sequences", label: "Séquences", icon: GitBranch },
-    { id: "closing", label: "Service de Closing", icon: Target, comingSoon: true },
+    { id: "closing", label: <span translate="no">Service de Closing</span>, icon: Target, comingSoon: true },
     { id: "calendar", label: "Calendrier", icon: Calendar },
     { id: "analytics", label: "Statistiques", icon: BarChart3 },
     { id: "settings", label: "Paramètres", icon: Settings },
@@ -104,7 +104,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
             {leadsUsed} leads utilisés ce mois
           </p>
           <p className="text-xs text-primary/70 mb-3">
-            {currentLimits.variations} variations IA disponibles
+            {currentLimits.variations} variations disponibles
           </p>
           <Button 
             size="sm" 
