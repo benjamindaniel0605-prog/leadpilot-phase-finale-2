@@ -121,7 +121,7 @@ const CheckoutForm = ({ selectedPlan, isYearly }: { selectedPlan: Plan; isYearly
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/dashboard?upgrade=success`,
+          return_url: `${window.location.origin}/payment-success?plan=${selectedPlan.id}&billing=${isYearly ? 'yearly' : 'monthly'}`,
         },
       });
 

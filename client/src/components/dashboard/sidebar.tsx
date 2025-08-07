@@ -112,7 +112,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
             onClick={() => onSectionChange("settings")}
           >
             <Crown className="h-4 w-4 mr-2" />
-            Upgrader
+            <span translate="no">Upgrade</span>
           </Button>
         </div>
       </div>

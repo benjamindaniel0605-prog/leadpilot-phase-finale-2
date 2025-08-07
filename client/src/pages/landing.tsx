@@ -46,7 +46,7 @@ export default function Landing() {
     },
     {
       icon: Target,
-      title: "Service de Closing",
+      title: <span translate="no">Service de Closing</span>,
       description: "Closeurs professionnels pour conclure vos ventes par téléphone avec commission sur résultats.",
       color: "bg-orange-100 text-orange-600",
       comingSoon: true
@@ -84,7 +84,7 @@ export default function Landing() {
         "Séquences automatisées (3 étapes)",
         "Connexion Gmail OAuth",
         "Analyse détaillée des campagnes",
-        "Support prioritaire"
+        "Service prioritaire"
       ],
       buttonText: "Choisir Pro",
       buttonVariant: "default" as const,
@@ -253,15 +253,10 @@ export default function Landing() {
                             <CheckCircle className="h-4 w-4 text-emerald-500 mr-3 flex-shrink-0" />
                             <span className="text-card-foreground">{feature}</span>
                           </>
-                        ) : feature.disabled ? (
-                          <>
-                            <Lock className="h-4 w-4 text-muted-foreground mr-3 flex-shrink-0" />
-                            <span className="text-muted-foreground">{feature.text}</span>
-                          </>
                         ) : (
                           <>
                             <CheckCircle className="h-4 w-4 text-emerald-500 mr-3 flex-shrink-0" />
-                            <span className="text-card-foreground">{feature.text}</span>
+                            <span className="text-card-foreground">{feature}</span>
                           </>
                         )}
                       </li>
