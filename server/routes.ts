@@ -840,7 +840,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Route pour annuler l'abonnement
-  app.post('/api/cancel-subscription', isAuthenticated, async (req, res) => {
+  app.post('/api/cancel-subscription', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user?.claims?.sub;
       if (!userId) {

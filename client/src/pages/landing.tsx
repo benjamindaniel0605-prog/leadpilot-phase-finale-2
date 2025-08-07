@@ -104,7 +104,7 @@ export default function Landing() {
         "30 templates email premium",
         "1000 variations par mois",
         "Séquences automatisées (5 étapes)",
-        "Analyse avancée + recommandations IA",
+        "Analyse avancée des performances",
         "Recommandations automatiques",
         "Support 24/7"
       ],
