@@ -810,7 +810,7 @@ export class DatabaseStorage implements IStorage {
       const planLimits = {
         free: 5,
         starter: 100,
-        pro: 500,
+        pro: 400,
         growth: 1500
       };
 

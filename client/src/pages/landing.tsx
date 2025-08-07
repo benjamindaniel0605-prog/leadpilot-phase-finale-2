@@ -55,29 +55,20 @@ export default function Landing() {
 
   const plans = [
     {
-      name: "Free",
-      price: "0€",
-      description: "Pour tester",
-      features: [
-        "5 leads/mois",
-        "1 template accessible",
-        "5 variations/mois",
-        { text: "Pas de séquences", disabled: true }
-      ],
-      buttonText: "Commencer Gratuitement",
-      buttonVariant: "outline" as const
-    },
-    {
       name: "Starter",
       price: "49€",
       description: "par mois",
       features: [
-        "100 leads/mois",
-        "5 templates accessibles",
-        "100 variations/mois",
-        "Essai gratuit 14 jours"
+        "100 leads par mois",
+        "5 templates email",
+        "100 variations par mois",
+        "Lien de booking personnalisé",
+        "Essai gratuit 14 jours sans engagement",
+        "Support email",
+        "Statistiques de conversion",
+        "Résiliable à tout moment"
       ],
-      buttonText: "Essai gratuit",
+      buttonText: "Choisir Starter",
       buttonVariant: "default" as const
     },
     {
@@ -85,13 +76,17 @@ export default function Landing() {
       price: "99€",
       description: "par mois",
       features: [
+        "✨ Essai gratuit 14 jours sans engagement",
         "Tout Starter +",
-        "400 leads/mois", 
-        "15 templates accessibles",
-        "300 variations/mois",
-        "Séquences 3 étapes"
+        "400 leads par mois",
+        "15 templates email",
+        "300 variations par mois",
+        "Séquences automatisées (3 étapes)",
+        "Connexion Gmail OAuth",
+        "Analyse détaillée des campagnes",
+        "Support prioritaire"
       ],
-      buttonText: "Commencer Pro",
+      buttonText: "Choisir Pro",
       buttonVariant: "default" as const,
       popular: true
     },
@@ -101,12 +96,15 @@ export default function Landing() {
       description: "par mois",
       features: [
         "Tout Pro +",
-        "1500 leads/mois",
-        "30 templates premium",
-        "1000 variations/mois",
-        "Séquences 5 étapes"
+        "1500 leads par mois",
+        "30 templates email premium",
+        "1000 variations par mois",
+        "Séquences automatisées (5 étapes)",
+        "Analyse avancée + insight IA",
+        "Recommandations automatiques",
+        "Support 24/7"
       ],
-      buttonText: "Commencer Growth",
+      buttonText: "Choisir Growth",
       buttonVariant: "secondary" as const
     }
   ];

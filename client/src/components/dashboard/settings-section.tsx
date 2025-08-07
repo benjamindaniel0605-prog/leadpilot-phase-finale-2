@@ -315,9 +315,9 @@ export default function SettingsSection() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Templates accessibles</span>
-                    <span className="font-medium">1/30</span>
+                    <span className="font-medium">{currentLimits.templates}/30</span>
                   </div>
-                  <Progress value={(1/30) * 100} className="h-2" />
+                  <Progress value={(currentLimits.templates/30) * 100} className="h-2" />
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
@@ -327,9 +327,12 @@ export default function SettingsSection() {
                   <Progress value={variationsUsage} className="h-2" />
                 </div>
               </div>
-              <Button className="w-full">
+              <Button 
+                className="w-full"
+                onClick={() => setLocation('/upgrade')}
+              >
                 <Crown className="h-4 w-4 mr-2" />
-                Upgrader vers Starter
+                Choisir un Plan
               </Button>
             </CardContent>
           </Card>

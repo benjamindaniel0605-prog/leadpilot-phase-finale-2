@@ -265,8 +265,18 @@ export default function TemplatesSection() {
   ];
 
   const filteredTemplates = activeCategory === "all" 
-    ? templates 
-    : templates.filter((template: Template) => template.plan === activeCategory);
+    ? templates.filter((template: Template) => {
+        const planHierarchy = ["free", "starter", "pro", "growth"];
+        const userIndex = planHierarchy.indexOf(userPlan);
+        const templateIndex = planHierarchy.indexOf(template.plan);
+        return userIndex >= templateIndex;
+      })
+    : templates.filter((template: Template) => {
+        const planHierarchy = ["free", "starter", "pro", "growth"];
+        const userIndex = planHierarchy.indexOf(userPlan);
+        const templateIndex = planHierarchy.indexOf(template.plan);
+        return template.plan === activeCategory && userIndex >= templateIndex;
+      });
 
   if (isLoading) {
     return (
@@ -292,13 +302,15 @@ export default function TemplatesSection() {
           <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
         <div className="flex space-x-2">
-          <Button
-            onClick={() => setShowCustomEmailDialog(true)}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Écrire Email Personnel
-          </Button>
+          {userPlan !== "free" && (
+            <Button
+              onClick={() => setShowCustomEmailDialog(true)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Écrire Email Personnel
+            </Button>
+          )}
         </div>
       </div>
 
