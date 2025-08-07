@@ -46,7 +46,7 @@ export default function Landing() {
     },
     {
       icon: Target,
-      title: "Service Closing",
+      title: "Service de Closing",
       description: "Closeurs professionnels pour conclure vos ventes par téléphone avec commission sur résultats.",
       color: "bg-orange-100 text-orange-600",
       comingSoon: true
@@ -59,8 +59,8 @@ export default function Landing() {
       price: "0€",
       description: "Pour tester",
       features: [
-        "5 leads/mois",
-        "1 template accessible",
+        "5 dérivations/mois",
+        "1 modèle accessible",
         "5 variations IA/mois",
         { text: "Pas de séquences", disabled: true }
       ],
@@ -72,12 +72,12 @@ export default function Landing() {
       price: "49€",
       description: "par mois",
       features: [
-        "100 leads/mois",
-        "5 templates accessibles",
+        "100 fils/mois",
+        "5 modèles accessibles",
         "100 variations IA/mois",
         "Essai gratuit 14 jours"
       ],
-      buttonText: "Essai Gratuit",
+      buttonText: "Essai gratuit",
       buttonVariant: "default" as const
     },
     {
@@ -86,7 +86,7 @@ export default function Landing() {
       description: "par mois",
       features: [
         "400 leads/mois",
-        "15 templates accessibles",
+        "15 modèles accessibles",
         "300 variations IA/mois",
         "Séquences 3 étapes"
       ],
@@ -100,11 +100,11 @@ export default function Landing() {
       description: "par mois",
       features: [
         "1500 leads/mois",
-        "30 templates accessibles",
+        "30 modèles accessibles",
         "1000 variations IA/mois",
         "Séquences 5 étapes + A/B testing"
       ],
-      buttonText: "Commencer Growth",
+      buttonText: "Croissance des débuts",
       buttonVariant: "secondary" as const
     }
   ];
@@ -118,7 +118,7 @@ export default function Landing() {
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
                 <Rocket className="h-8 w-8 text-primary mr-3" />
-                <span className="text-xl font-bold text-foreground">LeadPilot</span>
+                <span className="text-xl font-bold text-foreground" translate="no">LeadPilot</span>
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -155,7 +155,7 @@ export default function Landing() {
                 <Button size="lg" onClick={handleLogin}>
                   Commencer Gratuitement
                 </Button>
-                <Button variant="outline" size="lg">
+                <Button variant="outline" size="lg" style={{ display: 'none' }}>
                   Voir la Démo
                 </Button>
               </div>

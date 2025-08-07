@@ -37,7 +37,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: "custom-emails", label: "Mes Emails", icon: Mail },
     { id: "campaigns", label: "Campagnes", icon: Send },
     { id: "sequences", label: "Séquences", icon: GitBranch },
-    { id: "closing", label: "Closing", icon: Target, comingSoon: true },
+    { id: "closing", label: "Service de Closing", icon: Target, comingSoon: true },
     { id: "calendar", label: "Calendrier", icon: Calendar },
     { id: "analytics", label: "Statistiques", icon: BarChart3 },
     { id: "settings", label: "Paramètres", icon: Settings },
@@ -59,7 +59,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
       <div className="p-6">
         <div className="flex items-center mb-8">
           <Rocket className="h-8 w-8 text-primary mr-3" />
-          <span className="text-xl font-bold text-foreground">LeadPilot</span>
+          <span className="text-xl font-bold text-foreground" translate="no">LeadPilot</span>
         </div>
         
         <nav className="space-y-2">

@@ -8,7 +8,7 @@ interface HeaderProps {
 }
 
 const sectionTitles = {
-  dashboard: { title: "Dashboard", subtitle: "Aperçu de vos campagnes et performances" },
+  dashboard: { title: "Dashboard", subtitle: "Débloquez tout le potentiel de LeadPilot" },
   leads: { title: "Gestion des Leads", subtitle: "Gérez vos prospects et leur scoring IA" },
   templates: { title: "Templates d'Emails", subtitle: "30 templates optimisés avec variations IA" },
   campaigns: { title: "Campagnes Email", subtitle: "Créez et gérez vos campagnes d'emailing" },
@@ -16,6 +16,7 @@ const sectionTitles = {
   calendar: { title: "Calendrier de Booking", subtitle: "Gérez vos créneaux et RDV prospects" },
   analytics: { title: "Statistiques & Analytics", subtitle: "Analysez vos performances de prospection" },
   settings: { title: "Paramètres", subtitle: "Configurez votre compte et intégrations" },
+  closing: { title: "Service de Closing", subtitle: "Closeurs professionnels pour conclure vos ventes par téléphone avec commission sur résultats" },
 };
 
 export default function Header({ activeSection }: HeaderProps) {

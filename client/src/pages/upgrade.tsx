@@ -78,7 +78,7 @@ const plans: Plan[] = [
       '1500 leads par mois',
       '30 templates email premium',
       '1000 variations IA par mois',
-      'Séquences automatisées (5 étapes)',
+      'Séquences automatisées (5 étapes) + A/B testing',
       'Lien de booking personnalisé',
       'Analyse avancée + prédictions IA',
       'Recommandations automatiques',
