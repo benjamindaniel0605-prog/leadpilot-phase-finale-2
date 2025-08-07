@@ -839,7 +839,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Route pour annuler l'abonnement
   app.post('/api/cancel-subscription', isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
       const { reason, userEmail, userName } = req.body;
       
       console.log(`🚫 Demande d'annulation d'abonnement pour ${userId}: ${reason}`);

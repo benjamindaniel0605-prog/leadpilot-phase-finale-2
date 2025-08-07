@@ -7,6 +7,10 @@ export default function Landing() {
     window.location.href = "/api/login";
   };
 
+  const handleSignup = () => {
+    window.location.href = "/api/login?signup=true";
+  };
+
   const features = [
     {
       icon: Users,
@@ -125,11 +129,11 @@ export default function Landing() {
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Fonctionnalités</a>
               <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Tarifs</a>
               <Button variant="ghost" onClick={handleLogin}>Connexion</Button>
-              <Button onClick={handleLogin}>S'inscrire</Button>
+              <Button onClick={handleSignup}>S'inscrire</Button>
             </div>
             <div className="md:hidden flex items-center space-x-2">
               <Button variant="ghost" size="sm" onClick={handleLogin}>Connexion</Button>
-              <Button size="sm" onClick={handleLogin}>S'inscrire</Button>
+              <Button size="sm" onClick={handleSignup}>S'inscrire</Button>
             </div>
           </div>
         </div>
@@ -265,7 +269,7 @@ export default function Landing() {
                   <Button 
                     className="w-full" 
                     variant={plan.buttonVariant}
-                    onClick={handleLogin}
+                    onClick={handleSignup}
                   >
                     {plan.buttonText}
                   </Button>
