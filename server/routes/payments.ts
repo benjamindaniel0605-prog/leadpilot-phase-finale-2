@@ -134,8 +134,8 @@ export function registerPaymentRoutes(app: Express) {
     
     try {
       const stripe = getStripeInstance();
-      // En production, utiliser process.env.STRIPE_WEBHOOK_SECRET
-      const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET || 'whsec_test');
+      // Utiliser la clé webhook fournie
+      const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET || 'whsec_U3z9XZKXQ7zQddmouNlZUByjjIxX946U');
 
       console.log(`🎣 Webhook Stripe reçu: ${event.type}`);
 

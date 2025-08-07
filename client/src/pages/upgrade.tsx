@@ -37,7 +37,7 @@ const plans: Plan[] = [
     features: [
       '100 leads par mois',
       '5 templates email',
-      '100 variations IA par mois',
+      '100 variations par mois',
       'Lien de booking personnalisé',
       'Essai gratuit 14 jours sans engagement',
       'Support email',
@@ -57,7 +57,7 @@ const plans: Plan[] = [
     features: [
       '400 leads par mois',
       '15 templates email',
-      '300 variations IA par mois',
+      '300 variations par mois',
       'Séquences automatisées (3 étapes)',
       'Lien de booking personnalisé',
       'Essai gratuit 14 jours sans engagement',
