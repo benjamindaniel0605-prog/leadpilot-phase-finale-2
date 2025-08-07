@@ -151,7 +151,7 @@ Vous pensez que ça vaut la peine d'en parler 5 minutes ?
   // Growth Plan Templates (additional)
   {
     id: "template-11",
-    name: "Template 11 – A/B test courte",
+    name: "Template 11 – Version courte",
     subject: "Une idée pour [Entreprise]",
     content: `Bonjour [Prénom],
 On aide [Entreprise similaire] à [résultat] en [temps].
@@ -159,7 +159,7 @@ Intéressé ?
 
 [Signature]`,
     plan: "growth",
-    category: "ab-test",
+    category: "courte",
     variables: ["Prénom", "Entreprise", "Entreprise similaire", "résultat", "temps", "Signature"]
   },
   {
