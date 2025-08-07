@@ -59,9 +59,9 @@ export default function Landing() {
       price: "0€",
       description: "Pour tester",
       features: [
-        "5 dérivations/mois",
-        "1 modèle accessible",
-        "5 variations IA/mois",
+        "5 leads/mois",
+        "1 template accessible",
+        "5 variations/mois",
         { text: "Pas de séquences", disabled: true }
       ],
       buttonText: "Commencer Gratuitement",
@@ -72,9 +72,9 @@ export default function Landing() {
       price: "49€",
       description: "par mois",
       features: [
-        "100 fils/mois",
-        "5 modèles accessibles",
-        "100 variations IA/mois",
+        "100 leads/mois",
+        "5 templates accessibles",
+        "100 variations/mois",
         "Essai gratuit 14 jours"
       ],
       buttonText: "Essai gratuit",
@@ -85,9 +85,10 @@ export default function Landing() {
       price: "99€",
       description: "par mois",
       features: [
-        "400 leads/mois",
-        "15 modèles accessibles",
-        "300 variations IA/mois",
+        "Tout Starter +",
+        "400 leads/mois", 
+        "15 templates accessibles",
+        "300 variations/mois",
         "Séquences 3 étapes"
       ],
       buttonText: "Commencer Pro",
@@ -99,12 +100,13 @@ export default function Landing() {
       price: "299€",
       description: "par mois",
       features: [
+        "Tout Pro +",
         "1500 leads/mois",
-        "30 modèles accessibles",
-        "1000 variations IA/mois",
-        "Séquences 5 étapes + A/B testing"
+        "30 templates premium",
+        "1000 variations/mois",
+        "Séquences 5 étapes"
       ],
-      buttonText: "Croissance des débuts",
+      buttonText: "Commencer Growth",
       buttonVariant: "secondary" as const
     }
   ];

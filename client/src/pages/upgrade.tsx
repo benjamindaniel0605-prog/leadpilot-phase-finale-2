@@ -55,16 +55,15 @@ const plans: Plan[] = [
     popular: true,
     trial: true,
     features: [
+      '✨ Essai gratuit 14 jours sans engagement',
+      'Tout Starter +',
       '400 leads par mois',
       '15 templates email',
       '300 variations par mois',
       'Séquences automatisées (3 étapes)',
-      'Lien de booking personnalisé',
-      'Essai gratuit 14 jours sans engagement',
       'Connexion Gmail OAuth',
       'Analyse détaillée des campagnes',
-      'Support prioritaire',
-      'Résiliable à tout moment'
+      'Support prioritaire'
     ]
   },
   {
@@ -75,15 +74,14 @@ const plans: Plan[] = [
     icon: <Rocket className="h-6 w-6" />,
     color: 'from-pink-600 to-red-600',
     features: [
+      'Tout Pro +',
       '1500 leads par mois',
       '30 templates email premium',
-      '1000 variations IA par mois',
-      'Séquences automatisées (5 étapes) + A/B testing',
-      'Lien de booking personnalisé',
+      '1000 variations par mois',
+      'Séquences automatisées (5 étapes)',
       'Analyse avancée + prédictions IA',
       'Recommandations automatiques',
-      'Support 24/7',
-      'Résiliable à tout moment'
+      'Support 24/7'
     ]
   }
 ];
