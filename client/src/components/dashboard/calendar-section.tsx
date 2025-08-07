@@ -16,8 +16,15 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function CalendarSection() {
-  const { data: bookings = [], isLoading } = useQuery<Booking[]>({
+  const { data: allBookings = [], isLoading } = useQuery<Booking[]>({
     queryKey: ["/api/bookings"],
+  });
+  
+  // Filtrer les bookings par mois courant
+  const bookings = allBookings.filter(booking => {
+    const bookingDate = new Date(booking.startTime);
+    return bookingDate.getMonth() === currentMonth.getMonth() && 
+           bookingDate.getFullYear() === currentMonth.getFullYear();
   });
 
   const { user } = useAuth();
@@ -423,7 +430,7 @@ export default function CalendarSection() {
             <div className="flex items-center justify-center">
               <Calendar className="h-8 w-8 text-blue-500" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">RDV ce mois</p>
+                <p className="text-sm font-medium text-gray-600">RDV en {getCurrentMonthName()}</p>
                 <div className="text-2xl font-bold">{bookings.length}</div>
               </div>
             </div>

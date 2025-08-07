@@ -302,15 +302,13 @@ export default function TemplatesSection() {
           <p className="text-muted-foreground">30 templates optimisés avec variations IA</p>
         </div>
         <div className="flex space-x-2">
-          {userPlan !== "free" && (
-            <Button
-              onClick={() => setShowCustomEmailDialog(true)}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Écrire Email Personnel
-            </Button>
-          )}
+          <Button
+            onClick={() => setShowCustomEmailDialog(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Écrire Email Personnel
+          </Button>
         </div>
       </div>
 
