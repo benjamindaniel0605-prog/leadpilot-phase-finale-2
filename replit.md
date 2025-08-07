@@ -6,6 +6,7 @@ LeadPilot is a comprehensive B2B SaaS platform designed to automate lead generat
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Closing service preference: Human closers (not AI) for phone sales with commission structure.
+Authentication: Landing page should allow both login and signup options for multiple account creation.
 
 ## System Architecture
 The application is a full-stack TypeScript project. The frontend, built with React 18, Vite, and TypeScript, uses `shadcn/ui` and Radix UI components styled with Tailwind CSS, `Wouter` for routing, and TanStack React Query for state management. The backend is a Node.js Express server with TypeScript, implementing a RESTful API. Authentication is handled via Replit's OpenID Connect and Passport.js, with sessions stored in PostgreSQL. PostgreSQL, managed with Drizzle ORM, serves as the primary database, storing user, session, email template, lead, campaign, sequence, and booking data. The system supports a tiered subscription model with usage quotas for leads, templates, AI variations, and sequences, enforced at the API level with real-time validation.

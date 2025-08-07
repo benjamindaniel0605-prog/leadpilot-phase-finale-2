@@ -127,14 +127,11 @@ export default function Landing() {
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Fonctionnalités</a>
               <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Tarifs</a>
               <Button variant="ghost" onClick={handleLogin}>Connexion</Button>
-              <Button onClick={handleLogin}>Essai Gratuit</Button>
+              <Button onClick={handleLogin}>S'inscrire</Button>
             </div>
-            <div className="md:hidden">
-              <Button variant="ghost" size="sm">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
+            <div className="md:hidden flex items-center space-x-2">
+              <Button variant="ghost" size="sm" onClick={handleLogin}>Connexion</Button>
+              <Button size="sm" onClick={handleLogin}>S'inscrire</Button>
             </div>
           </div>
         </div>
@@ -155,10 +152,10 @@ export default function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" onClick={handleLogin}>
-                  Commencer Gratuitement
+                  S'inscrire Gratuitement
                 </Button>
-                <Button variant="outline" size="lg" style={{ display: 'none' }}>
-                  Voir la Démo
+                <Button variant="outline" size="lg" onClick={handleLogin}>
+                  Se Connecter
                 </Button>
               </div>
               <div className="mt-8 flex items-center space-x-6 text-sm text-muted-foreground">
