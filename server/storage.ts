@@ -150,6 +150,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     
+    if (!user) {
+      throw new Error(`Utilisateur ${userId} non trouvé`);
+    }
+    
     console.log(`📊 Plan utilisateur ${userId} mis à jour: ${plan} (${isYearly ? 'annuel' : 'mensuel'}), quotas réinitialisés`);
     return user;
   }

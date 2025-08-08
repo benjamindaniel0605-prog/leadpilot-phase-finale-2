@@ -1,0 +1,1662 @@
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadPilot - Génération de Leads B2B Automatisée</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="h-full font-sans">
+    <!-- @COMPONENT: MainApp -->
+    <div id="app" class="h-full">
+        <!-- Landing Page -->
+        <div id="landing-page" class="min-h-screen bg-white">
+            <!-- @COMPONENT: Header -->
+            <header class="relative bg-white shadow-sm">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="flex h-16 justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 flex items-center">
+                                <i class="fas fa-rocket text-2xl text-primary-600 mr-3"></i>
+                                <span class="text-xl font-bold text-gray-900">LeadPilot</span>
+                            </div>
+                        </div>
+                        <div class="hidden md:flex items-center space-x-8">
+                            <a href="#features" class="text-gray-600 hover:text-gray-900 transition-colors">Fonctionnalités</a>
+                            <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition-colors">Tarifs</a>
+                            <button onclick="showLogin()" class="text-gray-600 hover:text-gray-900 transition-colors">Connexion</button>
+                            <button onclick="showDashboard()" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                Essai Gratuit
+                            </button>
+                        </div>
+                        <div class="md:hidden">
+                            <button class="text-gray-600">
+                                <i class="fas fa-bars text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- @COMPONENT: HeroSection -->
+            <section class="relative bg-gradient-to-br from-primary-50 to-white py-20">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+                                Génération de leads B2B 
+                                <span class="text-primary-600">automatisée</span> avec IA
+                            </h1>
+                            <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                                Trouvez, qualifiez et convertissez vos prospects automatiquement. 
+                                30 templates d'emails, séquences multi-étapes et IA pour maximiser vos conversions.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button onclick="showDashboard()" class="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors">
+                                    Commencer Gratuitement
+                                </button>
+                                <button class="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors">
+                                    Voir la Démo
+                                </button>
+                            </div>
+                            <div class="mt-8 flex items-center space-x-6 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-2"></i>
+                                    Essai gratuit 14 jours
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-2"></i>
+                                    Sans engagement
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <!-- Dashboard preview placeholder -->
+                            <div class="bg-white rounded-2xl shadow-2xl p-6">
+                                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-chart-line text-4xl text-primary-600 mb-4"></i>
+                                        <p class="text-gray-600">Aperçu du Dashboard</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: HeroSection -->
+
+            <!-- @COMPONENT: FeaturesSection -->
+            <section id="features" class="py-20 bg-white">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                            Tout ce dont vous avez besoin pour générer des leads
+                        </h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Une plateforme complète qui automatise votre prospection de A à Z
+                        </p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-users text-primary-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Génération de Leads</h3>
+                            <p class="text-gray-600">Trouvez automatiquement des prospects qualifiés via l'API Apollo avec filtrage IA.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-envelope text-emerald-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">30 Templates Email</h3>
+                            <p class="text-gray-600">Templates optimisés en français avec variations IA pour maximiser les taux de réponse.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-robot text-amber-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">IA GPT-4o</h3>
+                            <p class="text-gray-600">Scoring automatique des leads et génération de variations d'emails personnalisées.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-project-diagram text-purple-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Séquences Multi-étapes</h3>
+                            <p class="text-gray-600">Automatisez vos campagnes avec des séquences intelligentes jusqu'à 5 étapes.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Statistiques Avancées</h3>
+                            <p class="text-gray-600">Suivez les taux d'ouverture, de clic, de réponse et de RDV bookés en temps réel.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-calendar text-indigo-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Calendrier Intégré</h3>
+                            <p class="text-gray-600">Permettez à vos prospects de réserver des RDV directement via vos emails.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: FeaturesSection -->
+
+            <!-- @COMPONENT: PricingSection -->
+            <section id="pricing" class="py-20 bg-slate-50">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                            Choisissez votre plan
+                        </h2>
+                        <p class="text-xl text-gray-600">
+                            Commencez gratuitement, évoluez selon vos besoins
+                        </p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Free Plan -->
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Free</h3>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">0€</div>
+                                <p class="text-gray-600">Pour tester</p>
+                            </div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">5 leads/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">1 template accessible</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">5 variations IA/mois</span>
+                                </li>
+                                <li class="flex items-center text-gray-400">
+                                    <i class="fas fa-times mr-3"></i>
+                                    <span>Pas de séquences</span>
+                                </li>
+                            </ul>
+                            <button onclick="showDashboard()" class="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                                Commencer Gratuitement
+                            </button>
+                        </div>
+
+                        <!-- Starter Plan -->
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">49€</div>
+                                <p class="text-gray-600">par mois</p>
+                            </div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">100 leads/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">5 templates accessibles</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">100 variations IA/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">Essai gratuit 14 jours</span>
+                                </li>
+                            </ul>
+                            <button class="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
+                                Essai Gratuit
+                            </button>
+                        </div>
+
+                        <!-- Pro Plan -->
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-600 relative">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                                <span class="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                                    Populaire
+                                </span>
+                            </div>
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">99€</div>
+                                <p class="text-gray-600">par mois</p>
+                            </div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">400 leads/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">15 templates accessibles</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">300 variations IA/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">Séquences 3 étapes</span>
+                                </li>
+                            </ul>
+                            <button class="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
+                                Commencer Pro
+                            </button>
+                        </div>
+
+                        <!-- Growth Plan -->
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Growth</h3>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">299€</div>
+                                <p class="text-gray-600">par mois</p>
+                            </div>
+                            <ul class="space-y-3 mb-8">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">1500 leads/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">30 templates accessibles</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">1000 variations IA/mois</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-emerald-500 mr-3"></i>
+                                    <span class="text-gray-700">Séquences 5 étapes + A/B testing</span>
+                                </li>
+                            </ul>
+                            <button class="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                                Commencer Growth
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <p class="text-gray-600">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Facturation annuelle = 2 mois offerts (payer 10 mois au lieu de 12)
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <!-- @END_COMPONENT: PricingSection -->
+        </div>
+
+        <!-- Login Modal -->
+        <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Connexion</h2>
+                    <p class="text-gray-600">Connectez-vous à votre compte LeadPilot</p>
+                </div>
+                
+                <!-- Mock Replit Auth Integration -->
+                <div class="space-y-4">
+                    <button onclick="showDashboard()" class="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Se connecter avec Replit Auth
+                    </button>
+                </div>
+                
+                <button onclick="hideLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden h-full bg-slate-50">
+            <!-- @COMPONENT: Sidebar -->
+            <div class="flex h-full">
+                <aside class="w-64 bg-white shadow-lg border-r border-gray-200">
+                    <div class="p-6">
+                        <div class="flex items-center mb-8">
+                            <i class="fas fa-rocket text-2xl text-primary-600 mr-3"></i>
+                            <span class="text-xl font-bold text-gray-900">LeadPilot</span>
+                        </div>
+                        <nav class="space-y-2">
+                            <a href="#" onclick="showSection('dashboard-overview')" class="nav-link active flex items-center px-3 py-2 rounded-lg text-primary-600 bg-primary-50">
+                                <i class="fas fa-chart-line mr-3"></i>
+                                Dashboard
+                            </a>
+                            <a href="#" onclick="showSection('leads-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-users mr-3"></i>
+                                Leads
+                            </a>
+                            <a href="#" onclick="showSection('templates-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-envelope mr-3"></i>
+                                Templates
+                            </a>
+                            <a href="#" onclick="showSection('campaigns-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-paper-plane mr-3"></i>
+                                Campagnes
+                            </a>
+                            <a href="#" onclick="showSection('sequences-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-project-diagram mr-3"></i>
+                                Séquences
+                            </a>
+                            <a href="#" onclick="showSection('calendar-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-calendar mr-3"></i>
+                                Calendrier
+                            </a>
+                            <a href="#" onclick="showSection('analytics-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-chart-bar mr-3"></i>
+                                Statistiques
+                            </a>
+                            <a href="#" onclick="showSection('settings-section')" class="nav-link flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-cog mr-3"></i>
+                                Paramètres
+                            </a>
+                        </nav>
+                    </div>
+                    <div class="border-t border-gray-200 p-6">
+                        <div class="bg-primary-50 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-primary-700">Plan Free</span>
+                                <span class="text-xs bg-primary-600 text-white px-2 py-1 rounded">3/5</span>
+                            </div>
+                            <div class="w-full bg-primary-200 rounded-full h-2 mb-2">
+                                <div class="bg-primary-600 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                            <p class="text-xs text-primary-600">3 leads utilisés ce mois</p>
+                            <button class="w-full mt-3 bg-primary-600 text-white py-2 px-3 rounded text-sm hover:bg-primary-700 transition-colors">
+                                Upgrader
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+                <!-- @END_COMPONENT: Sidebar -->
+
+                <!-- Main Content -->
+                <main class="flex-1 overflow-auto">
+                    <!-- @COMPONENT: TopBar -->
+                    <header class="bg-white border-b border-gray-200 px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900" data-bind="pageTitle">Dashboard</h1>
+                                <p class="text-gray-600" data-bind="pageSubtitle">Aperçu de vos campagnes et performances</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="relative p-2 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-bell text-xl"></i>
+                                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                </button>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-sm font-semibold">U</span>
+                                    </div>
+                                    <span class="text-gray-700 font-medium" data-bind="user.name">Utilisateur</span>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <!-- @END_COMPONENT: TopBar -->
+
+                    <!-- Dashboard Overview -->
+                    <div id="dashboard-overview" class="section-content p-6">
+                        <!-- @COMPONENT: StatsCards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Leads Générés</p>
+                                        <p class="text-3xl font-bold text-gray-900" data-bind="stats.leads">3</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <span class="text-emerald-600 text-sm">+12%</span>
+                                    <span class="text-gray-500 text-sm ml-2">vs mois dernier</span>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Emails Envoyés</p>
+                                        <p class="text-3xl font-bold text-gray-900" data-bind="stats.emails">15</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-envelope text-emerald-600 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <span class="text-emerald-600 text-sm">+25%</span>
+                                    <span class="text-gray-500 text-sm ml-2">vs mois dernier</span>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Taux d'Ouverture</p>
+                                        <p class="text-3xl font-bold text-gray-900" data-bind="stats.openRate">34%</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-envelope-open text-amber-600 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <span class="text-emerald-600 text-sm">+5%</span>
+                                    <span class="text-gray-500 text-sm ml-2">vs mois dernier</span>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">RDV Bookés</p>
+                                        <p class="text-3xl font-bold text-gray-900" data-bind="stats.meetings">2</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-purple-600 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <span class="text-emerald-600 text-sm">+100%</span>
+                                    <span class="text-gray-500 text-sm ml-2">vs mois dernier</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: StatsCards -->
+
+                        <!-- Recent Activity -->
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Activité Récente</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-plus text-emerald-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-900">Nouveau lead ajouté</p>
+                                            <p class="text-xs text-gray-500">Il y a 2 heures</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-paper-plane text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-900">Email envoyé à Jean Dupont</p>
+                                            <p class="text-xs text-gray-500">Il y a 4 heures</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-calendar text-purple-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-900">RDV booké avec Marie Martin</p>
+                                            <p class="text-xs text-gray-500">Hier</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions Rapides</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button onclick="showSection('leads-section')" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+                                        <i class="fas fa-plus text-primary-600 text-xl mb-2"></i>
+                                        <p class="text-sm font-medium text-gray-900">Nouveau Lead</p>
+                                    </button>
+                                    <button onclick="showSection('campaigns-section')" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+                                        <i class="fas fa-paper-plane text-emerald-600 text-xl mb-2"></i>
+                                        <p class="text-sm font-medium text-gray-900">Nouvelle Campagne</p>
+                                    </button>
+                                    <button onclick="showSection('templates-section')" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+                                        <i class="fas fa-envelope text-amber-600 text-xl mb-2"></i>
+                                        <p class="text-sm font-medium text-gray-900">Templates</p>
+                                    </button>
+                                    <button onclick="showSection('analytics-section')" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+                                        <i class="fas fa-chart-bar text-purple-600 text-xl mb-2"></i>
+                                        <p class="text-sm font-medium text-gray-900">Analytics</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leads Section -->
+                    <div id="leads-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Gestion des Leads</h2>
+                                <p class="text-gray-600">Gérez vos prospects et leur scoring IA</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-upload mr-2"></i>
+                                    Importer
+                                </button>
+                                <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Générer Leads
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Secteur</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Tous les secteurs</option>
+                                        <option>Tech/SaaS</option>
+                                        <option>E-commerce</option>
+                                        <option>Services</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Score IA</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Tous les scores</option>
+                                        <option>Très élevé (90-100)</option>
+                                        <option>Élevé (70-89)</option>
+                                        <option>Moyen (50-69)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Tous les statuts</option>
+                                        <option>Nouveau</option>
+                                        <option>Contacté</option>
+                                        <option>Qualifié</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end">
+                                    <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                        <i class="fas fa-search mr-2"></i>
+                                        Filtrer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leads Table -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Liste des Leads (3/5)</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Contact
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Entreprise
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Score IA
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Statut
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <!-- @MAP: leads.map(lead => ( -->
+                                        <tr data-mock="true">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-primary-600 font-semibold">JD</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900" data-bind="lead.name">Jean Dupont</div>
+                                                        <div class="text-sm text-gray-500" data-bind="lead.email">jean.dupont@exemple.fr</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900" data-bind="lead.company">TechStart SARL</div>
+                                                <div class="text-sm text-gray-500" data-bind="lead.sector">Tech/SaaS</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                                                        <div class="bg-emerald-500 h-2 rounded-full" style="width: 87%"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-gray-900" data-bind="lead.score">87%</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800" data-bind="lead.status">
+                                                    Qualifié
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button class="text-primary-600 hover:text-primary-900 mr-3">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                                <button class="text-gray-600 hover:text-gray-900 mr-3">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-purple-600 font-semibold">MM</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Marie Martin</div>
+                                                        <div class="text-sm text-gray-500">marie.martin@exemple.fr</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">Digital Solutions</div>
+                                                <div class="text-sm text-gray-500">E-commerce</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                                                        <div class="bg-amber-500 h-2 rounded-full" style="width: 72%"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-gray-900">72%</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    Contacté
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button class="text-primary-600 hover:text-primary-900 mr-3">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                                <button class="text-gray-600 hover:text-gray-900 mr-3">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-amber-600 font-semibold">PL</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Pierre Leblanc</div>
+                                                        <div class="text-sm text-gray-500">p.leblanc@exemple.fr</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">Conseil & Stratégie</div>
+                                                <div class="text-sm text-gray-500">Services</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                                                        <div class="bg-emerald-500 h-2 rounded-full" style="width: 94%"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-gray-900">94%</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                    Nouveau
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button class="text-primary-600 hover:text-primary-900 mr-3">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                                <button class="text-gray-600 hover:text-gray-900 mr-3">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- @END_MAP )) -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Templates Section -->
+                    <div id="templates-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Templates d'Emails</h2>
+                                <p class="text-gray-600">30 templates optimisés avec variations IA</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-robot mr-2"></i>
+                                    Générer Variation IA
+                                </button>
+                                <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Nouveau Template
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Template Categories -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+                            <div class="flex space-x-4">
+                                <button class="template-category active px-4 py-2 rounded-lg bg-primary-600 text-white">
+                                    Tous (1/30)
+                                </button>
+                                <button class="template-category px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                                    Free (1/1)
+                                </button>
+                                <button class="template-category px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 opacity-50 cursor-not-allowed">
+                                    Starter (0/5) 🔒
+                                </button>
+                                <button class="template-category px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 opacity-50 cursor-not-allowed">
+                                    Pro (0/15) 🔒
+                                </button>
+                                <button class="template-category px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 opacity-50 cursor-not-allowed">
+                                    Growth (0/30) 🔒
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Templates Grid -->
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <!-- Template Card -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Template 1 – Découverte simple</h3>
+                                        <p class="text-sm text-gray-600">Plan Free</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Template Preview -->
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <div class="text-sm text-gray-700">
+                                        <div class="mb-2">
+                                            <strong>Objet:</strong> Une idée rapide pour [Entreprise]
+                                        </div>
+                                        <div class="mb-3 border-t pt-3">
+                                            <p class="mb-2">Bonjour [Prénom],</p>
+                                            <p class="mb-2">Nous aidons des entreprises comme [Entreprise] à résoudre [Problème] rapidement grâce à [Produit].</p>
+                                            <p class="mb-2">Souhaitez-vous en discuter 5 minutes cette semaine ?</p>
+                                            <p>[Signature]</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Template Variables -->
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Variables disponibles:</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">[Prénom]</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">[Entreprise]</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">[Problème]</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">[Produit]</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">[Lien Calendrier]</span>
+                                    </div>
+                                </div>
+
+                                <!-- Template Stats -->
+                                <div class="flex items-center justify-between pt-4 border-t">
+                                    <div class="flex space-x-4 text-sm text-gray-600">
+                                        <span>Utilisé: 8 fois</span>
+                                        <span>Taux ouverture: 32%</span>
+                                    </div>
+                                    <button class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-700 transition-colors">
+                                        Utiliser
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Locked Template Card -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-50">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Template 2 – Problème → Solution</h3>
+                                        <p class="text-sm text-gray-600">Plan Starter 🔒</p>
+                                    </div>
+                                    <div class="bg-amber-100 p-2 rounded-lg">
+                                        <i class="fas fa-lock text-amber-600"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <div class="text-sm text-gray-500">
+                                        <div class="mb-2">
+                                            <strong>Objet:</strong> [Entreprise] et [Problème] ?
+                                        </div>
+                                        <div class="mb-3 border-t pt-3">
+                                            <p class="mb-2">Bonjour [Prénom],</p>
+                                            <p class="mb-2">J'ai remarqué que [Entreprise] rencontre souvent [Problème]...</p>
+                                            <p class="text-gray-400">Contenu verrouillé</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-4 border-t">
+                                    <span class="text-sm text-gray-500">Débloque avec le plan Starter</span>
+                                    <button class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-700 transition-colors">
+                                        Upgrader
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campaigns Section -->
+                    <div id="campaigns-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Campagnes Email</h2>
+                                <p class="text-gray-600">Créez et gérez vos campagnes d'emailing</p>
+                            </div>
+                            <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Nouvelle Campagne
+                            </button>
+                        </div>
+
+                        <!-- Campaign Creation Form -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Créer une Campagne</h3>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom de la campagne</label>
+                                    <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Ex: Prospection Q1 2024">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Template email</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Template 1 – Découverte simple</option>
+                                        <option disabled>Template 2 – Problème → Solution (Starter) 🔒</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Leads cibles</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Tous les leads qualifiés (2)</option>
+                                        <option>Score > 80% (2)</option>
+                                        <option>Secteur Tech/SaaS (1)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Programmation</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        <option>Envoyer maintenant</option>
+                                        <option>Programmer plus tard</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex justify-end mt-6">
+                                <button class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                    Créer Campagne
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Campaigns List -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Campagnes Récentes</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="border border-gray-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Prospection Test</h4>
+                                                <p class="text-sm text-gray-600">Template: Découverte simple • 3 destinataires</p>
+                                            </div>
+                                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-full">
+                                                Envoyée
+                                            </span>
+                                        </div>
+                                        <div class="grid grid-cols-4 gap-4 mb-3">
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-gray-900">3</div>
+                                                <div class="text-sm text-gray-600">Envoyés</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-emerald-600">2</div>
+                                                <div class="text-sm text-gray-600">Ouverts</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-blue-600">1</div>
+                                                <div class="text-sm text-gray-600">Clics</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-purple-600">1</div>
+                                                <div class="text-sm text-gray-600">Réponses</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between items-center text-sm text-gray-600">
+                                            <span>Créée il y a 2 jours</span>
+                                            <div class="space-x-3">
+                                                <button class="text-primary-600 hover:text-primary-900">Voir détails</button>
+                                                <button class="text-gray-600 hover:text-gray-900">Dupliquer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sequences Section -->
+                    <div id="sequences-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Séquences Multi-étapes</h2>
+                                <p class="text-gray-600">Automatisez vos follow-ups avec des séquences intelligentes</p>
+                            </div>
+                            <button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>
+                                <i class="fas fa-lock mr-2"></i>
+                                Nouvelle Séquence (Plan Pro)
+                            </button>
+                        </div>
+
+                        <!-- Upgrade Notice -->
+                        <div class="bg-gradient-to-r from-primary-50 to-purple-50 border border-primary-200 rounded-xl p-6 mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Débloque les Séquences Multi-étapes</h3>
+                                    <p class="text-gray-600 mb-4">
+                                        Automatisez vos follow-ups avec jusqu'à 3 étapes (Pro) ou 5 étapes (Growth)
+                                    </p>
+                                    <ul class="space-y-1 text-sm text-gray-600">
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                                            Relances automatiques personnalisées
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                                            Délais configurables entre chaque étape
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check text-emerald-500 mr-2"></i>
+                                            Arrêt automatique en cas de réponse
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="text-center">
+                                    <button class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors mb-2">
+                                        Upgrader vers Pro
+                                    </button>
+                                    <p class="text-sm text-gray-600">À partir de 99€/mois</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sequence Preview -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Aperçu: Séquence de Prospection Type</h3>
+                            <div class="space-y-6">
+                                <!-- Step 1 -->
+                                <div class="flex items-start space-x-4 opacity-60">
+                                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">
+                                        1
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h4 class="font-medium text-gray-900 mb-2">Email Initial</h4>
+                                            <p class="text-sm text-gray-600 mb-2">Template: Découverte simple</p>
+                                            <p class="text-xs text-gray-500">Envoi: Immédiatement</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div class="flex justify-center opacity-60">
+                                    <i class="fas fa-arrow-down text-gray-400"></i>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="flex items-start space-x-4 opacity-60">
+                                    <div class="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-semibold">
+                                        2
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h4 class="font-medium text-gray-900 mb-2">Follow-up 1</h4>
+                                            <p class="text-sm text-gray-600 mb-2">Template: Petit rappel</p>
+                                            <p class="text-xs text-gray-500">Envoi: 3 jours après si pas de réponse</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div class="flex justify-center opacity-60">
+                                    <i class="fas fa-arrow-down text-gray-400"></i>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="flex items-start space-x-4 opacity-60">
+                                    <div class="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-semibold">
+                                        3
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h4 class="font-medium text-gray-900 mb-2">Follow-up Final</h4>
+                                            <p class="text-sm text-gray-600 mb-2">Template: Dernier message</p>
+                                            <p class="text-xs text-gray-500">Envoi: 7 jours après si pas de réponse</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Section -->
+                    <div id="calendar-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Calendrier de Booking</h2>
+                                <p class="text-gray-600">Gérez vos créneaux et RDV prospects</p>
+                            </div>
+                            <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                <i class="fas fa-cog mr-2"></i>
+                                Configurer
+                            </button>
+                        </div>
+
+                        <div class="grid lg:grid-cols-3 gap-6">
+                            <!-- Calendar Configuration -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuration</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Durée des RDV</label>
+                                            <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                                <option>30 minutes</option>
+                                                <option>45 minutes</option>
+                                                <option>60 minutes</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Créneaux disponibles</label>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" checked class="mr-2">
+                                                    <span class="text-sm">Lundi 9h-17h</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" checked class="mr-2">
+                                                    <span class="text-sm">Mardi 9h-17h</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" checked class="mr-2">
+                                                    <span class="text-sm">Mercredi 9h-17h</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" checked class="mr-2">
+                                                    <span class="text-sm">Jeudi 9h-17h</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" checked class="mr-2">
+                                                    <span class="text-sm">Vendredi 9h-17h</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Calendar Link -->
+                                    <div class="mt-6 p-4 bg-primary-50 rounded-lg">
+                                        <h4 class="font-medium text-primary-900 mb-2">Lien de booking</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="text" value="leadpilot.com/book/user123" class="flex-1 text-sm text-primary-700 bg-white border border-primary-200 rounded px-2 py-1" readonly>
+                                            <button class="text-primary-600 hover:text-primary-800">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calendar View & Bookings -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-lg font-semibold text-gray-900">RDV à venir</h3>
+                                        <div class="flex space-x-2">
+                                            <button class="text-gray-600 hover:text-gray-900">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <span class="text-sm font-medium text-gray-900">Janvier 2024</span>
+                                            <button class="text-gray-600 hover:text-gray-900">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mock Calendar Bookings -->
+                                    <div class="space-y-4">
+                                        <div class="border border-emerald-200 bg-emerald-50 p-4 rounded-lg">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
+                                                        <span class="text-white text-sm font-semibold">MM</span>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-medium text-gray-900">Marie Martin</h4>
+                                                        <p class="text-sm text-gray-600">Digital Solutions</p>
+                                                    </div>
+                                                </div>
+                                                <span class="text-sm font-medium text-emerald-700">Confirmé</span>
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-600 space-x-4">
+                                                <span>
+                                                    <i class="fas fa-calendar mr-1"></i>
+                                                    Demain, 15 janvier
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                    14h00 - 14h30
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-video mr-1"></i>
+                                                    Visio
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="border border-blue-200 bg-blue-50 p-4 rounded-lg">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                                        <span class="text-white text-sm font-semibold">PL</span>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-medium text-gray-900">Pierre Leblanc</h4>
+                                                        <p class="text-sm text-gray-600">Conseil & Stratégie</p>
+                                                    </div>
+                                                </div>
+                                                <span class="text-sm font-medium text-blue-700">En attente</span>
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-600 space-x-4">
+                                                <span>
+                                                    <i class="fas fa-calendar mr-1"></i>
+                                                    18 janvier
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                    10h00 - 10h30
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-phone mr-1"></i>
+                                                    Téléphone
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Calendar Stats -->
+                                    <div class="mt-6 grid grid-cols-3 gap-4 pt-6 border-t">
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-gray-900">2</div>
+                                            <div class="text-sm text-gray-600">RDV ce mois</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-emerald-600">1</div>
+                                            <div class="text-sm text-gray-600">Confirmés</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-blue-600">67%</div>
+                                            <div class="text-sm text-gray-600">Taux show-up</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Section -->
+                    <div id="analytics-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Statistiques & Analytics</h2>
+                                <p class="text-gray-600">Analysez vos performances de prospection</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                    <option>7 derniers jours</option>
+                                    <option>30 derniers jours</option>
+                                    <option>Ce mois</option>
+                                </select>
+                                <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Exporter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Performance Charts -->
+                        <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Entonnoir de Conversion</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Leads générés</span>
+                                        <span class="font-semibold">3</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 100%"></div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Emails envoyés</span>
+                                        <span class="font-semibold">15</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-emerald-600 h-2 rounded-full" style="width: 80%"></div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Emails ouverts</span>
+                                        <span class="font-semibold">5</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-amber-600 h-2 rounded-full" style="width: 33%"></div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Clics</span>
+                                        <span class="font-semibold">2</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 13%"></div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">RDV bookés</span>
+                                        <span class="font-semibold">2</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-rose-600 h-2 rounded-full" style="width: 13%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Métriques Clés</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-blue-600">34%</div>
+                                        <div class="text-sm text-gray-600">Taux d'ouverture</div>
+                                    </div>
+                                    <div class="text-center p-4 bg-emerald-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-emerald-600">13%</div>
+                                        <div class="text-sm text-gray-600">Taux de clic</div>
+                                    </div>
+                                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-purple-600">7%</div>
+                                        <div class="text-sm text-gray-600">Taux de réponse</div>
+                                    </div>
+                                    <div class="text-center p-4 bg-rose-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-rose-600">13%</div>
+                                        <div class="text-sm text-gray-600">Conversion RDV</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Stats -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Performance par Template</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Template
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Envoyés
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Taux d'ouverture
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Taux de clic
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Réponses
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr data-mock="true">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">Template 1 – Découverte simple</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="text-sm font-medium text-gray-900">34%</div>
+                                                    <div class="ml-2 flex-1 bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-emerald-500 h-2 rounded-full" style="width: 34%"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="text-sm font-medium text-gray-900">13%</div>
+                                                    <div class="ml-2 flex-1 bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 13%"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings-section" class="section-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Paramètres</h2>
+                                <p class="text-gray-600">Configurez votre compte et intégrations</p>
+                            </div>
+                        </div>
+
+                        <div class="grid lg:grid-cols-3 gap-6">
+                            <!-- Account Settings -->
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informations du Compte</h3>
+                                    <div class="space-y-4">
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+                                                <input type="text" value="John" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                                                <input type="text" value="Doe" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                            <input type="email" value="john.doe@exemple.fr" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise</label>
+                                            <input type="text" value="Mon Entreprise" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuration Email</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Serveur SMTP</label>
+                                            <input type="text" placeholder="smtp.gmail.com" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                        </div>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Port</label>
+                                                <input type="text" placeholder="587" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Sécurité</label>
+                                                <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                                    <option>TLS</option>
+                                                    <option>SSL</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+                                                <input type="text" placeholder="votre-email@gmail.com" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+                                                <input type="password" placeholder="••••••••" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                            Tester la Configuration
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Intégrations API</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fas fa-rocket text-purple-600"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-medium text-gray-900">Apollo API</h4>
+                                                    <p class="text-sm text-gray-600">Génération automatique de leads</p>
+                                                </div>
+                                            </div>
+                                            <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                                                Non configuré
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fas fa-brain text-emerald-600"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-medium text-gray-900">OpenAI GPT-4o</h4>
+                                                    <p class="text-sm text-gray-600">Scoring et variations IA</p>
+                                                </div>
+                                            </div>
+                                            <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                                                Non configuré
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Subscription & Usage -->
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Abonnement Actuel</h3>
+                                    <div class="text-center mb-4">
+                                        <div class="text-3xl font-bold text-gray-900 mb-2">Free</div>
+                                        <div class="text-gray-600 mb-4">Plan gratuit</div>
+                                    </div>
+                                    <div class="space-y-3 mb-6">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-600">Leads utilisés</span>
+                                            <span class="font-medium">3/5</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-primary-600 h-2 rounded-full" style="width: 60%"></div>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-600">Templates accessibles</span>
+                                            <span class="font-medium">1/1</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-600">Variations IA</span>
+                                            <span class="font-medium">2/5</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                                        Upgrader vers Starter
+                                    </button>
+                                </div>
+
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+                                    <div class="space-y-3">
+                                        <button class="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                            <i class="fas fa-download text-gray-600 mr-3"></i>
+                                            Exporter mes données
+                                        </button>
+                                        <button class="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                            <i class="fas fa-life-ring text-gray-600 mr-3"></i>
+                                            Support client
+                                        </button>
+                                        <button class="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-red-600">
+                                            <i class="fas fa-trash text-red-600 mr-3"></i>
+                                            Supprimer mon compte
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TODO: Implement proper state management and API integration
+        (function() {
+            // Landing page functionality
+            window.showLogin = function() {
+                document.getElementById('login-modal').classList.remove('hidden');
+            };
+
+            window.hideLogin = function() {
+                document.getElementById('login-modal').classList.add('hidden');
+            };
+
+            window.showDashboard = function() {
+                document.getElementById('landing-page').classList.add('hidden');
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                // Update page title
+                document.querySelector('[data-bind="pageTitle"]').textContent = 'Dashboard';
+                document.querySelector('[data-bind="pageSubtitle"]').textContent = 'Aperçu de vos campagnes et performances';
+            };
+
+            // Section navigation
+            window.showSection = function(sectionId) {
+                // Hide all sections
+                document.querySelectorAll('.section-content').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Show selected section
+                document.getElementById(sectionId).classList.remove('hidden');
+                
+                // Update navigation active state
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active', 'text-primary-600', 'bg-primary-50');
+                    link.classList.add('text-gray-700');
+                });
+                
+                // Update page title based on section
+                const titles = {
+                    'dashboard-overview': { title: 'Dashboard', subtitle: 'Aperçu de vos campagnes et performances' },
+                    'leads-section': { title: 'Gestion des Leads', subtitle: 'Gérez vos prospects et leur scoring IA' },
+                    'templates-section': { title: 'Templates d\'Emails', subtitle: '30 templates optimisés avec variations IA' },
+                    'campaigns-section': { title: 'Campagnes Email', subtitle: 'Créez et gérez vos campagnes d\'emailing' },
+                    'sequences-section': { title: 'Séquences Multi-étapes', subtitle: 'Automatisez vos follow-ups avec des séquences intelligentes' },
+                    'calendar-section': { title: 'Calendrier de Booking', subtitle: 'Gérez vos créneaux et RDV prospects' },
+                    'analytics-section': { title: 'Statistiques & Analytics', subtitle: 'Analysez vos performances de prospection' },
+                    'settings-section': { title: 'Paramètres', subtitle: 'Configurez votre compte et intégrations' }
+                };
+                
+                if (titles[sectionId]) {
+                    document.querySelector('[data-bind="pageTitle"]').textContent = titles[sectionId].title;
+                    document.querySelector('[data-bind="pageSubtitle"]').textContent = titles[sectionId].subtitle;
+                }
+                
+                // Find and activate the corresponding nav link
+                const activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active', 'text-primary-600', 'bg-primary-50');
+                    activeLink.classList.remove('text-gray-700');
+                }
+            };
+
+            // Close modal on backdrop click
+            document.getElementById('login-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideLogin();
+                }
+            });
+
+            // Template category switching
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('template-category')) {
+                    document.querySelectorAll('.template-category').forEach(btn => {
+                        btn.classList.remove('active', 'bg-primary-600', 'text-white');
+                        btn.classList.add('text-gray-600');
+                    });
+                    e.target.classList.add('active', 'bg-primary-600', 'text-white');
+                    e.target.classList.remove('text-gray-600');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

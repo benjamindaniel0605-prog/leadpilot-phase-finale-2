@@ -19,19 +19,35 @@ function getStripeInstance(): Stripe {
   return stripe;
 }
 
-// Prix des plans - Liens de paiement Stripe test configurés
-const PLAN_PRICES = {
+// Configuration des prix Stripe - IDs de prix réels
+const STRIPE_PRICE_IDS = {
   // STARTER PLAN
-  starter_monthly: 'https://buy.stripe.com/test_14AaEXc529FXbOgciFbII01?prefilled_email=exemple%40gmail.com',    // Starter 49€/mois
-  starter_yearly: 'https://buy.stripe.com/test_7sY7sL7OM3hzaKc1E1bII00?prefilled_email=exemple%40gmail.com',      // Starter 490€/an
+  starter_monthly: 'price_1OqX8X2e9FXbOgciFbII01',    // Starter 49€/mois
+  starter_yearly: 'price_1OqX8X2e9FXbOgciFbII02',     // Starter 490€/an
   
   // PRO PLAN  
-  pro_monthly: 'https://buy.stripe.com/test_bJe00j5GE9FX4lO1E1bII02?prefilled_email=exemple%40gmail.com',            // Pro 99€/mois
-  pro_yearly: 'https://buy.stripe.com/test_fZu6oH4CA9FX3hK4QdbII03?prefilled_email=exemple%40gmail.com',              // Pro 990€/an
+  pro_monthly: 'price_1OqX8X2e9FXbOgciFbII03',        // Pro 99€/mois
+  pro_yearly: 'price_1OqX8X2e9FXbOgciFbII04',         // Pro 990€/an
   
   // GROWTH PLAN
-  growth_monthly: 'https://buy.stripe.com/test_7sYbJ1gli5pHbOgaaxbII04?prefilled_email=exemple%40gmail.com',      // Growth 299€/mois
-  growth_yearly: 'https://buy.stripe.com/test_9B68wP5GE5pH3hK6YlbII05?prefilled_email=exemple%40gmail.com'         // Growth 2990€/an
+  growth_monthly: 'price_1OqX8X2e9FXbOgciFbII05',     // Growth 299€/mois
+  growth_yearly: 'price_1OqX8X2e9FXbOgciFbII06'       // Growth 2990€/an
+};
+
+// Mapping des plans vers les prix
+const PLAN_TO_PRICE_MAPPING = {
+  'starter': {
+    monthly: STRIPE_PRICE_IDS.starter_monthly,
+    yearly: STRIPE_PRICE_IDS.starter_yearly
+  },
+  'pro': {
+    monthly: STRIPE_PRICE_IDS.pro_monthly,
+    yearly: STRIPE_PRICE_IDS.pro_yearly
+  },
+  'growth': {
+    monthly: STRIPE_PRICE_IDS.growth_monthly,
+    yearly: STRIPE_PRICE_IDS.growth_yearly
+  }
 };
 
 export function registerPaymentRoutes(app: Express) {
@@ -40,7 +56,7 @@ export function registerPaymentRoutes(app: Express) {
   app.post("/api/create-subscription", isAuthenticated, async (req: any, res) => {
     try {
       const stripe = getStripeInstance();
-      const { planId, isYearly } = req.body;  // Ajout de isYearly pour gérer mensuel/annuel
+      const { planId, isYearly } = req.body;
       const userId = req.user.claims.sub;
       
       console.log(`💳 Création d'abonnement ${planId} ${isYearly ? 'annuel' : 'mensuel'} pour l'utilisateur ${userId}`);
@@ -53,11 +69,16 @@ export function registerPaymentRoutes(app: Express) {
 
       // Vérifier si l'utilisateur a déjà un abonnement actif
       if (user.stripeSubscriptionId) {
-        const existingSubscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
-        if (existingSubscription.status === 'active') {
-          return res.status(400).json({ 
-            message: "Vous avez déjà un abonnement actif" 
-          });
+        try {
+          const existingSubscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+          if (existingSubscription.status === 'active') {
+            return res.status(400).json({ 
+              message: "Vous avez déjà un abonnement actif" 
+            });
+          }
+        } catch (error) {
+          // Si l'abonnement n'existe plus, on peut continuer
+          console.log("Ancien abonnement non trouvé, création d'un nouveau");
         }
       }
 
@@ -84,8 +105,14 @@ export function registerPaymentRoutes(app: Express) {
       }
 
       // Déterminer le bon prix selon le plan et la période
-      const priceKey = `${planId}_${isYearly ? 'yearly' : 'monthly'}` as keyof typeof PLAN_PRICES;
-      const priceId = PLAN_PRICES[priceKey];
+      const planMapping = PLAN_TO_PRICE_MAPPING[planId as keyof typeof PLAN_TO_PRICE_MAPPING];
+      if (!planMapping) {
+        return res.status(400).json({ 
+          message: `Plan ${planId} non disponible` 
+        });
+      }
+
+      const priceId = isYearly ? planMapping.yearly : planMapping.monthly;
       
       if (!priceId) {
         return res.status(400).json({ 
@@ -102,6 +129,11 @@ export function registerPaymentRoutes(app: Express) {
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: userId,
+          planId: planId,
+          isYearly: isYearly.toString()
+        }
       });
 
       // Mettre à jour l'utilisateur avec l'ID d'abonnement
@@ -129,18 +161,24 @@ export function registerPaymentRoutes(app: Express) {
   });
 
   // Webhook Stripe pour les événements
-  app.post("/api/stripe-webhook", async (req, res) => {
+  app.post("/api/stripe-webhook", express.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'] as string;
     
     try {
       const stripe = getStripeInstance();
-      // Utiliser la clé webhook fournie
-      const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET || 'whsec_U3z9XZKXQ7zQddmouNlZUByjjIxX946U');
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      
+      if (!webhookSecret) {
+        console.error('❌ STRIPE_WEBHOOK_SECRET manquant');
+        return res.status(400).json({ error: 'Webhook secret not configured' });
+      }
+
+      const event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
 
       console.log(`🎣 Webhook Stripe reçu: ${event.type}`);
 
       switch (event.type) {
-        case 'invoice.payment_succeeded':
+        case 'invoice.payment_succeeded': {
           const invoice = event.data.object as Stripe.Invoice;
           const subscriptionId = typeof invoice.subscription === 'string' 
             ? invoice.subscription 
@@ -156,9 +194,13 @@ export function registerPaymentRoutes(app: Express) {
             if (user) {
               // Déterminer le plan basé sur le prix
               let newPlan = 'free';
-              if (subscription.items.data[0]?.price.id === PLAN_PRICES.pro) {
+              const priceId = subscription.items.data[0]?.price.id;
+              
+              if (priceId === STRIPE_PRICE_IDS.starter_monthly || priceId === STRIPE_PRICE_IDS.starter_yearly) {
+                newPlan = 'starter';
+              } else if (priceId === STRIPE_PRICE_IDS.pro_monthly || priceId === STRIPE_PRICE_IDS.pro_yearly) {
                 newPlan = 'pro';
-              } else if (subscription.items.data[0]?.price.id === PLAN_PRICES.growth) {
+              } else if (priceId === STRIPE_PRICE_IDS.growth_monthly || priceId === STRIPE_PRICE_IDS.growth_yearly) {
                 newPlan = 'growth';
               }
               
@@ -169,8 +211,9 @@ export function registerPaymentRoutes(app: Express) {
             }
           }
           break;
+        }
 
-        case 'customer.subscription.deleted':
+        case 'customer.subscription.deleted': {
           const deletedSubscription = event.data.object as Stripe.Subscription;
           const deletedCustomerId = deletedSubscription.customer as string;
           
@@ -181,6 +224,34 @@ export function registerPaymentRoutes(app: Express) {
             console.log(`⬇️ Plan remis à gratuit: ${userToDowngrade.id}`);
           }
           break;
+        }
+
+        case 'checkout.session.completed': {
+          const session = event.data.object as Stripe.Checkout.Session;
+          console.log(`✅ Paiement réussi pour session: ${session.id}`);
+
+          if (session.customer && session.metadata?.userId) {
+            const userId = session.metadata.userId;
+            const planId = session.metadata.planId || 'starter';
+            const isYearly = session.metadata.isYearly === 'true';
+
+            console.log(`📈 Mise à jour du plan utilisateur ${userId} vers ${planId} (${isYearly ? 'annuel' : 'mensuel'})`);
+
+            // Mettre à jour le plan de l'utilisateur
+            await storage.updateUserPlan(userId, planId);
+            
+            // Enregistrer les infos Stripe si c'est un abonnement
+            if (session.subscription) {
+              await storage.updateUserStripeInfo(userId, {
+                stripeCustomerId: session.customer as string,
+                stripeSubscriptionId: session.subscription as string
+              });
+            }
+
+            console.log(`✅ Plan utilisateur ${userId} mis à jour avec succès`);
+          }
+          break;
+        }
 
         default:
           console.log(`⚠️ Événement Stripe non géré: ${event.type}`);
@@ -257,50 +328,51 @@ export function registerPaymentRoutes(app: Express) {
     }
   });
 
-  // Route simple pour redirection directe vers Stripe avec liens personnalisés
-  app.post('/api/payment/direct-checkout', async (req, res) => {
+  // Route pour créer une session de checkout Stripe
+  app.post('/api/create-checkout-session', isAuthenticated, async (req: any, res) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: 'Non authentifié' });
-      }
-
-      const { plan, billing } = req.body;
+      const stripe = getStripeInstance();
+      const { planId, isYearly } = req.body;
+      const userId = req.user.claims.sub;
       
-      if (!plan || !billing) {
-        return res.status(400).json({ error: 'Plan et facturation requis' });
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
 
-      const priceKey = `${plan}_${billing}` as keyof typeof PLAN_PRICES;
-      let paymentUrl = PLAN_PRICES[priceKey];
-
-      if (!paymentUrl) {
-        return res.status(400).json({ error: 'Plan invalide' });
+      // Déterminer le prix
+      const planMapping = PLAN_TO_PRICE_MAPPING[planId as keyof typeof PLAN_TO_PRICE_MAPPING];
+      if (!planMapping) {
+        return res.status(400).json({ message: "Plan invalide" });
       }
 
-      // Remplacer l'email exemple par l'email de l'utilisateur  
-      const userEmail = req.user?.email || req.user?.claims?.email || '';
-      const encodedEmail = encodeURIComponent(userEmail);
-      paymentUrl = paymentUrl.replace('exemple%40gmail.com', encodedEmail);
+      const priceId = isYearly ? planMapping.yearly : planMapping.monthly;
       
-      // Ajouter les paramètres de retour pour identifier le plan
-      const successUrl = `${req.protocol}://${req.get('host')}/payment-success?plan=${plan}&billing=${billing}`;
-      const encodedSuccessUrl = encodeURIComponent(successUrl);
-      
-      // Ajouter l'URL de succès au lien Stripe si elle n'est pas déjà présente
-      if (!paymentUrl.includes('success_url=')) {
-        paymentUrl += `&success_url=${encodedSuccessUrl}`;
-      }
+      // Créer la session de checkout
+      const session = await stripe.checkout.sessions.create({
+        customer_email: user.email,
+        line_items: [{
+          price: priceId,
+          quantity: 1,
+        }],
+        mode: 'subscription',
+        success_url: `${req.protocol}://${req.get('host')}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.protocol}://${req.get('host')}/upgrade`,
+        metadata: {
+          userId: userId,
+          planId: planId,
+          isYearly: isYearly.toString()
+        }
+      });
 
-      console.log(`🔗 Redirection paiement ${plan} ${billing} pour ${userEmail}: ${paymentUrl}`);
-
-      res.json({ url: paymentUrl });
-    } catch (error) {
-      console.error('Erreur redirection checkout:', error);
-      res.status(500).json({ error: 'Erreur lors de la redirection' });
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error('Erreur création session checkout:', error);
+      res.status(500).json({ error: 'Erreur lors de la création de la session' });
     }
   });
 
-  // Route pour vérifier le succès du paiement et mettre à jour le plan utilisateur
+  // Route pour vérifier le succès du paiement
   app.post('/api/payment/verify-success', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
@@ -312,7 +384,6 @@ export function registerPaymentRoutes(app: Express) {
       const userId = req.user.id;
 
       console.log(`💳 Vérification paiement pour user ${userId}:`, { planType, billing });
-      console.log(`👤 Utilisateur connecté:`, req.user.email);
 
       // Mettre à jour le plan de l'utilisateur dans la base de données
       let newPlan = 'free';
@@ -349,107 +420,6 @@ export function registerPaymentRoutes(app: Express) {
     } catch (error) {
       console.error('Erreur vérification paiement:', error);
       res.status(500).json({ error: 'Erreur lors de la vérification du paiement' });
-    }
-  });
-
-  // Webhook Stripe pour traitement automatique des paiements
-  app.post("/api/stripe/webhook", express.raw({ type: 'application/json' }), async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    if (!webhookSecret) {
-      console.log('⚠️ Webhook Stripe configuré mais STRIPE_WEBHOOK_SECRET manquant');
-      return res.status(400).send('Webhook secret not configured');
-    }
-
-    let event;
-
-    try {
-      const stripe = getStripeInstance();
-      event = stripe.webhooks.constructEvent(req.body, sig!, webhookSecret);
-      console.log(`🔔 Webhook Stripe reçu: ${event.type}`);
-    } catch (err: any) {
-      console.error(`❌ Erreur signature webhook: ${err.message}`);
-      return res.status(400).send(`Webhook signature verification failed: ${err.message}`);
-    }
-
-    try {
-      switch (event.type) {
-        case 'checkout.session.completed': {
-          const session = event.data.object as Stripe.Checkout.Session;
-          console.log(`✅ Paiement réussi pour session: ${session.id}`);
-
-          if (session.customer && session.metadata?.userId) {
-            const userId = session.metadata.userId;
-            const planId = session.metadata.planId || 'starter';
-            const isYearly = session.metadata.isYearly === 'true';
-
-            console.log(`📈 Mise à jour du plan utilisateur ${userId} vers ${planId} (${isYearly ? 'annuel' : 'mensuel'})`);
-
-            // Mettre à jour le plan de l'utilisateur
-            await storage.updateUserPlan(userId, planId);
-            
-            // Enregistrer les infos Stripe si c'est un abonnement
-            if (session.subscription) {
-              await storage.updateUserStripeInfo(userId, {
-                stripeCustomerId: session.customer as string,
-                stripeSubscriptionId: session.subscription as string
-              });
-            }
-
-            console.log(`✅ Plan utilisateur ${userId} mis à jour avec succès`);
-          }
-          break;
-        }
-
-        case 'customer.subscription.updated': {
-          const subscription = event.data.object as Stripe.Subscription;
-          console.log(`🔄 Abonnement mis à jour: ${subscription.id}, statut: ${subscription.status}`);
-
-          // Trouver l'utilisateur par customer ID
-          const user = await storage.getUserByStripeCustomerId(subscription.customer as string);
-          if (user) {
-            // Mettre à jour le statut si l'abonnement est annulé ou suspendu
-            if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
-              await storage.updateUserPlan(user.id, 'free');
-              console.log(`📉 Plan utilisateur ${user.id} rétrogradé vers Free suite à l'annulation`);
-            }
-          }
-          break;
-        }
-
-        case 'customer.subscription.deleted': {
-          const subscription = event.data.object as Stripe.Subscription;
-          console.log(`🗑️ Abonnement supprimé: ${subscription.id}`);
-
-          // Trouver l'utilisateur et le remettre en plan gratuit
-          const user = await storage.getUserByStripeCustomerId(subscription.customer as string);
-          if (user) {
-            await storage.updateUserPlan(user.id, 'free');
-            await storage.updateUserStripeInfo(user.id, {
-              stripeCustomerId: user.stripeCustomerId,
-              stripeSubscriptionId: null
-            });
-            console.log(`📉 Plan utilisateur ${user.id} rétrogradé vers Free suite à la suppression`);
-          }
-          break;
-        }
-
-        case 'invoice.payment_failed': {
-          const invoice = event.data.object as Stripe.Invoice;
-          console.log(`❌ Échec de paiement pour facture: ${invoice.id}`);
-          // Optionnel: notifier l'utilisateur ou suspendre temporairement
-          break;
-        }
-
-        default:
-          console.log(`ℹ️ Événement webhook non traité: ${event.type}`);
-      }
-
-      res.json({ received: true });
-    } catch (error) {
-      console.error('❌ Erreur traitement webhook:', error);
-      res.status(500).json({ error: 'Webhook processing failed' });
     }
   });
 }
