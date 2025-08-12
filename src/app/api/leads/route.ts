@@ -1,8 +1,8 @@
-import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
-import { leads } from '@/lib/schema'
+import { db } from '../../../lib/database'
+import { leads } from '../../../lib/schema'
 import { eq } from 'drizzle-orm'
 
 // GET - Récupérer les leads de l'utilisateur
@@ -10,21 +10,9 @@ export async function GET(request: NextRequest) {
   try {
     const cookieStore = cookies()
 
-    const supabase = createServerClient(
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
     // Vérifier l'authentification
@@ -56,21 +44,9 @@ export async function POST(request: NextRequest) {
     const { firstName, lastName, email, company, sector, position, notes } = await request.json()
     const cookieStore = cookies()
 
-    const supabase = createServerClient(
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
     // Vérifier l'authentification
