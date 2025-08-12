@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '../../../lib/database'
-import { leads } from '../../../lib/schema'
+import { db } from '@/lib/database'
+import { leads } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
 // GET - Récupérer les leads de l'utilisateur

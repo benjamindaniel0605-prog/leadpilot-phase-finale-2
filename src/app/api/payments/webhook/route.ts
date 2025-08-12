@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '../../../lib/stripe'
-import { db } from '../../../lib/database'
-import { users } from '../../../lib/schema'
+import { stripe } from '@/lib/stripe'
+import { db } from '@/lib/database'
+import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
 export async function POST(request: NextRequest) {
