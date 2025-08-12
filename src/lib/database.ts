@@ -1,5 +1,6 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
+import 'server-only'
 import postgres from 'postgres'
+import { drizzle } from 'drizzle-orm/postgres-js'
 import {
   users,
   templates,
@@ -14,8 +15,16 @@ import {
 
 // Configuration de la base de données
 const connectionString = process.env.DATABASE_URL!
-const client = postgres(connectionString)
-export const db = drizzle(client)
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not set')
+}
+
+export const sql = postgres(connectionString, {
+  ssl: 'require',
+  max: 1, // limite la pool en serverless / route handlers
+})
+
+export const db = drizzle(sql)
 
 // Types exportés
 export type User = typeof users.$inferSelect
