@@ -13,19 +13,19 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 
 # Stripe
 STRIPE_SECRET_KEY=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
-STRIPE_WEBHOOK_SECRET=[À AJOUTER APRÈS DÉPLOIEMENT]
+STRIPE_WEBHOOK_SECRET=whsec_C8DcHXN1lhUaK6sq7BMNcgQmq482auJW
 
 # Google OAuth
 GOOGLE_CLIENT_ID=1013613006859-nttqu2jcmpjq2ukpnu2pb3tqh9ep5vvq.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=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
-GOOGLE_REDIRECT_URI=https://your-domain.vercel.app/api/oauth/google/callback
+GOOGLE_REDIRECT_URI=https://get-leadpilot.vercel.app/api/oauth/google/callback
 
 # Services externes
 OPENAI_API_KEY=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
 APOLLO_API_KEY=xb2pDLrY3aHyutE1KyGrHw
 
 # Application
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+NEXT_PUBLIC_APP_URL=https://get-leadpilot.vercel.app
 NODE_ENV=production
 ```
 
@@ -57,7 +57,7 @@ vercel --prod
 ### 1. Stripe Webhooks
 - Aller sur [stripe.com/dashboard](https://stripe.com/dashboard)
 - Webhooks > Add endpoint
-- URL : `https://your-domain.vercel.app/api/payments/webhook`
+- URL : `https://get-leadpilot.vercel.app/api/payments/webhook`
 - Events : `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
 - Copier le webhook secret et l'ajouter dans `STRIPE_WEBHOOK_SECRET`
 
@@ -67,8 +67,8 @@ vercel --prod
 - Activer l'API Gmail
 - Créer des identifiants OAuth 2.0
 - URLs autorisées :
-  - JavaScript : `https://your-domain.vercel.app`
-  - Redirection : `https://your-domain.vercel.app/api/oauth/google/callback`
+  - JavaScript : `https://get-leadpilot.vercel.app`
+  - Redirection : `https://get-leadpilot.vercel.app/api/oauth/google/callback`
 
 ## 📁 Structure du Projet
 
@@ -112,12 +112,12 @@ src/
 Après déploiement, configurer dans Stripe Dashboard :
 
 **URLs de succès :**
-- Starter Monthly : `https://your-domain.vercel.app/payment-success?plan=starter&yearly=false`
-- Starter Yearly : `https://your-domain.vercel.app/payment-success?plan=starter&yearly=true`
-- Pro Monthly : `https://your-domain.vercel.app/payment-success?plan=pro&yearly=false`
-- Pro Yearly : `https://your-domain.vercel.app/payment-success?plan=pro&yearly=true`
-- Growth Monthly : `https://your-domain.vercel.app/payment-success?plan=growth&yearly=false`
-- Growth Yearly : `https://your-domain.vercel.app/payment-success?plan=growth&yearly=true`
+- Starter Monthly : `https://get-leadpilot.vercel.app/payment-success?plan=starter&yearly=false`
+- Starter Yearly : `https://get-leadpilot.vercel.app/payment-success?plan=starter&yearly=true`
+- Pro Monthly : `https://get-leadpilot.vercel.app/payment-success?plan=pro&yearly=false`
+- Pro Yearly : `https://get-leadpilot.vercel.app/payment-success?plan=pro&yearly=true`
+- Growth Monthly : `https://get-leadpilot.vercel.app/payment-success?plan=growth&yearly=false`
+- Growth Yearly : `https://get-leadpilot.vercel.app/payment-success?plan=growth&yearly=true`
 
 ## 📞 Support
 
