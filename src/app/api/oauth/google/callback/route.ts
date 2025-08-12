@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
-import { db } from '@/lib/database'
-import { users } from '@/lib/schema'
+import { db } from '../../../../lib/database'
+import { users } from '../../../../lib/schema'
 import { eq } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
