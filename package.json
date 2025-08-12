@@ -1,17 +1,17 @@
 {
-  "name": "rest-express",
+  "name": "leadpilot-saas",
   "version": "1.0.0",
-  "type": "module",
-  "license": "MIT",
+  "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
-    "check": "tsc",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "db:push": "drizzle-kit push",
     "check-setup": "node check-setup.js"
   },
   "dependencies": {
+    "next": "^14.0.0",
     "@azure/msal-node": "^3.6.4",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
